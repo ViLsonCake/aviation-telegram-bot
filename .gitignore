@@ -13,7 +13,6 @@ out/
 *.log
 
 # Package Files
-/*/gradle/wrapper/gradle-wrapper.jar
 *.jar
 *.war
 *.nar
@@ -28,6 +27,3 @@ hs_err_pid*
 # OS specific
 .DS_Store
 Thumbs.db
-
-/bot-commands-processing-lambda/gradle/wrapper/gradle-wrapper.jar
-/flights-notification-lambda/gradle/wrapper/gradle-wrapper.jar
