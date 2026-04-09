@@ -3,6 +3,9 @@
 *.iml
 out/
 
+# Local configuration
+*/application-local.yml
+
 # Compiled class files
 *.class
 
