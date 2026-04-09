@@ -4,7 +4,8 @@
 out/
 
 # Local configuration
-*/application-local.yml
+/flights-notification-lambda/src/main/resources/application-local.yml
+/bot-commands-processing-lambda/src/main/resources/application-local.yml
 
 # Compiled class files
 *.class
