@@ -4,8 +4,7 @@
 out/
 
 # Local configuration
-/flights-notification-lambda/src/main/resources/application-local.yml
-/bot-commands-processing-lambda/src/main/resources/application-local.yml
+/*/src/main/resources/application-local.yml
 
 # Compiled class files
 *.class
@@ -14,6 +13,7 @@ out/
 *.log
 
 # Package Files
+/*/gradle/wrapper/gradle-wrapper.jar
 *.jar
 *.war
 *.nar
