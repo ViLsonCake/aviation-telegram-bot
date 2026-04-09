@@ -7,4 +7,10 @@ terraform {
   }
 
   required_version = ">= 1.2"
+
+  backend "s3" {
+    bucket = "aviation-telegram-bot-tfstate"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+  }
 }
