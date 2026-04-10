@@ -15,6 +15,9 @@ public class TelegramClient {
   private final HttpClient httpClient;
   private final BotConfig botConfig;
 
+  private static final String API_URL = "https://api.telegram.org/bot%s/sendMessage";
+  private final String BOT_TOKEN = System.getenv("BOT_TOKEN");
+
   private static final String BODY_TEMPLATE = """
       {
           "chat_id": %d,
@@ -33,7 +36,7 @@ public class TelegramClient {
     String body = constructBody(chatId, messageText);
 
     HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(botConfig.getTelegramApiUrl()))
+        .uri(URI.create(String.format(API_URL, BOT_TOKEN)))
         .header("Content-Type", "application/json")
         .POST(HttpRequest.BodyPublishers.ofString(body))
         .build();
