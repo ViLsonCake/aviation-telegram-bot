@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'flightradar-api-lambda/**'
+      - '.github/workflows/deploy-flightradar-api-lambda.yml'
 
 jobs:
   deploy:
