@@ -1,3 +1,8 @@
 spring:
   application:
     name: flights-notification-lambda
+  main:
+    web-application-type: none
+  cloud:
+    function:
+      definition: flightsNotificationHandler
