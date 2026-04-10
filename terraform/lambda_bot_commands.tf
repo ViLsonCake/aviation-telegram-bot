@@ -24,3 +24,8 @@ resource "aws_lambda_function" "bot_commands_processing" {
     ManagedBy = "terraform"
   }
 }
+
+resource "aws_lambda_function_url" "bot_commands_processing" {
+  function_name      = aws_lambda_function.bot_commands_processing.function_name
+  authorization_type = "NONE"
+}

@@ -1,3 +1,8 @@
+output "bot_commands_processing_function_url" {
+  description = "Function URL of the bot-commands-processing Lambda"
+  value       = aws_lambda_function_url.bot_commands_processing.function_url
+}
+
 output "bot_commands_processing_function_arn" {
   description = "ARN of the bot-commands-processing Lambda function"
   value       = aws_lambda_function.bot_commands_processing.arn

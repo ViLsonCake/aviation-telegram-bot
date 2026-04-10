@@ -40,3 +40,9 @@ jobs:
           aws lambda update-function-code \
             --function-name aviation-telegram-bot-bot-commands-processing \
             --zip-file fileb://bot-commands-processing-lambda/build/libs/bot-commands-processing-lambda.jar
+
+      - name: Set Lambda Environment Variables
+        run: |
+          aws lambda update-function-configuration \
+            --function-name aviation-telegram-bot-bot-commands-processing \
+            --environment "Variables={BOT_TOKEN=${{ secrets.BOT_TOKEN }}}"
