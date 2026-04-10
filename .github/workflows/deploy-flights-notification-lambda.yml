@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'flights-notification-lambda/**'
+      - '.github/workflows/deploy-flights-notification-lambda.yml'
 
 jobs:
   deploy:
