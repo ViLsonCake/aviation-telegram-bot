@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'project.vilsoncake:common-library:1.0-SNAPSHOT'
 
     // AWS Lambda core
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'

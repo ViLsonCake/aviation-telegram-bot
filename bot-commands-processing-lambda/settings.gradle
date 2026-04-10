@@ -1,1 +1,3 @@
 rootProject.name = 'bot-commands-processing-lambda'
+
+includeBuild '../common-library'

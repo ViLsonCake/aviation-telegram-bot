@@ -1,1 +1,3 @@
 rootProject.name = 'flights-notification-lambda'
+
+includeBuild '../common-library'
