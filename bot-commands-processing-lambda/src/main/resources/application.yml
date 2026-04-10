@@ -6,3 +6,7 @@ spring:
   cloud:
     function:
       definition: botCommandsHandler
+
+bot:
+  token: ${BOT_TOKEN}
+  telegram-api-url: https://api.telegram.org/bot${bot.token}/sendMessage
