@@ -41,6 +41,11 @@ jobs:
             --function-name aviation-telegram-bot-bot-commands-processing \
             --zip-file fileb://bot-commands-processing-lambda/build/libs/bot-commands-processing-lambda.jar
 
+      - name: Wait for Lambda Update
+        run: |
+          aws lambda wait function-updated \
+            --function-name aviation-telegram-bot-bot-commands-processing
+
       - name: Set Lambda Environment Variables
         run: |
           aws lambda update-function-configuration \
