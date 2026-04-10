@@ -38,4 +38,4 @@ jobs:
         run: |
           aws lambda update-function-code \
             --function-name aviation-telegram-bot-bot-commands-processing \
-            --zip-file fileb://bot-commands-processing-lambda/build/libs/bot-commands-processing-lambda-0.0.1-SNAPSHOT.jar
+            --zip-file fileb://bot-commands-processing-lambda/build/libs/bot-commands-processing-lambda.jar
