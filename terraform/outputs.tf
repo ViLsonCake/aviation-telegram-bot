@@ -1,3 +1,8 @@
+output "rds_endpoint" {
+  description = "RDS PostgreSQL endpoint (host:port)"
+  value       = aws_db_instance.main.endpoint
+}
+
 output "bot_commands_processing_function_url" {
   description = "Function URL of the bot-commands-processing Lambda"
   value       = aws_lambda_function_url.bot_commands_processing.function_url
