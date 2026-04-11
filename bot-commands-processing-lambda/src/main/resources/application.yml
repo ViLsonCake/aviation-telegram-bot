@@ -9,4 +9,4 @@ spring:
 
 bot:
   token: ${BOT_TOKEN}
-  telegram-api-url: https://api.telegram.org/bot${bot.token}/sendMessage
+  telegram-api-url-template: 'https://api.telegram.org/bot%s/sendMessage'
