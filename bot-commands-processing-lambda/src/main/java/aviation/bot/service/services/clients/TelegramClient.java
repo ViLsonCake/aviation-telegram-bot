@@ -33,7 +33,7 @@ public class TelegramClient {
     String body = constructBody(chatId, messageText);
 
     HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(String.format(botConfig.getTelegramApiUrlTemplate(), botConfig.getToken())))
+        .uri(URI.create(botConfig.getTelegramApiUrl()))
         .header("Content-Type", "application/json")
         .POST(HttpRequest.BodyPublishers.ofString(body))
         .build();

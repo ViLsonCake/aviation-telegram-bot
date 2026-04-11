@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BotConfig {
   private String token;
-  private String telegramApiUrlTemplate;
+  private String telegramApiUrl;
 }
