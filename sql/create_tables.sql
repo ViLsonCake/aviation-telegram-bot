@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    chat_id BIGINT NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    bot_mode VARCHAR(50),
+    airport VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
