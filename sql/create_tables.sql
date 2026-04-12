@@ -21,5 +21,3 @@ CREATE TABLE IF NOT EXISTS airports (
     latitude DECIMAL(10, 8) NOT NULL,
     longitude DECIMAL(11, 8) NOT NULL
 );
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_airports_iata ON airports (iata);
