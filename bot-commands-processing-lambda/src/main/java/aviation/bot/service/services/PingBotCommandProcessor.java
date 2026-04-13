@@ -18,7 +18,7 @@ public class PingBotCommandProcessor implements BotCommandProcessor {
   }
 
   @Override
-  public void process(long chatId, String text) {
+  public void process(String username, long chatId, String text) {
     telegramClient.sendMessage(chatId, PING_MESSAGE);
   }
 }

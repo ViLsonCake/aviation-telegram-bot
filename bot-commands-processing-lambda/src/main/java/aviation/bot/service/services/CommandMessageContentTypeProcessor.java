@@ -1,13 +1,13 @@
 package aviation.bot.service.services;
 
 import aviation.bot.service.models.MessageContentType;
-import aviation.bot.service.services.adapters.BotCommandAdapter;
+import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "create")
 public class CommandMessageContentTypeProcessor implements MessageContentTypeProcessor {
 
-  private final BotCommandAdapter botCommandAdapter;
+  private final BotCommandProcessorsAdapter botCommandProcessorsAdapter;
 
   @Override
   public MessageContentType getMessageContentType() {
@@ -15,7 +15,7 @@ public class CommandMessageContentTypeProcessor implements MessageContentTypePro
   }
 
   @Override
-  public void process(long chatId, String text) {
-    botCommandAdapter.process(chatId, text);
+  public void process(String username, long chatId, String text) {
+    botCommandProcessorsAdapter.process(username, chatId, text);
   }
 }

@@ -24,11 +24,12 @@ public class TelegramHandler {
     }
 
     long chatId = message.path("chat").path("id").asLong();
+    String username = message.path("chat").path("username").asString(null);
     String text = message.path("text").asString("");
 
     MessageContentType messageContentType = getMessageContent(text);
 
-    messageContentTypeAdapter.process(messageContentType, chatId, text);
+    messageContentTypeAdapter.process(messageContentType, username, chatId, text);
 
     return "OK";
   }

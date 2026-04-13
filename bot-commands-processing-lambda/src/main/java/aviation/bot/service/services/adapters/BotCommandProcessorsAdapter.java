@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor(staticName = "create")
-public class BotCommandAdapter {
+public class BotCommandProcessorsAdapter {
 
   private final Map<String, BotCommandProcessor> commandProcessorMap = new LinkedHashMap<>();
 
@@ -15,7 +15,7 @@ public class BotCommandAdapter {
     commandProcessorMap.put(commandProcessor.getProcessorCommand().getCommand(), commandProcessor);
   }
 
-  public void process(long chatId, String command) {
+  public void process(String username, long chatId, String command) {
     BotCommandProcessor botCommandProcessor = commandProcessorMap.get(command);
 
     // Silently ignore unknown commands
@@ -23,6 +23,6 @@ public class BotCommandAdapter {
       return;
     }
 
-    botCommandProcessor.process(chatId, command);
+    botCommandProcessor.process(username, chatId, command);
   }
 }
