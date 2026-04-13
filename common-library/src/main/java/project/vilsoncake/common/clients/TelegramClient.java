@@ -56,7 +56,28 @@ public class TelegramClient {
 
   /** Normalize message text for Telegram API MarkdownV2 format. */
   private String normalizeMessageText(String messageText) {
-    return messageText.replace("-", "\\\\-").replace("\"", "\\\"");
+    return messageText
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("_", "\\\\_")
+        .replace("*", "\\\\*")
+        .replace("[", "\\\\[")
+        .replace("]", "\\\\]")
+        .replace("(", "\\\\(")
+        .replace(")", "\\\\)")
+        .replace("~", "\\\\~")
+        .replace("`", "\\\\`")
+        .replace(">", "\\\\>")
+        .replace("#", "\\\\#")
+        .replace("+", "\\\\+")
+        .replace("-", "\\\\-")
+        .replace("=", "\\\\=")
+        .replace("|", "\\\\|")
+        .replace("{", "\\\\{")
+        .replace("}", "\\\\}")
+        .replace(".", "\\\\.")
+        .replace("!", "\\\\!")
+        .replace("\"", "\\\"");
   }
 
   public static class TelegramClientException extends RuntimeException {
