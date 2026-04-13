@@ -16,7 +16,7 @@ public class MessageContentTypeAdapter {
     messageContentTypeProcessorMap.put(messageContentTypeProcessor.getMessageContentType(), messageContentTypeProcessor);
   }
 
-  public void process(MessageContentType messageContentType, long chatId, String text) {
+  public void process(MessageContentType messageContentType, String username, long chatId, String text) {
     MessageContentTypeProcessor messageContentTypeProcessor = messageContentTypeProcessorMap.get(messageContentType);
 
     // Silently ignore unknown message content types
@@ -24,6 +24,6 @@ public class MessageContentTypeAdapter {
       return;
     }
 
-    messageContentTypeProcessor.process(chatId, text);
+    messageContentTypeProcessor.process(username, chatId, text);
   }
 }

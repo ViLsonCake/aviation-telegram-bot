@@ -10,3 +10,6 @@ spring:
 bot:
   token: ${BOT_TOKEN}
   telegram-api-url: https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
+
+general:
+  timezone: Europe/Warsaw
