@@ -41,6 +41,12 @@ public class UserDatabaseProvider {
     log.info("User state updated to '{}' for user with username '{}'", userState, userEntity.getUsername());
   }
 
+  public void updateState(UserEntity userEntity, UserState userState) {
+    userEntity.setState(userState);
+    userEntity.setUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())));
+    userRepository.save(userEntity);
+  }
+
   public Optional<UserEntity> getByUsername(String username) {
     return userRepository.findByUsername(username);
   }
