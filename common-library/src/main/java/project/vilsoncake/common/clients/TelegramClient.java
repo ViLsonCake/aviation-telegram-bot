@@ -51,7 +51,7 @@ public class TelegramClient {
 
   /** Construct a body for a request to Telegram API from the given parameters. */
   private String constructBody(long chatId, String messageText) {
-    return String.format(BODY_TEMPLATE, chatId, normalizeMessageText(messageText));
+    return BODY_TEMPLATE.formatted(chatId, normalizeMessageText(messageText));
   }
 
   /** Normalize message text for Telegram API MarkdownV2 format. */
