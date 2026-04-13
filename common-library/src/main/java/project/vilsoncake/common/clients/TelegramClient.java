@@ -59,8 +59,6 @@ public class TelegramClient {
     return messageText
         .replace("\n", "\\n")
         .replace("\r", "\\r")
-        .replace("_", "\\\\_")
-        .replace("*", "\\\\*")
         .replace("[", "\\\\[")
         .replace("]", "\\\\]")
         .replace("(", "\\\\(")
