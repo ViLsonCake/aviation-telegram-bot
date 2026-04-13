@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'bot-commands-processing-lambda/**'
+      - 'common-library/**'
       - '.github/workflows/deploy-bot-commands-processing-lambda.yml'
 
 jobs:
