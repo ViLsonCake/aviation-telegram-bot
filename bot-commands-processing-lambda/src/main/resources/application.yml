@@ -6,6 +6,15 @@ spring:
   cloud:
     function:
       definition: botCommandsHandler
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
 
 bot:
   token: ${BOT_TOKEN}
