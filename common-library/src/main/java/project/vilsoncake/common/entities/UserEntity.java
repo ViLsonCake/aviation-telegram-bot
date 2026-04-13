@@ -48,7 +48,7 @@ public class UserEntity {
   @Enumerated(value = EnumType.STRING)
   private UserState state;
 
-  @Column(name = "bot_mode")
+  @Column(name = "bot_mode", nullable = true)
   @Enumerated(value = EnumType.STRING)
   private BotMode botMode;
 
