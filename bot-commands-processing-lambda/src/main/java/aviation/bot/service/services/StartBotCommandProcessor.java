@@ -15,7 +15,7 @@ public class StartBotCommandProcessor implements BotCommandProcessor {
   private final UserDatabaseProvider userDatabaseProvider;
   private final TelegramClient telegramClient;
 
-  private static final String START_MESSAGE = "Welcome to Aviation Bot! Provide ICAO or IATA code of the airport you want to choose."; // TODO: replace with actual message
+  private static final String START_MESSAGE = "Welcome to Aviation Bot Provide ICAO or IATA code of the airport you want to choose"; // TODO: replace with actual message
 
   @Override
   public BotCommand getProcessorCommand() {
