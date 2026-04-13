@@ -8,7 +8,7 @@ resource "aws_lambda_function" "bot_commands_processing" {
   function_name = "${var.project_name}-bot-commands-processing"
   role          = aws_iam_role.lambda_execution_role.arn
   runtime       = "java17"
-  handler       = "aviation.bot.service.handler.LambdaHandler"
+  handler       = "org.springframework.cloud.function.adapter.aws.FunctionInvoker"
   memory_size   = 512
   timeout       = 30
 
@@ -23,4 +23,9 @@ resource "aws_lambda_function" "bot_commands_processing" {
     Project   = var.project_name
     ManagedBy = "terraform"
   }
+}
+
+resource "aws_lambda_function_url" "bot_commands_processing" {
+  function_name      = aws_lambda_function.bot_commands_processing.function_name
+  authorization_type = "NONE"
 }

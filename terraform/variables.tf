@@ -9,3 +9,21 @@ variable "project_name" {
   type        = string
   default     = "aviation-telegram-bot"
 }
+
+variable "db_name" {
+  description = "Database name for the RDS PostgreSQL instance"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_username" {
+  description = "Master username for the RDS PostgreSQL instance"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_password" {
+  description = "Master password for the RDS PostgreSQL instance"
+  type        = string
+  sensitive   = true
+}

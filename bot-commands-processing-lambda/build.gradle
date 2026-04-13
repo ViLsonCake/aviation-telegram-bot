@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.github.goooler.shadow' version '8.1.8'
 }
 ext {
     springCloudVersion = "2025.1.1"
@@ -23,9 +24,8 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'project.vilsoncake:common-library:1.0-SNAPSHOT'
+    implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
 
-    // AWS Lambda core
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.4'
 
@@ -36,6 +36,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
+
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
@@ -44,4 +45,22 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    enabled = false
+}
+
+shadowJar {
+    archiveFileName = 'bot-commands-processing-lambda.jar'
+    // Merge Spring service files and auto-configuration imports from all dependencies
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.factories'
+    append 'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports'
+    append 'META-INF/spring/org.springframework.boot.env.EnvironmentPostProcessor.imports'
+    manifest {
+        attributes 'Start-Class': 'aviation.bot.service.BotCommandsProcessingLambdaApplication'
+    }
 }

@@ -1,0 +1,28 @@
+name: Run Database Migrations
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'sql/create_tables.sql'
+      - '.github/workflows/run-migrations.yml'
+
+jobs:
+  migrate:
+    name: Apply SQL Migrations
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run migrations
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          psql \
+            -h ${{ secrets.DB_HOST }} \
+            -U ${{ secrets.DB_USERNAME }} \
+            -d ${{ secrets.DB_NAME }} \
+            -f sql/create_tables.sql

@@ -4,6 +4,10 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
+ext {
+    springCloudVersion = "2025.1.1"
+}
+
 group = 'project.vilsoncake'
 version = '0.0.1-SNAPSHOT'
 description = 'flights-notification-lambda'
@@ -20,9 +24,8 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'project.vilsoncake:common-library:1.0-SNAPSHOT'
+    implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
 
-    // AWS Lambda core
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.4'
 
@@ -34,6 +37,16 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootJar {
+    archiveFileName = 'flights-notification-lambda.jar'
 }

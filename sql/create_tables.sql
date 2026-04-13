@@ -1,0 +1,24 @@
+CREATE EXTENSION IF NOT EXISTS cube;
+CREATE EXTENSION IF NOT EXISTS earthdistance;
+
+CREATE TABLE IF NOT EXISTS airports (
+    icao VARCHAR(4) PRIMARY KEY,
+    iata VARCHAR(3) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    latitude DECIMAL(10, 8) NOT NULL,
+    longitude DECIMAL(11, 8) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    chat_id BIGINT NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    bot_mode VARCHAR(50),
+    airport_icao VARCHAR(4),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    FOREIGN KEY (airport_icao) REFERENCES airports(icao)
+);
