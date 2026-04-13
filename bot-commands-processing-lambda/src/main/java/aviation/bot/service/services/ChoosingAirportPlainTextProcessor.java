@@ -27,7 +27,7 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
   }
 
   @Override
-  public void process(String username, long chatId, String text) {
+  public void process(String username, long chatId, String airportCode) {
     Optional<UserEntity> userEntity = userDatabaseProvider.getByUsername(username);
 
     // Silently ignore unknown users
@@ -35,10 +35,12 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
       return;
     }
 
-    Optional<AirportEntity> airportByCode = airportDatabaseProvider.getAirportByCode(text);
+    String upperCaseAirportCode = airportCode.toUpperCase();
+
+    Optional<AirportEntity> airportByCode = airportDatabaseProvider.getAirportByCode(upperCaseAirportCode);
 
     if (airportByCode.isEmpty()) {
-      telegramClient.sendMessage(chatId, String.format(AIRPORT_NOT_FOUND_MESSAGE, text));
+      telegramClient.sendMessage(chatId, String.format(AIRPORT_NOT_FOUND_MESSAGE, upperCaseAirportCode));
       return;
     }
 
