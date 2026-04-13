@@ -19,7 +19,7 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
 
   // TODO: replace with actual messages
   private static final String AIRPORT_NOT_FOUND_MESSAGE = "Airport with code %s not found";
-  private static final String AIRPORT_CHOSEN_MESSAGE = "Great! You have chosen airport %s";
+  private static final String AIRPORT_CHOSEN_MESSAGE = "Great You have chosen airport %s";
 
   @Override
   public UserState getUserState() {
@@ -46,6 +46,6 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
     AirportEntity airport = airportByCode.get();
 
     userDatabaseProvider.updateAirportAndState(user, airport, UserState.ALL_SET);
-    telegramClient.sendMessage(chatId, String.format(AIRPORT_CHOSEN_MESSAGE, airport.getName()));
+    telegramClient.sendMessage(chatId, String.format(AIRPORT_CHOSEN_MESSAGE, airport.getIata()));
   }
 }
