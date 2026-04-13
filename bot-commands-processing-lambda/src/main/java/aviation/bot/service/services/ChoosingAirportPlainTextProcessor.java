@@ -19,7 +19,7 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
 
   // TODO: replace with actual messages
   private static final String AIRPORT_NOT_FOUND_MESSAGE = "Airport with code %s not found";
-  private static final String AIRPORT_CHOSEN_MESSAGE = "Great!\n\nYou have chosen airport %s";
+  private static final String AIRPORT_CHOSEN_MESSAGE = "Great! You have chosen airport %s";
 
   @Override
   public UserState getUserState() {
