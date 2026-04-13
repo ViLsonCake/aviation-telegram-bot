@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.vilsoncake.common.entities.enums.BotMode;
 import project.vilsoncake.common.entities.enums.UserState;
 
 import java.time.ZonedDateTime;
@@ -49,7 +50,7 @@ public class UserEntity {
 
   @Column(name = "bot_mode")
   @Enumerated(value = EnumType.STRING)
-  private String botMode;
+  private BotMode botMode;
 
   @Column(name = "created_at", nullable = false, updatable = false)
   private ZonedDateTime createdAt;
