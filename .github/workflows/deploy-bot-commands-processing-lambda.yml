@@ -35,11 +35,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp \
+            bot-commands-processing-lambda/build/libs/bot-commands-processing-lambda.jar \
+            s3://${{ secrets.LAMBDA_BUCKET }}/bot-commands-processing-lambda.jar
+
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
             --function-name aviation-telegram-bot-bot-commands-processing \
-            --zip-file fileb://bot-commands-processing-lambda/build/libs/bot-commands-processing-lambda.jar
+            --s3-bucket ${{ secrets.LAMBDA_BUCKET }} \
+            --s3-key bot-commands-processing-lambda.jar
 
       - name: Wait for Lambda Update
         run: |
