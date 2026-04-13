@@ -1,4 +1,4 @@
-package project.vilsoncake.models;
+package project.vilsoncake.common.models;
 
 public class User {
   // TODO: add implementation

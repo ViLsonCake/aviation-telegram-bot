@@ -1,8 +1,8 @@
 package aviation.bot.service.services;
 
 import aviation.bot.service.models.BotCommand;
-import aviation.bot.service.services.clients.TelegramClient;
 import lombok.RequiredArgsConstructor;
+import project.vilsoncake.common.clients.TelegramClient;
 
 /** Processor for the /ping command to check bot availability. */
 @RequiredArgsConstructor(staticName = "create")

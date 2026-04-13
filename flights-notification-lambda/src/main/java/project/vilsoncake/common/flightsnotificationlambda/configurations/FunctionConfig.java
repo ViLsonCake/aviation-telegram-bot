@@ -1,4 +1,4 @@
-package project.vilsoncake.flightsnotificationlambda.configurations;
+package project.vilsoncake.common.flightsnotificationlambda.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
