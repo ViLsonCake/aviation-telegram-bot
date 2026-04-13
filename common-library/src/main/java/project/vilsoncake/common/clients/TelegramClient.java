@@ -42,7 +42,7 @@ public class TelegramClient {
       HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
       if (response.statusCode() != 200) {
-        throw new TelegramClientException("Telegram API returned non-200 status code: " + response.statusCode());
+        throw new TelegramClientException("Telegram API returned non-200 status code: " + response.statusCode() + ", body: " + response.body());
       }
     } catch (Exception e) {
       throw new TelegramClientException("An exception occurred while sending message to Telegram API", e);
