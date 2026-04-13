@@ -26,6 +26,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
 
+    // Common library
+    implementation 'project.vilsoncake:common-library:1.0-SNAPSHOT'
+
+    // AWS
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.4'
 

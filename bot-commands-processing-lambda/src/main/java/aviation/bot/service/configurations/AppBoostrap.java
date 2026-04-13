@@ -5,10 +5,11 @@ import aviation.bot.service.services.CommandMessageContentTypeProcessor;
 import aviation.bot.service.services.PingBotCommandProcessor;
 import aviation.bot.service.services.adapters.BotCommandAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
-import aviation.bot.service.services.clients.TelegramClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import project.vilsoncake.common.clients.TelegramClient;
+import project.vilsoncake.common.configurations.BotConfig;
 import tools.jackson.databind.ObjectMapper;
 
 import java.net.http.HttpClient;

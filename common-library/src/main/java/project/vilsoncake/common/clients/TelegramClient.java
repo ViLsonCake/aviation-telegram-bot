@@ -1,7 +1,7 @@
-package aviation.bot.service.services.clients;
+package project.vilsoncake.common.clients;
 
-import aviation.bot.service.configurations.BotConfig;
 import lombok.RequiredArgsConstructor;
+import project.vilsoncake.common.configurations.BotConfig;
 
 import java.net.URI;
 import java.net.http.HttpClient;
