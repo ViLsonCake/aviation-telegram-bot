@@ -1,12 +1,11 @@
 package project.vilsoncake.common.clients;
 
-import lombok.RequiredArgsConstructor;
-import project.vilsoncake.common.configurations.BotConfig;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import lombok.RequiredArgsConstructor;
+import project.vilsoncake.common.configurations.BotConfig;
 
 /** Telegram HTTP client to interact with Telegram API. */
 @RequiredArgsConstructor(staticName = "create")
@@ -15,7 +14,8 @@ public class TelegramClient {
   private final HttpClient httpClient;
   private final BotConfig botConfig;
 
-  private static final String BODY_TEMPLATE = """
+  private static final String BODY_TEMPLATE =
+      """
       {
           "chat_id": %d,
           "text": "%s",
@@ -32,20 +32,27 @@ public class TelegramClient {
   public void sendMessage(long chatId, String messageText) {
     String body = constructBody(chatId, messageText);
 
-    HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(botConfig.getTelegramApiUrl()))
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(body))
-        .build();
+    HttpRequest request =
+        HttpRequest.newBuilder()
+            .uri(URI.create(botConfig.getTelegramApiUrl()))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .build();
 
     try {
-      HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response =
+          httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
       if (response.statusCode() != 200) {
-        throw new TelegramClientException("Telegram API returned non-200 status code: " + response.statusCode() + ", body: " + response.body());
+        throw new TelegramClientException(
+            "Telegram API returned non-200 status code: "
+                + response.statusCode()
+                + ", body: "
+                + response.body());
       }
     } catch (Exception e) {
-      throw new TelegramClientException("An exception occurred while sending message to Telegram API", e);
+      throw new TelegramClientException(
+          "An exception occurred while sending message to Telegram API", e);
     }
   }
 
