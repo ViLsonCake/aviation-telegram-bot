@@ -1,21 +1,20 @@
 package aviation.bot.service.services;
 
-import aviation.bot.service.models.BotCommand;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.enums.UserState;
+import project.vilsoncake.common.models.BotCommand;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
-
-import java.util.Optional;
+import project.vilsoncake.common.utils.BotTemplatesResolver;
 
 @RequiredArgsConstructor(staticName = "create")
 public class StartBotCommandProcessor implements BotCommandProcessor {
 
   private final UserDatabaseProvider userDatabaseProvider;
   private final TelegramClient telegramClient;
-
-  private static final String START_MESSAGE = "Welcome to Aviation Bot!\n\nProvide *ICAO* or *IATA* code of the airport you want to choose."; // TODO: replace with actual message
+  private final BotTemplatesResolver botTemplatesResolver;
 
   @Override
   public BotCommand getProcessorCommand() {
@@ -30,6 +29,6 @@ public class StartBotCommandProcessor implements BotCommandProcessor {
     } else {
       userDatabaseProvider.updateState(user.get(), UserState.CHOOSING_AIRPORT);
     }
-    telegramClient.sendMessage(chatId, START_MESSAGE);
+    telegramClient.sendMessage(chatId, botTemplatesResolver.getTemplate(getProcessorCommand()));
   }
 }

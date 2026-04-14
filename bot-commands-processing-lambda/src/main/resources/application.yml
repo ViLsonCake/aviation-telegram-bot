@@ -1,6 +1,8 @@
 spring:
   application:
     name: bot-commands-processing-lambda
+  config:
+    import: classpath:messages.yml
   main:
     web-application-type: none
   cloud:

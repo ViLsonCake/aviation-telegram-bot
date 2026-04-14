@@ -1,16 +1,16 @@
 package aviation.bot.service.services;
 
-import aviation.bot.service.models.BotCommand;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
+import project.vilsoncake.common.models.BotCommand;
+import project.vilsoncake.common.utils.BotTemplatesResolver;
 
 /** Processor for the /ping command to check bot availability. */
 @RequiredArgsConstructor(staticName = "create")
 public class PingBotCommandProcessor implements BotCommandProcessor {
 
   private final TelegramClient telegramClient;
-
-  private static final String PING_MESSAGE = "pong";
+  private final BotTemplatesResolver botTemplatesResolver;
 
   @Override
   public BotCommand getProcessorCommand() {
@@ -19,6 +19,6 @@ public class PingBotCommandProcessor implements BotCommandProcessor {
 
   @Override
   public void process(String username, long chatId, String text) {
-    telegramClient.sendMessage(chatId, PING_MESSAGE);
+    telegramClient.sendMessage(chatId, botTemplatesResolver.getTemplate(getProcessorCommand()));
   }
 }

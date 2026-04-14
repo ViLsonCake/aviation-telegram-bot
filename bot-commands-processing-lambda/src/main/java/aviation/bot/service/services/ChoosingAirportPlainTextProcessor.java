@@ -1,14 +1,15 @@
 package aviation.bot.service.services;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.AirportEntity;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.enums.UserState;
+import project.vilsoncake.common.models.UserStateResponseTemplate;
 import project.vilsoncake.common.repositories.AirportDatabaseProvider;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
-
-import java.util.Optional;
+import project.vilsoncake.common.utils.BotTemplatesResolver;
 
 @RequiredArgsConstructor(staticName = "create")
 public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
@@ -16,10 +17,7 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
   private final UserDatabaseProvider userDatabaseProvider;
   private final AirportDatabaseProvider airportDatabaseProvider;
   private final TelegramClient telegramClient;
-
-  // TODO: replace with actual messages
-  private static final String AIRPORT_NOT_FOUND_MESSAGE = "Airport with *ICAO* or *IATA* code %s not found";
-  private static final String AIRPORT_CHOSEN_MESSAGE = "Great! You have chosen airport: \n\n*Name*: %s\n*ICAO*: %s\n*IATA*: %s\n";
+  private final BotTemplatesResolver botTemplatesResolver;
 
   @Override
   public UserState getUserState() {
@@ -37,10 +35,16 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
 
     String upperCaseAirportCode = airportCode.toUpperCase();
 
-    Optional<AirportEntity> airportByCode = airportDatabaseProvider.getAirportByCode(upperCaseAirportCode);
+    Optional<AirportEntity> airportByCode =
+        airportDatabaseProvider.getAirportByCode(upperCaseAirportCode);
 
     if (airportByCode.isEmpty()) {
-      telegramClient.sendMessage(chatId, String.format(AIRPORT_NOT_FOUND_MESSAGE, upperCaseAirportCode));
+      telegramClient.sendMessage(
+          chatId,
+          String.format(
+              botTemplatesResolver.getTemplate(
+                  getUserState(), UserStateResponseTemplate.AIRPORT_NOT_FOUND),
+              upperCaseAirportCode));
       return;
     }
 
@@ -48,6 +52,13 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
     AirportEntity airport = airportByCode.get();
 
     userDatabaseProvider.updateAirportAndState(user, airport, UserState.ALL_SET);
-    telegramClient.sendMessage(chatId, String.format(AIRPORT_CHOSEN_MESSAGE, airport.getName(), airport.getIcao(), airport.getIata()));
+    telegramClient.sendMessage(
+        chatId,
+        String.format(
+            botTemplatesResolver.getTemplate(
+                getUserState(), UserStateResponseTemplate.VALID_AIRPORT_SELECTED),
+            airport.getName(),
+            airport.getIcao(),
+            airport.getIata()));
   }
 }

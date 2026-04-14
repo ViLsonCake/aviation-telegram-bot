@@ -1,11 +1,10 @@
 package aviation.bot.service.services.adapters;
 
 import aviation.bot.service.services.PlainTextProcessor;
-import lombok.RequiredArgsConstructor;
-import project.vilsoncake.common.entities.enums.UserState;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import project.vilsoncake.common.entities.enums.UserState;
 
 @RequiredArgsConstructor(staticName = "create")
 public class PlainTextProcessorsAdapter {
