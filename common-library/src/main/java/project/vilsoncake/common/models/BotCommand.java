@@ -1,4 +1,4 @@
-package aviation.bot.service.models;
+package project.vilsoncake.common.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public enum BotCommand {
   START("/start"),
-  PING("/ping");
+  PING("/ping"),
+  AIRPORT("/airport");
 
   private final String command;
 }

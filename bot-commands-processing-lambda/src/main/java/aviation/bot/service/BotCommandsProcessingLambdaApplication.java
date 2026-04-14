@@ -15,5 +15,4 @@ public class BotCommandsProcessingLambdaApplication {
   public static void main(String[] args) {
     SpringApplication.run(BotCommandsProcessingLambdaApplication.class, args);
   }
-
 }
