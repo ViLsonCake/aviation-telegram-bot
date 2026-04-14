@@ -15,8 +15,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Spotless Check
-        run: ./gradlew spotlessCheck
+      - name: Spotless Check - Common library
+        run: |
+          cd common-library
+          ./gradlew spotlessCheck
+
+      - name: Spotless Check - Bot commands processing lambda
+        run: |
+          cd bot-commands-processing-lambda
+          ./gradlew spotlessCheck
+
+      - name: Spotless Check - Flights notification lambda
+        run: |
+          cd flights-notification-lambda
+          ./gradlew spotlessCheck
 
   build:
     name: Gradle Build
@@ -27,5 +39,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Gradle Build
-        run: ./gradlew build
+      - name: Gradle Build - Common library
+        run: |
+          cd common-library
+          ./gradlew build
+
+      - name: Gradle Build - Bot commands processing lambda
+        run: |
+          cd bot-commands-processing-lambda
+          ./gradlew build
+
+      - name: Gradle Build - Flights notification lambda
+        run: |
+          cd flights-notification-lambda
+          ./gradlew build
