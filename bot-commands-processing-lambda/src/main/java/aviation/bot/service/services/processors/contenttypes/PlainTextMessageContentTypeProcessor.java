@@ -1,7 +1,8 @@
-package aviation.bot.service.services;
+package aviation.bot.service.services.processors.contenttypes;
 
 import aviation.bot.service.models.MessageContentType;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
+import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
