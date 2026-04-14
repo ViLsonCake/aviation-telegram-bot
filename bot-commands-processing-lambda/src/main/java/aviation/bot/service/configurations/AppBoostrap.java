@@ -4,6 +4,7 @@ import aviation.bot.service.handlers.TelegramHandler;
 import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
+import aviation.bot.service.services.processors.commands.AirportBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.PingBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.StartBotCommandProcessor;
 import aviation.bot.service.services.processors.contenttypes.CommandMessageContentTypeProcessor;
@@ -72,6 +73,15 @@ public class AppBoostrap {
         userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
+  @Bean
+  public AirportBotCommandProcessor airportBotCommandProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return AirportBotCommandProcessor.create(
+        userDatabaseProvider, telegramClient, botTemplatesResolver);
+  }
+
   // Processors - Content Types
   @Bean
   public CommandMessageContentTypeProcessor commandMessageContentTypeProcessor(
@@ -102,11 +112,13 @@ public class AppBoostrap {
   @Bean
   public BotCommandProcessorsAdapter botCommandAdapter(
       PingBotCommandProcessor pingBotCommandProcessor,
-      StartBotCommandProcessor startBotCommandProcessor) {
+      StartBotCommandProcessor startBotCommandProcessor,
+      AirportBotCommandProcessor airportBotCommandProcessor) {
     BotCommandProcessorsAdapter botCommandProcessorsAdapter = BotCommandProcessorsAdapter.create();
 
     botCommandProcessorsAdapter.registerCommandProcessor(startBotCommandProcessor);
     botCommandProcessorsAdapter.registerCommandProcessor(pingBotCommandProcessor);
+    botCommandProcessorsAdapter.registerCommandProcessor(airportBotCommandProcessor);
 
     return botCommandProcessorsAdapter;
   }
