@@ -57,7 +57,7 @@ public class UserEntity {
   @Column(name = "updated_at", nullable = false)
   private ZonedDateTime updatedAt;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "airport_icao", referencedColumnName = "icao")
-  private AirportEntity airportIcao;
+  private AirportEntity airport;
 }

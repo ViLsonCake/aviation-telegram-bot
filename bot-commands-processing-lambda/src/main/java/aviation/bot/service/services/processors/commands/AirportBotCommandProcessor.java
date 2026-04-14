@@ -32,7 +32,7 @@ public class AirportBotCommandProcessor implements BotCommandProcessor {
     }
 
     UserEntity user = optionalUser.get();
-    AirportEntity airport = user.getAirportIcao();
+    AirportEntity airport = user.getAirport();
 
     // Silently ignore users that don't have airport set
     if (airport == null) {

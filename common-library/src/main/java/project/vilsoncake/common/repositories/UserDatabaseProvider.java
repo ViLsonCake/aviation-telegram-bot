@@ -34,7 +34,7 @@ public class UserDatabaseProvider {
 
   public void updateAirportAndState(
       UserEntity userEntity, AirportEntity airportEntity, UserState userState) {
-    userEntity.setAirportIcao(airportEntity);
+    userEntity.setAirport(airportEntity);
     userEntity.setState(userState);
     userEntity.setUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())));
     userRepository.save(userEntity);
