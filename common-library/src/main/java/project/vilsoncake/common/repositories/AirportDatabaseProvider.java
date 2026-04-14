@@ -1,9 +1,8 @@
 package project.vilsoncake.common.repositories;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.entities.AirportEntity;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor(staticName = "create")
 public class AirportDatabaseProvider {

@@ -40,5 +40,4 @@ public class AirportEntity {
 
   @Column(name = "longitude", nullable = false)
   private Double longitude;
-
 }

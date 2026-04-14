@@ -1,0 +1,55 @@
+name: Gradle Check
+on:
+  pull_request:
+    paths:
+      - "common-library/**"
+      - "bot-commands-processing-lambda/**"
+      - "flights-notification-lambda/**"
+
+jobs:
+  check:
+    name: Gradle Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Spotless Check - Common library
+        run: |
+          cd common-library
+          ./gradlew spotlessCheck
+
+      - name: Spotless Check - Bot commands processing lambda
+        run: |
+          cd bot-commands-processing-lambda
+          ./gradlew spotlessCheck
+
+      - name: Spotless Check - Flights notification lambda
+        run: |
+          cd flights-notification-lambda
+          ./gradlew spotlessCheck
+
+  build:
+    name: Gradle Build
+    runs-on: ubuntu-latest
+    needs: check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Gradle Build - Common library
+        run: |
+          cd common-library
+          ./gradlew build
+
+      - name: Gradle Build - Bot commands processing lambda
+        run: |
+          cd bot-commands-processing-lambda
+          ./gradlew build
+
+      - name: Gradle Build - Flights notification lambda
+        run: |
+          cd flights-notification-lambda
+          ./gradlew build

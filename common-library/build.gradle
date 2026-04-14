@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.diffplug.spotless' version '7.0.3'
 }
 
 group = 'project.vilsoncake'
@@ -30,4 +31,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        googleJavaFormat('1.25.2')
+    }
 }
