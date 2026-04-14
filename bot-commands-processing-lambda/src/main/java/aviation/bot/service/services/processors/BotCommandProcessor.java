@@ -1,4 +1,4 @@
-package aviation.bot.service.services;
+package aviation.bot.service.services.processors;
 
 import project.vilsoncake.common.models.BotCommand;
 

@@ -1,14 +1,14 @@
 package aviation.bot.service.configurations;
 
 import aviation.bot.service.handlers.TelegramHandler;
-import aviation.bot.service.services.ChoosingAirportPlainTextProcessor;
-import aviation.bot.service.services.CommandMessageContentTypeProcessor;
-import aviation.bot.service.services.PingBotCommandProcessor;
-import aviation.bot.service.services.PlainTextMessageContentTypeProcessor;
-import aviation.bot.service.services.StartBotCommandProcessor;
 import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
+import aviation.bot.service.services.processors.commands.PingBotCommandProcessor;
+import aviation.bot.service.services.processors.commands.StartBotCommandProcessor;
+import aviation.bot.service.services.processors.contenttypes.CommandMessageContentTypeProcessor;
+import aviation.bot.service.services.processors.contenttypes.PlainTextMessageContentTypeProcessor;
+import aviation.bot.service.services.processors.userstates.ChoosingAirportPlainTextProcessor;
 import java.net.http.HttpClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,23 +27,13 @@ import tools.jackson.databind.ObjectMapper;
 @Configuration
 public class AppBoostrap {
 
+  // Telegram Bot
   @Bean
   @ConfigurationProperties(prefix = "bot")
   public BotConfig botConfig() {
     return new BotConfig();
   }
 
-  @Bean
-  public HttpClient httpClient() {
-    return HttpClient.newHttpClient();
-  }
-
-  @Bean
-  public ObjectMapper objectMapper() {
-    return new ObjectMapper();
-  }
-
-  // Telegram
   @Bean
   public TelegramClient telegramClient(HttpClient httpClient, BotConfig botConfig) {
     return TelegramClient.create(httpClient, botConfig);
@@ -55,7 +45,18 @@ public class AppBoostrap {
     return TelegramHandler.create(messageContentTypeAdapter, objectMapper);
   }
 
-  // Processors
+  @Bean
+  @ConfigurationProperties(prefix = "templates")
+  public BotTemplates botTemplates() {
+    return new BotTemplates();
+  }
+
+  @Bean
+  public BotTemplatesResolver botTemplatesResolver(BotTemplates botTemplates) {
+    return BotTemplatesResolver.create(botTemplates);
+  }
+
+  // Processors - Commands
   @Bean
   public PingBotCommandProcessor pingBotCommandProcessor(
       TelegramClient telegramClient, BotTemplatesResolver botTemplatesResolver) {
@@ -71,24 +72,22 @@ public class AppBoostrap {
         userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
-  @Bean
-  public BotCommandProcessorsAdapter botCommandAdapter(
-      PingBotCommandProcessor pingBotCommandProcessor,
-      StartBotCommandProcessor startBotCommandProcessor) {
-    BotCommandProcessorsAdapter botCommandProcessorsAdapter = BotCommandProcessorsAdapter.create();
-
-    botCommandProcessorsAdapter.registerCommandProcessor(startBotCommandProcessor);
-    botCommandProcessorsAdapter.registerCommandProcessor(pingBotCommandProcessor);
-
-    return botCommandProcessorsAdapter;
-  }
-
+  // Processors - Content Types
   @Bean
   public CommandMessageContentTypeProcessor commandMessageContentTypeProcessor(
       BotCommandProcessorsAdapter botCommandProcessorsAdapter) {
     return CommandMessageContentTypeProcessor.create(botCommandProcessorsAdapter);
   }
 
+  @Bean
+  public PlainTextMessageContentTypeProcessor plainTextMessageContentTypeProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      PlainTextProcessorsAdapter plainTextProcessorsAdapter) {
+    return PlainTextMessageContentTypeProcessor.create(
+        userDatabaseProvider, plainTextProcessorsAdapter);
+  }
+
+  // Processors - User States
   @Bean
   public ChoosingAirportPlainTextProcessor choosingAirportPlainTextProcessor(
       UserDatabaseProvider userDatabaseProvider,
@@ -99,22 +98,17 @@ public class AppBoostrap {
         userDatabaseProvider, airportDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
+  // Adapters
   @Bean
-  public PlainTextProcessorsAdapter plainTextProcessorsAdapter(
-      ChoosingAirportPlainTextProcessor choosingAirportPlainTextProcessor) {
-    PlainTextProcessorsAdapter plainTextProcessorsAdapter = PlainTextProcessorsAdapter.create();
+  public BotCommandProcessorsAdapter botCommandAdapter(
+      PingBotCommandProcessor pingBotCommandProcessor,
+      StartBotCommandProcessor startBotCommandProcessor) {
+    BotCommandProcessorsAdapter botCommandProcessorsAdapter = BotCommandProcessorsAdapter.create();
 
-    plainTextProcessorsAdapter.registerPlainTextProcessor(choosingAirportPlainTextProcessor);
+    botCommandProcessorsAdapter.registerCommandProcessor(startBotCommandProcessor);
+    botCommandProcessorsAdapter.registerCommandProcessor(pingBotCommandProcessor);
 
-    return plainTextProcessorsAdapter;
-  }
-
-  @Bean
-  public PlainTextMessageContentTypeProcessor plainTextMessageContentTypeProcessor(
-      UserDatabaseProvider userDatabaseProvider,
-      PlainTextProcessorsAdapter plainTextProcessorsAdapter) {
-    return PlainTextMessageContentTypeProcessor.create(
-        userDatabaseProvider, plainTextProcessorsAdapter);
+    return botCommandProcessorsAdapter;
   }
 
   @Bean
@@ -132,11 +126,16 @@ public class AppBoostrap {
   }
 
   @Bean
-  @ConfigurationProperties(prefix = "general")
-  public GeneralConfig generalConfig() {
-    return new GeneralConfig();
+  public PlainTextProcessorsAdapter plainTextProcessorsAdapter(
+      ChoosingAirportPlainTextProcessor choosingAirportPlainTextProcessor) {
+    PlainTextProcessorsAdapter plainTextProcessorsAdapter = PlainTextProcessorsAdapter.create();
+
+    plainTextProcessorsAdapter.registerPlainTextProcessor(choosingAirportPlainTextProcessor);
+
+    return plainTextProcessorsAdapter;
   }
 
+  // Database
   @Bean
   public UserDatabaseProvider userDatabaseProvider(
       UserRepository userRepository, GeneralConfig generalConfig) {
@@ -148,14 +147,20 @@ public class AppBoostrap {
     return AirportDatabaseProvider.create(airportRepository);
   }
 
+  // Other required beans
   @Bean
-  @ConfigurationProperties(prefix = "templates")
-  public BotTemplates botTemplates() {
-    return new BotTemplates();
+  @ConfigurationProperties(prefix = "general")
+  public GeneralConfig generalConfig() {
+    return new GeneralConfig();
   }
 
   @Bean
-  public BotTemplatesResolver botTemplatesResolver(BotTemplates botTemplates) {
-    return BotTemplatesResolver.create(botTemplates);
+  public HttpClient httpClient() {
+    return HttpClient.newHttpClient();
+  }
+
+  @Bean
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper();
   }
 }

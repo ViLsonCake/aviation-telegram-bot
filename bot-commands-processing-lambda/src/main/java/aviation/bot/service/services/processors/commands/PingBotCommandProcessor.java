@@ -1,5 +1,6 @@
-package aviation.bot.service.services;
+package aviation.bot.service.services.processors.commands;
 
+import aviation.bot.service.services.processors.BotCommandProcessor;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.models.BotCommand;

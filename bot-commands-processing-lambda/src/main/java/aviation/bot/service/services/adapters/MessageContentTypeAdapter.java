@@ -1,7 +1,7 @@
 package aviation.bot.service.services.adapters;
 
 import aviation.bot.service.models.MessageContentType;
-import aviation.bot.service.services.MessageContentTypeProcessor;
+import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

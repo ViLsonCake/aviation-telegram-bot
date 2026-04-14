@@ -1,5 +1,6 @@
-package aviation.bot.service.services;
+package aviation.bot.service.services.processors.userstates;
 
+import aviation.bot.service.services.processors.PlainTextProcessor;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;

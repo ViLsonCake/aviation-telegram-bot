@@ -1,6 +1,6 @@
 package aviation.bot.service.services.adapters;
 
-import aviation.bot.service.services.PlainTextProcessor;
+import aviation.bot.service.services.processors.PlainTextProcessor;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
