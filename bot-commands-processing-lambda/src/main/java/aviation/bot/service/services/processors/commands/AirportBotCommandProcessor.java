@@ -4,9 +4,12 @@ import aviation.bot.service.services.processors.BotCommandProcessor;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
+import project.vilsoncake.common.clients.telegram.InlineKeyboardButton;
+import project.vilsoncake.common.clients.telegram.InlineKeyboardMarkup;
 import project.vilsoncake.common.entities.AirportEntity;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.models.BotCommand;
+import project.vilsoncake.common.models.CallbackType;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.utils.BotTemplatesResolver;
 
@@ -43,6 +46,15 @@ public class AirportBotCommandProcessor implements BotCommandProcessor {
     String message =
         String.format(messageTemplate, airport.getName(), airport.getIcao(), airport.getIata());
 
-    telegramClient.sendMessage(chatId, message);
+    telegramClient.sendMessage(chatId, message, buildInlineKeyboardMarkupToChangeAirport());
+  }
+
+  private InlineKeyboardMarkup buildInlineKeyboardMarkupToChangeAirport() {
+    String inlineButtonText =
+        botTemplatesResolver.getTemplate(CallbackType.CHANGE_AIRPORT).getButtonText();
+    String callbackData = CallbackType.CHANGE_AIRPORT.name();
+    return InlineKeyboardMarkup.builder()
+        .addRow(InlineKeyboardButton.of(inlineButtonText, callbackData))
+        .build();
   }
 }

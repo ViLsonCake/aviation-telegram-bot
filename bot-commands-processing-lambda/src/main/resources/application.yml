@@ -21,6 +21,7 @@ spring:
 bot:
   token: ${BOT_TOKEN}
   telegram-api-url: https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
+  telegram-api-callback-url: https://api.telegram.org/bot${BOT_TOKEN}/answerCallbackQuery
 
 general:
   timezone: Europe/Warsaw

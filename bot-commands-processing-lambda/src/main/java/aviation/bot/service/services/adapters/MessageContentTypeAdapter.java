@@ -1,6 +1,7 @@
 package aviation.bot.service.services.adapters;
 
 import aviation.bot.service.models.MessageContentType;
+import aviation.bot.service.models.TelegramRequestPayload;
 import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class MessageContentTypeAdapter {
   }
 
   public void process(
-      MessageContentType messageContentType, String username, long chatId, String text) {
+      MessageContentType messageContentType, TelegramRequestPayload telegramRequestPayload) {
     MessageContentTypeProcessor messageContentTypeProcessor =
         messageContentTypeProcessorMap.get(messageContentType);
 
@@ -28,6 +29,6 @@ public class MessageContentTypeAdapter {
       return;
     }
 
-    messageContentTypeProcessor.process(username, chatId, text);
+    messageContentTypeProcessor.process(telegramRequestPayload);
   }
 }

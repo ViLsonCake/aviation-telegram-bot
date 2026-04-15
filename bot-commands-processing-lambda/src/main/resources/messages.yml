@@ -23,3 +23,10 @@ templates:
             *Name*: %s
             *ICAO*: %s
             *IATA*: %s
+
+  callbacks:
+    CHANGE_AIRPORT:
+      button-text: |-
+        Change Airport
+      message-template: |-
+        Provide *ICAO* or *IATA* code of the airport you want to choose\.

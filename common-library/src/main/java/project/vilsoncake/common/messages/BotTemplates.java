@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import project.vilsoncake.common.entities.enums.UserState;
 import project.vilsoncake.common.models.BotCommand;
+import project.vilsoncake.common.models.CallbackType;
 import project.vilsoncake.common.models.UserStateResponseTemplate;
 
 @Data
@@ -14,4 +15,5 @@ import project.vilsoncake.common.models.UserStateResponseTemplate;
 public class BotTemplates {
   Map<BotCommand, String> commands;
   Map<UserState, Map<UserStateResponseTemplate, String>> userStateResponses;
+  Map<CallbackType, CallbackTemplate> callbacks;
 }

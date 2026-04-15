@@ -2,11 +2,14 @@ package aviation.bot.service.configurations;
 
 import aviation.bot.service.handlers.TelegramHandler;
 import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
+import aviation.bot.service.services.adapters.CallbackProcessorsAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
+import aviation.bot.service.services.processors.callbacks.ChangeAirportCallbackProcessor;
 import aviation.bot.service.services.processors.commands.AirportBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.PingBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.StartBotCommandProcessor;
+import aviation.bot.service.services.processors.contenttypes.CallbackMessageContentTypeProcessor;
 import aviation.bot.service.services.processors.contenttypes.CommandMessageContentTypeProcessor;
 import aviation.bot.service.services.processors.contenttypes.PlainTextMessageContentTypeProcessor;
 import aviation.bot.service.services.processors.userstates.ChoosingAirportPlainTextProcessor;
@@ -36,8 +39,9 @@ public class AppBoostrap {
   }
 
   @Bean
-  public TelegramClient telegramClient(HttpClient httpClient, BotConfig botConfig) {
-    return TelegramClient.create(httpClient, botConfig);
+  public TelegramClient telegramClient(
+      HttpClient httpClient, BotConfig botConfig, ObjectMapper objectMapper) {
+    return TelegramClient.create(httpClient, botConfig, objectMapper);
   }
 
   @Bean
@@ -97,6 +101,12 @@ public class AppBoostrap {
         userDatabaseProvider, plainTextProcessorsAdapter);
   }
 
+  @Bean
+  public CallbackMessageContentTypeProcessor callbackMessageContentTypeProcessor(
+      CallbackProcessorsAdapter callbackProcessorsAdapter) {
+    return CallbackMessageContentTypeProcessor.create(callbackProcessorsAdapter);
+  }
+
   // Processors - User States
   @Bean
   public ChoosingAirportPlainTextProcessor choosingAirportPlainTextProcessor(
@@ -106,6 +116,16 @@ public class AppBoostrap {
       BotTemplatesResolver botTemplatesResolver) {
     return ChoosingAirportPlainTextProcessor.create(
         userDatabaseProvider, airportDatabaseProvider, telegramClient, botTemplatesResolver);
+  }
+
+  // Processors - Callbacks
+  @Bean
+  public ChangeAirportCallbackProcessor changeAirportCallbackProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return ChangeAirportCallbackProcessor.create(
+        userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
   // Adapters
@@ -126,13 +146,16 @@ public class AppBoostrap {
   @Bean
   public MessageContentTypeAdapter messageContentTypeAdapter(
       CommandMessageContentTypeProcessor commandMessageContentTypeProcessor,
-      PlainTextMessageContentTypeProcessor plainTextMessageContentTypeProcessor) {
+      PlainTextMessageContentTypeProcessor plainTextMessageContentTypeProcessor,
+      CallbackMessageContentTypeProcessor callbackMessageContentTypeProcessor) {
     MessageContentTypeAdapter messageContentTypeAdapter = MessageContentTypeAdapter.create();
 
     messageContentTypeAdapter.registerMessageContentTypeProcessor(
         commandMessageContentTypeProcessor);
     messageContentTypeAdapter.registerMessageContentTypeProcessor(
         plainTextMessageContentTypeProcessor);
+    messageContentTypeAdapter.registerMessageContentTypeProcessor(
+        callbackMessageContentTypeProcessor);
 
     return messageContentTypeAdapter;
   }
@@ -145,6 +168,16 @@ public class AppBoostrap {
     plainTextProcessorsAdapter.registerPlainTextProcessor(choosingAirportPlainTextProcessor);
 
     return plainTextProcessorsAdapter;
+  }
+
+  @Bean
+  public CallbackProcessorsAdapter callbackProcessorsAdapter(
+      ChangeAirportCallbackProcessor changeAirportCallbackProcessor) {
+    CallbackProcessorsAdapter callbackProcessorsAdapter = CallbackProcessorsAdapter.create();
+
+    callbackProcessorsAdapter.registerCallbackProcessor(changeAirportCallbackProcessor);
+
+    return callbackProcessorsAdapter;
   }
 
   // Database
