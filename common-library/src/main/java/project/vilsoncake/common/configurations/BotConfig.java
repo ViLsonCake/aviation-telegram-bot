@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class BotConfig {
   private String token;
   private String telegramApiUrl;
+  private String telegramApiCallbackUrl;
 }

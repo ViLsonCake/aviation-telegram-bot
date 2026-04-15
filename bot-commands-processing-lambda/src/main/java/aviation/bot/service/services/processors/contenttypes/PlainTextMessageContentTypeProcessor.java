@@ -1,6 +1,7 @@
 package aviation.bot.service.services.processors.contenttypes;
 
 import aviation.bot.service.models.MessageContentType;
+import aviation.bot.service.models.TelegramRequestPayload;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
 import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import java.util.Optional;
@@ -23,10 +24,20 @@ public class PlainTextMessageContentTypeProcessor implements MessageContentTypeP
   }
 
   @Override
-  public void process(String username, long chatId, String text) {
+  public void process(TelegramRequestPayload telegramRequestPayload) {
+    String username = telegramRequestPayload.getUsername();
+    long chatId = telegramRequestPayload.getChatId();
+    String text = telegramRequestPayload.getText();
+
     Optional<UserEntity> userEntity = userDatabaseProvider.getByUsername(username);
 
+    // Silently ignore unknown users
     if (userEntity.isEmpty()) {
+      return;
+    }
+
+    // Silently ignore messages without text
+    if (text == null) {
       return;
     }
 

@@ -1,6 +1,8 @@
 package aviation.bot.service.handlers;
 
 import aviation.bot.service.models.MessageContentType;
+import aviation.bot.service.models.TelegramRequest;
+import aviation.bot.service.models.TelegramRequestPayload;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +20,55 @@ public class TelegramHandler {
 
     JsonNode root = objectMapper.readTree(body);
 
-    JsonNode message = root.path("message");
-    if (message.isMissingNode()) {
-      return "OK";
-    }
+    TelegramRequest telegramRequest = buildTelegramRequest(root);
 
-    long chatId = message.path("chat").path("id").asLong();
-    String username = message.path("chat").path("username").asString(null);
-    String text = message.path("text").asString("");
-
-    MessageContentType messageContentType = getMessageContent(text);
-
-    messageContentTypeAdapter.process(messageContentType, username, chatId, text);
+    messageContentTypeAdapter.process(
+        telegramRequest.getMessageContentType(), telegramRequest.getPayload());
 
     return "OK";
   }
 
-  private MessageContentType getMessageContent(String messageText) {
+  private TelegramRequest buildTelegramRequest(JsonNode root) {
+    JsonNode callbackQuery = root.path("callback_query");
+    JsonNode message = root.path("message");
+
+    if (!callbackQuery.isMissingNode()) {
+      long chatId = callbackQuery.path("message").path("chat").path("id").asLong();
+      String username = callbackQuery.path("from").path("username").asString(null);
+      String callbackData = callbackQuery.path("data").asString(null);
+      String callbackId = callbackQuery.path("id").asString(null);
+
+      return TelegramRequest.builder()
+          .withMessageContentType(MessageContentType.CALLBACK)
+          .withPayload(
+              TelegramRequestPayload.builder()
+                  .withChatId(chatId)
+                  .withUsername(username)
+                  .withCallbackData(callbackData)
+                  .withCallbackId(callbackId)
+                  .build())
+          .build();
+    } else if (!message.isMissingNode()) {
+      long chatId = message.path("chat").path("id").asLong();
+      String username = message.path("chat").path("username").asString(null);
+      String text = message.path("text").asString("");
+      MessageContentType messageContentType = getMessageContentType(text);
+
+      return TelegramRequest.builder()
+          .withMessageContentType(messageContentType)
+          .withPayload(
+              TelegramRequestPayload.builder()
+                  .withChatId(chatId)
+                  .withUsername(username)
+                  .withText(text)
+                  .build())
+          .build();
+    }
+
+    throw new IllegalArgumentException("Unsupported request");
+  }
+
+  private MessageContentType getMessageContentType(String messageText) {
     return messageText.startsWith("/") ? MessageContentType.COMMAND : MessageContentType.PLAIN_TEXT;
   }
 }

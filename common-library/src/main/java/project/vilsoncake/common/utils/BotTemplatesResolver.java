@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.entities.enums.UserState;
 import project.vilsoncake.common.exceptions.TemplateNotFound;
 import project.vilsoncake.common.messages.BotTemplates;
+import project.vilsoncake.common.messages.CallbackTemplate;
 import project.vilsoncake.common.models.BotCommand;
+import project.vilsoncake.common.models.CallbackType;
 import project.vilsoncake.common.models.UserStateResponseTemplate;
 
 @RequiredArgsConstructor(staticName = "create")
@@ -41,5 +43,15 @@ public class BotTemplatesResolver {
     }
 
     return userStateResponseTemplates.get(userStateResponseTemplate);
+  }
+
+  public CallbackTemplate getTemplate(CallbackType callbackType) {
+    Map<CallbackType, CallbackTemplate> callbacks = botTemplates.getCallbacks();
+
+    if (!callbacks.containsKey(callbackType)) {
+      throw new TemplateNotFound("Message template not found for callback type: " + callbackType);
+    }
+
+    return callbacks.get(callbackType);
   }
 }

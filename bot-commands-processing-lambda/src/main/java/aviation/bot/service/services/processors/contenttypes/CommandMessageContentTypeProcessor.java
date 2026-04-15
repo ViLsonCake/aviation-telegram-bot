@@ -1,6 +1,7 @@
 package aviation.bot.service.services.processors.contenttypes;
 
 import aviation.bot.service.models.MessageContentType;
+import aviation.bot.service.models.TelegramRequestPayload;
 import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,15 @@ public class CommandMessageContentTypeProcessor implements MessageContentTypePro
   }
 
   @Override
-  public void process(String username, long chatId, String text) {
+  public void process(TelegramRequestPayload telegramRequestPayload) {
+    String username = telegramRequestPayload.getUsername();
+    long chatId = telegramRequestPayload.getChatId();
+    String text = telegramRequestPayload.getText();
+
+    if (text == null) {
+      throw new IllegalArgumentException("Text cannot be null");
+    }
+
     botCommandProcessorsAdapter.process(username, chatId, text);
   }
 }
