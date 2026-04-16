@@ -17,6 +17,16 @@ resource "aws_lambda_function" "bot_commands_processing" {
     apply_on = "PublishedVersions"
   }
 
+  environment {
+    variables = {
+      DB_HOST     = var.db_host
+      DB_NAME     = var.db_name
+      DB_USERNAME = var.db_username
+      DB_PASSWORD = var.db_password
+      BOT_TOKEN   = var.bot_token
+    }
+  }
+
   filename         = data.archive_file.placeholder_bot_commands.output_path
   source_code_hash = data.archive_file.placeholder_bot_commands.output_base64sha256
 
