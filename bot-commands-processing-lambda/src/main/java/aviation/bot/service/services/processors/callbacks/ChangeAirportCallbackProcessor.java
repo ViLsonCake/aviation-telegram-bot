@@ -38,6 +38,6 @@ public class ChangeAirportCallbackProcessor implements CallbackProcessor {
     userDatabaseProvider.updateState(user, UserState.CHOOSING_AIRPORT);
 
     telegramClient.sendMessage(
-        chatId, botTemplatesResolver.getTemplate(CallbackType.CHANGE_AIRPORT).getMessageTemplate());
+        chatId, botTemplatesResolver.getTemplate(getCallbackType()).getMessageTemplate());
   }
 }

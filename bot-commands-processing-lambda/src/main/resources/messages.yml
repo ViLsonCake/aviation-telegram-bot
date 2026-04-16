@@ -12,6 +12,14 @@ templates:
         *Name*: %s
         *ICAO*: %s
         *IATA*: %s
+    MODE: |-
+      Current mode is %s.
+      
+      Modes explanation:
+      *Default*: you'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
+      *Only Scheduled Flights*: you'll be notified only about the scheduled flights to your airport.
+      *Only Specific Aircraft*: you'll be notified only about the specific aircraft.
+      *Mute*: you won't be notified about any flights.
 
   user-state-responses:
     CHOOSING_AIRPORT:
@@ -30,3 +38,43 @@ templates:
         Change Airport
       message-template: |-
         Provide *ICAO* or *IATA* code of the airport you want to choose.
+    CHANGE_BOT_MODE:
+      button-text: |-
+        Change Mode
+      message-template: |-
+        Select mode using the buttons below.
+        
+        Modes explanation:
+        *Default*: you'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
+        *Only Scheduled Flights*: you'll be notified only about the scheduled flights to your airport.
+        *Only Specific Aircraft*: you'll be notified only about the specific aircraft.
+        *Mute*: you won't be notified about any flights.
+    DEFAULT_BOT_MODE_SELECTED:
+      button-text: |-
+        Default
+      message-template: |-
+        Current mode is *Default*.
+        
+        You'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
+    ONLY_SCHEDULED_FLIGHTS_BOT_MODE_SELECTED:
+      button-text: |-
+        Only Scheduled Flights
+      message-template:
+        Current mode is *Only Scheduled Flights*.
+        
+        You'll be notified only about the scheduled flights to your airport.
+    ONLY_SPECIFIC_AIRCRAFT_BOT_MODE_SELECTED:
+      button-text: |-
+        Only Specific Aircraft
+      message-template:
+        Current mode is *Only Specific Aircraft*.
+        
+        You'll be notified only about the specific aircraft.
+    MUTE_BOT_MODE_SELECTED:
+      button-text: |-
+        Mute
+      message-template:
+        Current mode is *Mute*.
+        
+        You won't be notified about any flights.
+
