@@ -1,79 +1,83 @@
 templates:
   commands:
     START: |-
-        *Welcome to Aviation Bot!*
-  
+        ✈️ *Welcome to Aviation Bot!*
+
         Provide *ICAO* or *IATA* code of the airport you want to choose.
     PING: |-
         pong
     AIRPORT: |-
-        Current airport information:
-  
-        *Name*: %s
-        *ICAO*: %s
-        *IATA*: %s
+        🛬 Current airport information:
+
+        *Name*: _%s_
+        *ICAO*: _%s_
+        *IATA*: _%s_
+        *City*: _%s_
+        *Country*: _%s_
     MODE: |-
-      Current mode is %s.
-      
-      
+      ⚙️ Current mode is %s.
+
+
       _Modes explanation_
-      
-      *Default*: you'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
-      
-      *Only Scheduled Flights*: you'll be notified only about the scheduled flights to your airport.
-      
-      *Only Specific Aircraft*: you'll be notified only about the specific aircraft.
-      
-      *Mute*: you won't be notified about any flights.
+
+      🔔 *Default*: you'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
+
+      🗓 *Only Scheduled Flights*: you'll be notified only about the scheduled flights to your airport.
+
+      🛩 *Only Specific Aircraft*: you'll be notified only about the specific aircraft.
+
+      🔕 *Mute*: you won't be notified about any flights.
 
   user-state-responses:
     CHOOSING_AIRPORT:
         AIRPORT_NOT_FOUND: |-
-            Airport with *ICAO* or *IATA* code %s not found.
+          ❌ Airport with *ICAO* or *IATA* code %s not found.
         VALID_AIRPORT_SELECTED: |-
-            Great! You have chosen your airport.
+          ✅ Great! You have chosen your airport.
 
-            *Name*: %s
-            *ICAO*: %s
-            *IATA*: %s
+          *Name*: _%s_
+          *ICAO*: _%s_
+          *IATA*: _%s_
+          *City*: _%s_
+          *Country*: _%s_
 
   callbacks:
     CHANGE_AIRPORT:
       button-text: |-
-        Change Airport
+        🛬 Change Airport
       message-template: |-
         Provide *ICAO* or *IATA* code of the airport you want to choose.
     CHANGE_BOT_MODE:
       button-text: |-
-        Change Mode
+        ⚙️ Change Mode
       message-template: |-
         Select mode using the buttons below.
     DEFAULT_BOT_MODE_SELECTED:
       button-text: |-
-        Default
+        🔔 Default
       message-template: |-
-        Current mode is *Default*.
-        
+        ⚙️ Current mode is *Default*.
+
         You'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
     ONLY_SCHEDULED_FLIGHTS_BOT_MODE_SELECTED:
       button-text: |-
-        Only Scheduled Flights
+        🗓 Only Scheduled Flights
       message-template:
-        Current mode is *Only Scheduled Flights*.
-        
+        ⚙️ Current mode is *Only Scheduled Flights*.
+
         You'll be notified only about the scheduled flights to your airport.
     ONLY_SPECIFIC_AIRCRAFT_BOT_MODE_SELECTED:
       button-text: |-
-        Only Specific Aircraft
+        🛩 Only Specific Aircraft
       message-template:
-        Current mode is *Only Specific Aircraft*.
-        
+        ⚙️ Current mode is *Only Specific Aircraft*.
+
         You'll be notified only about the specific aircraft.
     MUTE_BOT_MODE_SELECTED:
       button-text: |-
-        Mute
+        🔕 Mute
       message-template:
-        Current mode is *Mute*.
-        
+        ⚙️ Current mode is *Mute*.
+
         You won't be notified about any flights.
 
