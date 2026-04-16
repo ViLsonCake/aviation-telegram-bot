@@ -34,4 +34,4 @@ def get_wide_body_aircraft_planes_for_airport(code: str):
     arrivals: list = details['airport']['pluginData']['schedule']['arrivals']['data']
     row_white_list_arrivals: list = aircraft_utils.get_white_list_plane_codes(arrivals)
 
-    return {'flights': [ScheduledFlight(flight) for flight in row_white_list_arrivals]}
+    return {'flights': [vars(ScheduledFlight(flight)) for flight in row_white_list_arrivals]}
