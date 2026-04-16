@@ -53,6 +53,13 @@ public class UserDatabaseProvider {
     userRepository.save(userEntity);
   }
 
+  public void updateBotModeAnsState(UserEntity userEntity, BotMode botMode, UserState userState) {
+    userEntity.setBotMode(botMode);
+    userEntity.setState(userState);
+    userEntity.setUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())));
+    userRepository.save(userEntity);
+  }
+
   public void updateBotMode(UserEntity userEntity, BotMode botMode) {
     userEntity.setBotMode(botMode);
     userEntity.setUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())));

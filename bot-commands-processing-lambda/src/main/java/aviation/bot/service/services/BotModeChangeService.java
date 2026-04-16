@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.enums.BotMode;
+import project.vilsoncake.common.entities.enums.UserState;
 import project.vilsoncake.common.models.CallbackType;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.utils.BotTemplatesResolver;
@@ -36,7 +37,7 @@ public class BotModeChangeService {
 
     UserEntity user = optionalUser.get();
     BotMode botMode = getBotModeByCallbackType(callbackType);
-    userDatabaseProvider.updateBotMode(user, botMode);
+    userDatabaseProvider.updateBotModeAnsState(user, botMode, UserState.ALL_SET);
 
     telegramClient.sendMessage(
         chatId, botTemplatesResolver.getTemplate(callbackType).getMessageTemplate());

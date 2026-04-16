@@ -37,7 +37,7 @@ public class ModeBotCommandProcessor implements BotCommandProcessor {
     UserEntity user = optionalUser.get();
     BotMode botMode = user.getBotMode();
     String messageTemplate = botTemplatesResolver.getTemplate(getProcessorCommand());
-    String message = String.format(messageTemplate, botMode.name());
+    String message = String.format(messageTemplate, botMode.getLabel());
 
     telegramClient.sendMessage(chatId, message, buildInlineKeyboardMarkupToChangeBotMode());
   }
