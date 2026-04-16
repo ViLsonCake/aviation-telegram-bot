@@ -17,12 +17,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          cd flightradar-api-lambdas
+          pip install -r requirements.txt -t package/
+          cp -r utils models static package/
+
       - name: Zip Lambdas Sources
         run: |
           cd flightradar-api-lambdas
-          zip get_airport_lambda.zip get_airport_lambda.py
-          zip get_scheduled_flights_lambda.zip get_scheduled_flights_lambda.py
-          zip get_specific_aircraft_lambda.zip get_specific_aircraft_lambda.py
+          cp get_airport_lambda.py package/ && cd package && zip -r ../get_airport_lambda.zip . && cd ..
+          cp get_scheduled_flights_lambda.py package/ && cd package && zip -r ../get_scheduled_flights_lambda.zip . && cd ..
+          cp get_specific_aircraft_lambda.py package/ && cd package && zip -r ../get_specific_aircraft_lambda.zip . && cd ..
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
