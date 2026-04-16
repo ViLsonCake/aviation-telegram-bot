@@ -8,7 +8,7 @@ resource "aws_lambda_function" "flightradar_api_airport" {
   function_name = "${var.project_name}-flightradar-api-get-airport"
   role          = aws_iam_role.lambda_execution_role.arn
   runtime       = "python3.12"
-  handler       = "lambda.lambda_handler"
+  handler       = "get_airport_lambda.lambda_handler"
   memory_size   = 256
   timeout       = 30
 
@@ -29,7 +29,7 @@ resource "aws_lambda_function" "flightradar_api_scheduled_flights" {
   function_name = "${var.project_name}-flightradar-api-get-scheduled-flights"
   role          = aws_iam_role.lambda_execution_role.arn
   runtime       = "python3.12"
-  handler       = "lambda.lambda_handler"
+  handler       = "get_scheduled_flights_lambda.lambda_handler"
   memory_size   = 256
   timeout       = 30
 
@@ -50,7 +50,7 @@ resource "aws_lambda_function" "flightradar_api_get_specific_aircraft" {
   function_name = "${var.project_name}-flightradar-api-get-specific-aircraft"
   role          = aws_iam_role.lambda_execution_role.arn
   runtime       = "python3.12"
-  handler       = "lambda.lambda_handler"
+  handler       = "get_specific_aircraft_lambda.lambda_handler"
   memory_size   = 256
   timeout       = 30
 
