@@ -11,6 +11,11 @@ resource "aws_lambda_function" "bot_commands_processing" {
   handler       = "org.springframework.cloud.function.adapter.aws.FunctionInvoker"
   memory_size   = 512
   timeout       = 30
+  publish       = true
+
+  snap_start {
+    apply_on = "PublishedVersions"
+  }
 
   filename         = data.archive_file.placeholder_bot_commands.output_path
   source_code_hash = data.archive_file.placeholder_bot_commands.output_base64sha256
@@ -25,7 +30,14 @@ resource "aws_lambda_function" "bot_commands_processing" {
   }
 }
 
+resource "aws_lambda_alias" "bot_commands_processing" {
+  name             = "live"
+  function_name    = aws_lambda_function.bot_commands_processing.function_name
+  function_version = aws_lambda_function.bot_commands_processing.version
+}
+
 resource "aws_lambda_function_url" "bot_commands_processing" {
   function_name      = aws_lambda_function.bot_commands_processing.function_name
+  qualifier          = aws_lambda_alias.bot_commands_processing.name
   authorization_type = "NONE"
 }
