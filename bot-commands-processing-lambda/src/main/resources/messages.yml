@@ -1,9 +1,9 @@
 templates:
   commands:
     START: |-
-        *Welcome to Aviation Bot\!*
+        *Welcome to Aviation Bot!*
   
-        Provide *ICAO* or *IATA* code of the airport you want to choose\.
+        Provide *ICAO* or *IATA* code of the airport you want to choose.
     PING: |-
         pong
     AIRPORT: |-
@@ -16,9 +16,9 @@ templates:
   user-state-responses:
     CHOOSING_AIRPORT:
         AIRPORT_NOT_FOUND: |-
-            Airport with *ICAO* or *IATA* code %s not found\.
+            Airport with *ICAO* or *IATA* code %s not found.
         VALID_AIRPORT_SELECTED: |-
-            Great! You have chosen your airport\.
+            Great! You have chosen your airport.
 
             *Name*: %s
             *ICAO*: %s
@@ -29,4 +29,4 @@ templates:
       button-text: |-
         Change Airport
       message-template: |-
-        Provide *ICAO* or *IATA* code of the airport you want to choose\.
+        Provide *ICAO* or *IATA* code of the airport you want to choose.
