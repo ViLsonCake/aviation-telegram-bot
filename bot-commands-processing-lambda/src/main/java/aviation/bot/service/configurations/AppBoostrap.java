@@ -1,12 +1,19 @@
 package aviation.bot.service.configurations;
 
 import aviation.bot.service.handlers.TelegramHandler;
+import aviation.bot.service.services.BotModeChangeService;
 import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import aviation.bot.service.services.adapters.CallbackProcessorsAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
 import aviation.bot.service.services.processors.callbacks.ChangeAirportCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.ChangeBotModeCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.DefaultModeCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.MuteModeCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.OnlyScheduledFlightsModeCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.OnlySpecificAircraftModeCallbackProcessor;
 import aviation.bot.service.services.processors.commands.AirportBotCommandProcessor;
+import aviation.bot.service.services.processors.commands.ModeBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.PingBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.StartBotCommandProcessor;
 import aviation.bot.service.services.processors.contenttypes.CallbackMessageContentTypeProcessor;
@@ -86,6 +93,15 @@ public class AppBoostrap {
         userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
+  @Bean
+  public ModeBotCommandProcessor modeBotCommandProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return ModeBotCommandProcessor.create(
+        userDatabaseProvider, telegramClient, botTemplatesResolver);
+  }
+
   // Processors - Content Types
   @Bean
   public CommandMessageContentTypeProcessor commandMessageContentTypeProcessor(
@@ -128,17 +144,52 @@ public class AppBoostrap {
         userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
+  @Bean
+  public ChangeBotModeCallbackProcessor changeBotModeCallbackProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return ChangeBotModeCallbackProcessor.create(
+        userDatabaseProvider, telegramClient, botTemplatesResolver);
+  }
+
+  @Bean
+  public DefaultModeCallbackProcessor defaultModeCallbackProcessor(
+      BotModeChangeService botModeChangeService) {
+    return DefaultModeCallbackProcessor.create(botModeChangeService);
+  }
+
+  @Bean
+  public OnlyScheduledFlightsModeCallbackProcessor onlyScheduledFlightsModeCallbackProcessor(
+      BotModeChangeService botModeChangeService) {
+    return OnlyScheduledFlightsModeCallbackProcessor.create(botModeChangeService);
+  }
+
+  @Bean
+  public OnlySpecificAircraftModeCallbackProcessor onlySpecificAircraftModeCallbackProcessor(
+      BotModeChangeService botModeChangeService) {
+    return OnlySpecificAircraftModeCallbackProcessor.create(botModeChangeService);
+  }
+
+  @Bean
+  public MuteModeCallbackProcessor muteModeCallbackProcessor(
+      BotModeChangeService botModeChangeService) {
+    return MuteModeCallbackProcessor.create(botModeChangeService);
+  }
+
   // Adapters
   @Bean
   public BotCommandProcessorsAdapter botCommandAdapter(
       PingBotCommandProcessor pingBotCommandProcessor,
       StartBotCommandProcessor startBotCommandProcessor,
-      AirportBotCommandProcessor airportBotCommandProcessor) {
+      AirportBotCommandProcessor airportBotCommandProcessor,
+      ModeBotCommandProcessor modeBotCommandProcessor) {
     BotCommandProcessorsAdapter botCommandProcessorsAdapter = BotCommandProcessorsAdapter.create();
 
     botCommandProcessorsAdapter.registerCommandProcessor(startBotCommandProcessor);
     botCommandProcessorsAdapter.registerCommandProcessor(pingBotCommandProcessor);
     botCommandProcessorsAdapter.registerCommandProcessor(airportBotCommandProcessor);
+    botCommandProcessorsAdapter.registerCommandProcessor(modeBotCommandProcessor);
 
     return botCommandProcessorsAdapter;
   }
@@ -172,10 +223,20 @@ public class AppBoostrap {
 
   @Bean
   public CallbackProcessorsAdapter callbackProcessorsAdapter(
-      ChangeAirportCallbackProcessor changeAirportCallbackProcessor) {
+      ChangeAirportCallbackProcessor changeAirportCallbackProcessor,
+      ChangeBotModeCallbackProcessor changeBotModeCallbackProcessor,
+      DefaultModeCallbackProcessor defaultModeCallbackProcessor,
+      OnlyScheduledFlightsModeCallbackProcessor onlyScheduledFlightsModeCallbackProcessor,
+      OnlySpecificAircraftModeCallbackProcessor onlySpecificAircraftModeCallbackProcessor,
+      MuteModeCallbackProcessor muteModeCallbackProcessor) {
     CallbackProcessorsAdapter callbackProcessorsAdapter = CallbackProcessorsAdapter.create();
 
     callbackProcessorsAdapter.registerCallbackProcessor(changeAirportCallbackProcessor);
+    callbackProcessorsAdapter.registerCallbackProcessor(changeBotModeCallbackProcessor);
+    callbackProcessorsAdapter.registerCallbackProcessor(defaultModeCallbackProcessor);
+    callbackProcessorsAdapter.registerCallbackProcessor(onlyScheduledFlightsModeCallbackProcessor);
+    callbackProcessorsAdapter.registerCallbackProcessor(onlySpecificAircraftModeCallbackProcessor);
+    callbackProcessorsAdapter.registerCallbackProcessor(muteModeCallbackProcessor);
 
     return callbackProcessorsAdapter;
   }
@@ -190,6 +251,15 @@ public class AppBoostrap {
   @Bean
   public AirportDatabaseProvider airportDatabaseProvider(AirportRepository airportRepository) {
     return AirportDatabaseProvider.create(airportRepository);
+  }
+
+  // Other Services
+  @Bean
+  public BotModeChangeService botModeChangeService(
+      UserDatabaseProvider userDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return BotModeChangeService.create(userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
   // Other required beans

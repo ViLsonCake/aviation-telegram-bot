@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.configurations.GeneralConfig;
 import project.vilsoncake.common.entities.AirportEntity;
 import project.vilsoncake.common.entities.UserEntity;
+import project.vilsoncake.common.entities.enums.BotMode;
 import project.vilsoncake.common.entities.enums.UserState;
 
 @Slf4j
@@ -23,6 +24,7 @@ public class UserDatabaseProvider {
             .withUsername(username)
             .withChatId(chatId)
             .withState(UserState.CHOOSING_AIRPORT)
+            .withBotMode(BotMode.DEFAULT)
             .withCreatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())))
             .withUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())))
             .build();
@@ -47,6 +49,12 @@ public class UserDatabaseProvider {
 
   public void updateState(UserEntity userEntity, UserState userState) {
     userEntity.setState(userState);
+    userEntity.setUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())));
+    userRepository.save(userEntity);
+  }
+
+  public void updateBotMode(UserEntity userEntity, BotMode botMode) {
+    userEntity.setBotMode(botMode);
     userEntity.setUpdatedAt(ZonedDateTime.now(ZoneId.of(generalConfig.getTimezone())));
     userRepository.save(userEntity);
   }

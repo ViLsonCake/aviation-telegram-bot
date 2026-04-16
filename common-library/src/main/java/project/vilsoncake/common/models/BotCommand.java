@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum BotCommand {
   START("/start"),
   PING("/ping"),
-  AIRPORT("/airport");
+  AIRPORT("/airport"),
+  MODE("/mode");
 
   private final String command;
 }
