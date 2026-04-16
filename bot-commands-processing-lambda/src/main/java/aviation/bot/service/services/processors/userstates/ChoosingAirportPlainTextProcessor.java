@@ -60,6 +60,8 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
                 getUserState(), UserStateResponseTemplate.VALID_AIRPORT_SELECTED),
             airport.getName(),
             airport.getIcao(),
-            airport.getIata()));
+            airport.getIata(),
+            airport.getCity(),
+            airport.getCountry()));
   }
 }

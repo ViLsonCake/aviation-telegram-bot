@@ -44,7 +44,13 @@ public class AirportBotCommandProcessor implements BotCommandProcessor {
 
     String messageTemplate = botTemplatesResolver.getTemplate(BotCommand.AIRPORT);
     String message =
-        String.format(messageTemplate, airport.getName(), airport.getIcao(), airport.getIata());
+        String.format(
+            messageTemplate,
+            airport.getName(),
+            airport.getIcao(),
+            airport.getIata(),
+            airport.getCity(),
+            airport.getCountry());
 
     telegramClient.sendMessage(chatId, message, buildInlineKeyboardMarkupToChangeAirport());
   }
