@@ -98,8 +98,6 @@ public class TelegramClient {
   /** Normalize message text for Telegram API MarkdownV2 format. */
   private String normalizeMessageText(String messageText) {
     return messageText
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
         .replace("[", "\\[")
         .replace("]", "\\]")
         .replace("(", "\\(")
