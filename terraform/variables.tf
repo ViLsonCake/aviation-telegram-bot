@@ -10,6 +10,18 @@ variable "project_name" {
   default     = "aviation-telegram-bot"
 }
 
+variable "db_host" {
+  description = "Hostname of the RDS PostgreSQL instance"
+  type        = string
+  sensitive   = true
+}
+
+variable "bot_token" {
+  description = "Telegram bot token"
+  type        = string
+  sensitive   = true
+}
+
 variable "db_name" {
   description = "Database name for the RDS PostgreSQL instance"
   type        = string
