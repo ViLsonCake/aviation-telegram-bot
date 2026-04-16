@@ -15,7 +15,8 @@ templates:
     MODE: |-
       Current mode is %s.
       
-      Modes explanation:
+      
+      _Modes explanation_
       
       *Default*: you'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
       
@@ -47,16 +48,6 @@ templates:
         Change Mode
       message-template: |-
         Select mode using the buttons below.
-        
-        Modes explanation:
-        
-        *Default*: you'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
-        
-        *Only Scheduled Flights*: you'll be notified only about the scheduled flights to your airport.
-        
-        *Only Specific Aircraft*: you'll be notified only about the specific aircraft.
-        
-        *Mute*: you won't be notified about any flights.
     DEFAULT_BOT_MODE_SELECTED:
       button-text: |-
         Default
