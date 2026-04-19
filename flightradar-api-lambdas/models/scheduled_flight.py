@@ -7,9 +7,9 @@ class ScheduledFlight:
     code: str
     aircraft: str
     airline_name: str
-    airport: str
-    iata: str
-    icao: str
+    origin_airport: str
+    origin_iata: str
+    origin_icao: str
     callsign: str
     registration: str
     live: bool
@@ -21,9 +21,9 @@ class ScheduledFlight:
         if self.id is None:
             self.id = str(row_flight['flight']['identification']['row'])
 
-        self.airport: str = row_flight['flight']['airport']['origin']['name']
-        self.iata: str = row_flight['flight']['airport']['origin']['code']['iata']
-        self.icao: str = row_flight['flight']['airport']['origin']['code']['icao']
+        self.origin_airport: str = row_flight['flight']['airport']['origin']['name']
+        self.origin_iata: str = row_flight['flight']['airport']['origin']['code']['iata']
+        self.origin_icao: str = row_flight['flight']['airport']['origin']['code']['icao']
         self.callsign: str = row_flight['flight']['identification']['callsign']
         self.registration: str = row_flight['flight']['aircraft']['registration']
         self.live: bool = row_flight['flight']['status']['live']
