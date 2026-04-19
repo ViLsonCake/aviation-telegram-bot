@@ -13,7 +13,7 @@ class ScheduledFlight:
     callsign: str
     registration: str
     live: bool
-    status_text: str
+    status: str
 
     def __init__(self, row_flight: dict):
         self.id: str = row_flight['flight']['identification']['id']
@@ -27,7 +27,7 @@ class ScheduledFlight:
         self.callsign: str = row_flight['flight']['identification']['callsign']
         self.registration: str = row_flight['flight']['aircraft']['registration']
         self.live: bool = row_flight['flight']['status']['live']
-        self.status_text: str = row_flight['flight']['status']['text']
+        self.status: str = row_flight['flight']['status']['text']
 
         try:
             self.aircraft_code: str = row_flight['flight']['aircraft']['model']['code']
