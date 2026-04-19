@@ -4,16 +4,16 @@ aircraft_utils: AircraftUtils = AircraftUtils()
 
 class ScheduledFlight:
     id: str
-    code: str
-    aircraft: str
+    aircraft_code: str
+    aircraft_name: str
     airline_name: str
-    origin_airport: str
-    origin_iata: str
-    origin_icao: str
+    origin_airport_name: str
+    origin_airport_iata: str
+    origin_airport_icao: str
     callsign: str
     registration: str
     live: bool
-    text: str
+    status_text: str
 
     def __init__(self, row_flight: dict):
         self.id: str = row_flight['flight']['identification']['id']
@@ -21,20 +21,20 @@ class ScheduledFlight:
         if self.id is None:
             self.id = str(row_flight['flight']['identification']['row'])
 
-        self.origin_airport: str = row_flight['flight']['airport']['origin']['name']
-        self.origin_iata: str = row_flight['flight']['airport']['origin']['code']['iata']
-        self.origin_icao: str = row_flight['flight']['airport']['origin']['code']['icao']
+        self.origin_airport_name: str = row_flight['flight']['airport']['origin']['name']
+        self.origin_airport_iata: str = row_flight['flight']['airport']['origin']['code']['iata']
+        self.origin_airport_icao: str = row_flight['flight']['airport']['origin']['code']['icao']
         self.callsign: str = row_flight['flight']['identification']['callsign']
         self.registration: str = row_flight['flight']['aircraft']['registration']
         self.live: bool = row_flight['flight']['status']['live']
-        self.text: str = row_flight['flight']['status']['text']
+        self.status_text: str = row_flight['flight']['status']['text']
 
         try:
-            self.code: str = row_flight['flight']['aircraft']['model']['code']
-            self.aircraft = aircraft_utils.get_aircraft_name_by_code(self.code)
+            self.aircraft_code: str = row_flight['flight']['aircraft']['model']['code']
+            self.aircraft_name = aircraft_utils.get_aircraft_name_by_code(self.aircraft_code)
         except TypeError:
-            self.code = 'Unknown'
-            self.aircraft = 'Unknown'
+            self.aircraft_code = 'Unknown'
+            self.aircraft_name = 'Unknown'
 
         try:
             self.airline_name: str = row_flight['flight']['airline']['name']
