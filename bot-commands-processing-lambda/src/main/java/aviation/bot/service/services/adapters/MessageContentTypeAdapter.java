@@ -4,19 +4,26 @@ import aviation.bot.service.models.MessageContentType;
 import aviation.bot.service.models.TelegramRequestPayload;
 import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(staticName = "create")
 public class MessageContentTypeAdapter {
 
-  private final Map<MessageContentType, MessageContentTypeProcessor>
-      messageContentTypeProcessorMap = new LinkedHashMap<>();
+  private final Map<MessageContentType, MessageContentTypeProcessor> messageContentTypeProcessorMap;
 
-  public void registerMessageContentTypeProcessor(
-      MessageContentTypeProcessor messageContentTypeProcessor) {
-    messageContentTypeProcessorMap.put(
-        messageContentTypeProcessor.getMessageContentType(), messageContentTypeProcessor);
+  public static MessageContentTypeAdapter create(
+      List<MessageContentTypeProcessor> messageContentTypeProcessors) {
+    return new MessageContentTypeAdapter(messageContentTypeProcessors);
+  }
+
+  private MessageContentTypeAdapter(
+      List<MessageContentTypeProcessor> messageContentTypeProcessors) {
+    this.messageContentTypeProcessorMap =
+        messageContentTypeProcessors.stream()
+            .collect(
+                LinkedHashMap::new,
+                (map, processor) -> map.put(processor.getMessageContentType(), processor),
+                Map::putAll);
   }
 
   public void process(

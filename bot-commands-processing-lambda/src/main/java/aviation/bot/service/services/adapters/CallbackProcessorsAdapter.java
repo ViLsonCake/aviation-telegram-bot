@@ -2,21 +2,29 @@ package aviation.bot.service.services.adapters;
 
 import aviation.bot.service.services.processors.CallbackProcessor;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.models.CallbackType;
 
-@RequiredArgsConstructor(staticName = "create")
 public class CallbackProcessorsAdapter {
 
-  private final Map<CallbackType, CallbackProcessor> callbackProcessors = new LinkedHashMap<>();
+  private final Map<CallbackType, CallbackProcessor> callbackProcessorsMap;
 
-  public void registerCallbackProcessor(CallbackProcessor callbackProcessor) {
-    callbackProcessors.put(callbackProcessor.getCallbackType(), callbackProcessor);
+  public static CallbackProcessorsAdapter create(List<CallbackProcessor> callbackProcessors) {
+    return new CallbackProcessorsAdapter(callbackProcessors);
+  }
+
+  private CallbackProcessorsAdapter(List<CallbackProcessor> callbackProcessors) {
+    this.callbackProcessorsMap =
+        callbackProcessors.stream()
+            .collect(
+                LinkedHashMap::new,
+                (map, processor) -> map.put(processor.getCallbackType(), processor),
+                Map::putAll);
   }
 
   public void process(CallbackType callbackType, String username, long chatId, String callbackId) {
-    CallbackProcessor callbackProcessor = callbackProcessors.get(callbackType);
+    CallbackProcessor callbackProcessor = callbackProcessorsMap.get(callbackType);
 
     // Silently ignore unknown callback types
     if (callbackProcessor == null) {
