@@ -15,9 +15,9 @@ class ScheduledFlight:
     live: bool
     status: str
     diverted: str
-    scheduled_departure: int
-    scheduled_arrival: int
-    event_time_utc: int
+    scheduled_departure_time: int
+    scheduled_arrival_time: int
+    estimated_arrival_time: int
 
     def __init__(self, row_flight: dict):
         self.id: str = row_flight['flight']['identification']['id']
@@ -35,11 +35,11 @@ class ScheduledFlight:
         self.diverted: str = row_flight['flight']['status']['generic']['status']['diverted']
 
         # Scheduled times (Unix timestamps in UTC)
-        self.scheduled_departure: int = row_flight['flight']['time']['scheduled']['departure']
-        self.scheduled_arrival: int = row_flight['flight']['time']['scheduled']['arrival']
+        self.scheduled_departure_time: int = row_flight['flight']['time']['scheduled']['departure']
+        self.scheduled_arrival_time: int = row_flight['flight']['time']['scheduled']['arrival']
 
-        # Event time UTC (can be None if not yet happened)
-        self.event_time_utc: int = row_flight['flight']['status']['generic']['eventTime']['utc']
+        # Estimated time UTC (can be None if not yet happened)
+        self.estimated_arrival_time: int = row_flight['flight']['status']['generic']['eventTime']['utc']
 
         try:
             self.aircraft_code: str = row_flight['flight']['aircraft']['model']['code']
