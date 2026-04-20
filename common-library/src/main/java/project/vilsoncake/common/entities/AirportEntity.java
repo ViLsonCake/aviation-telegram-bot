@@ -35,6 +35,9 @@ public class AirportEntity {
   @Column(name = "country", nullable = false)
   private String country;
 
+  @Column(name = "timezone", nullable = false)
+  private String timezone;
+
   @Column(name = "latitude", nullable = false)
   private Double latitude;
 

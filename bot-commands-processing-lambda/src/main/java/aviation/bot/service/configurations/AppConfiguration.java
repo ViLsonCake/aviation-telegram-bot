@@ -36,7 +36,7 @@ import project.vilsoncake.common.utils.BotTemplatesResolver;
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
-public class AppBoostrap {
+public class AppConfiguration {
 
   // Telegram Bot
   @Bean
