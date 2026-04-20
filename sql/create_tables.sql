@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS airports (
     name VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     country VARCHAR(50) NOT NULL,
+    timezone VARCHAR(50) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL
 );
