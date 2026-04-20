@@ -6,6 +6,10 @@ import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import aviation.bot.service.services.adapters.CallbackProcessorsAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
 import aviation.bot.service.services.adapters.PlainTextProcessorsAdapter;
+import aviation.bot.service.services.processors.BotCommandProcessor;
+import aviation.bot.service.services.processors.CallbackProcessor;
+import aviation.bot.service.services.processors.MessageContentTypeProcessor;
+import aviation.bot.service.services.processors.PlainTextProcessor;
 import aviation.bot.service.services.processors.callbacks.ChangeAirportCallbackProcessor;
 import aviation.bot.service.services.processors.callbacks.ChangeBotModeCallbackProcessor;
 import aviation.bot.service.services.processors.callbacks.DefaultModeCallbackProcessor;
@@ -21,6 +25,7 @@ import aviation.bot.service.services.processors.contenttypes.CommandMessageConte
 import aviation.bot.service.services.processors.contenttypes.PlainTextMessageContentTypeProcessor;
 import aviation.bot.service.services.processors.userstates.ChoosingAirportPlainTextProcessor;
 import java.net.http.HttpClient;
+import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -180,65 +185,26 @@ public class AppConfiguration {
   // Adapters
   @Bean
   public BotCommandProcessorsAdapter botCommandAdapter(
-      PingBotCommandProcessor pingBotCommandProcessor,
-      StartBotCommandProcessor startBotCommandProcessor,
-      AirportBotCommandProcessor airportBotCommandProcessor,
-      ModeBotCommandProcessor modeBotCommandProcessor) {
-    BotCommandProcessorsAdapter botCommandProcessorsAdapter = BotCommandProcessorsAdapter.create();
-
-    botCommandProcessorsAdapter.registerCommandProcessor(startBotCommandProcessor);
-    botCommandProcessorsAdapter.registerCommandProcessor(pingBotCommandProcessor);
-    botCommandProcessorsAdapter.registerCommandProcessor(airportBotCommandProcessor);
-    botCommandProcessorsAdapter.registerCommandProcessor(modeBotCommandProcessor);
-
-    return botCommandProcessorsAdapter;
+      List<BotCommandProcessor> botCommandProcessors) {
+    return BotCommandProcessorsAdapter.create(botCommandProcessors);
   }
 
   @Bean
   public MessageContentTypeAdapter messageContentTypeAdapter(
-      CommandMessageContentTypeProcessor commandMessageContentTypeProcessor,
-      PlainTextMessageContentTypeProcessor plainTextMessageContentTypeProcessor,
-      CallbackMessageContentTypeProcessor callbackMessageContentTypeProcessor) {
-    MessageContentTypeAdapter messageContentTypeAdapter = MessageContentTypeAdapter.create();
-
-    messageContentTypeAdapter.registerMessageContentTypeProcessor(
-        commandMessageContentTypeProcessor);
-    messageContentTypeAdapter.registerMessageContentTypeProcessor(
-        plainTextMessageContentTypeProcessor);
-    messageContentTypeAdapter.registerMessageContentTypeProcessor(
-        callbackMessageContentTypeProcessor);
-
-    return messageContentTypeAdapter;
+      List<MessageContentTypeProcessor> messageContentTypeProcessors) {
+    return MessageContentTypeAdapter.create(messageContentTypeProcessors);
   }
 
   @Bean
   public PlainTextProcessorsAdapter plainTextProcessorsAdapter(
-      ChoosingAirportPlainTextProcessor choosingAirportPlainTextProcessor) {
-    PlainTextProcessorsAdapter plainTextProcessorsAdapter = PlainTextProcessorsAdapter.create();
-
-    plainTextProcessorsAdapter.registerPlainTextProcessor(choosingAirportPlainTextProcessor);
-
-    return plainTextProcessorsAdapter;
+      List<PlainTextProcessor> plainTextProcessors) {
+    return PlainTextProcessorsAdapter.create(plainTextProcessors);
   }
 
   @Bean
   public CallbackProcessorsAdapter callbackProcessorsAdapter(
-      ChangeAirportCallbackProcessor changeAirportCallbackProcessor,
-      ChangeBotModeCallbackProcessor changeBotModeCallbackProcessor,
-      DefaultModeCallbackProcessor defaultModeCallbackProcessor,
-      OnlyScheduledFlightsModeCallbackProcessor onlyScheduledFlightsModeCallbackProcessor,
-      OnlySpecificAircraftModeCallbackProcessor onlySpecificAircraftModeCallbackProcessor,
-      MuteModeCallbackProcessor muteModeCallbackProcessor) {
-    CallbackProcessorsAdapter callbackProcessorsAdapter = CallbackProcessorsAdapter.create();
-
-    callbackProcessorsAdapter.registerCallbackProcessor(changeAirportCallbackProcessor);
-    callbackProcessorsAdapter.registerCallbackProcessor(changeBotModeCallbackProcessor);
-    callbackProcessorsAdapter.registerCallbackProcessor(defaultModeCallbackProcessor);
-    callbackProcessorsAdapter.registerCallbackProcessor(onlyScheduledFlightsModeCallbackProcessor);
-    callbackProcessorsAdapter.registerCallbackProcessor(onlySpecificAircraftModeCallbackProcessor);
-    callbackProcessorsAdapter.registerCallbackProcessor(muteModeCallbackProcessor);
-
-    return callbackProcessorsAdapter;
+      List<CallbackProcessor> callbackProcessors) {
+    return CallbackProcessorsAdapter.create(callbackProcessors);
   }
 
   // Database

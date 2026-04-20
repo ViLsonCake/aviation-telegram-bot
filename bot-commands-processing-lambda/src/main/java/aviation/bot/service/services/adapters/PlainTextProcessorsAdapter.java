@@ -2,17 +2,25 @@ package aviation.bot.service.services.adapters;
 
 import aviation.bot.service.services.processors.PlainTextProcessor;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.entities.enums.UserState;
 
-@RequiredArgsConstructor(staticName = "create")
 public class PlainTextProcessorsAdapter {
 
-  private final Map<UserState, PlainTextProcessor> plainTextProcessorMap = new LinkedHashMap<>();
+  private final Map<UserState, PlainTextProcessor> plainTextProcessorMap;
 
-  public void registerPlainTextProcessor(PlainTextProcessor plainTextProcessor) {
-    plainTextProcessorMap.put(plainTextProcessor.getUserState(), plainTextProcessor);
+  public static PlainTextProcessorsAdapter create(List<PlainTextProcessor> plainTextProcessors) {
+    return new PlainTextProcessorsAdapter(plainTextProcessors);
+  }
+
+  private PlainTextProcessorsAdapter(List<PlainTextProcessor> plainTextProcessors) {
+    this.plainTextProcessorMap =
+        plainTextProcessors.stream()
+            .collect(
+                LinkedHashMap::new,
+                (map, processor) -> map.put(processor.getUserState(), processor),
+                Map::putAll);
   }
 
   public void process(UserState userState, String username, long chatId, String text) {
