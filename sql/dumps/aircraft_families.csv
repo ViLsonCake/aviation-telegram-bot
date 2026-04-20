@@ -1,0 +1,19 @@
+family_code,manufacturer
+BOEING_747,Boeing
+BOEING_777,Boeing
+BOEING_787,Boeing
+BOEING_767,Boeing
+BOEING_757,Boeing
+BOEING_C17,Boeing
+AIRBUS_A380,Airbus
+AIRBUS_A350,Airbus
+AIRBUS_A340,Airbus
+AIRBUS_A330,Airbus
+AIRBUS_A310,Airbus
+AIRBUS_A300,Airbus
+AIRBUS_A400,Airbus
+MD11,McDonnell Douglas
+AN124,Antonov
+C5_GALAXY,Lockheed
+C130_HERCULES,Lockheed
+ILYUSHIN_IL76,Ilyushin
