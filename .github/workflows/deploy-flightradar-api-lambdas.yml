@@ -26,7 +26,7 @@ jobs:
         run: |
           cd flightradar-api-lambdas
           pip install -r requirements.txt -t package/
-          cp -r utils models static package/
+          cp -r utils models package/
 
       - name: Zip Lambdas Sources
         run: |
