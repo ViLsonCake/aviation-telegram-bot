@@ -1,7 +1,3 @@
-from utils.flight_utils import AircraftUtils
-
-aircraft_utils: AircraftUtils = AircraftUtils()
-
 class ScheduledFlight:
     id: str
     aircraft_code: str
@@ -43,7 +39,7 @@ class ScheduledFlight:
 
         try:
             self.aircraft_code: str = row_flight['flight']['aircraft']['model']['code']
-            self.aircraft_name = aircraft_utils.get_aircraft_name_by_code(self.aircraft_code)
+            self.aircraft_name: str = row_flight['flight']['aircraft']['model']['text']
         except TypeError:
             self.aircraft_code = 'Unknown'
             self.aircraft_name = 'Unknown'
