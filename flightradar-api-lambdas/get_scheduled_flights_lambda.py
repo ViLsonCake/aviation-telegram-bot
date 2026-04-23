@@ -17,7 +17,7 @@ def lambda_handler(event, context):
             airport_code: str = airport.get('airport_code')
             aircraft_filter_codes = airport.get('aircraft_filter_codes', [])
             filtered_flights_for_airport = get_filtered_flights_for_airport(airport_code, aircraft_filter_codes)
-            response[airport] = filtered_flights_for_airport
+            response[airport_code] = filtered_flights_for_airport
         except Exception as e:
             logger.error(e)
 
