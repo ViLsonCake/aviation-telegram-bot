@@ -9,7 +9,7 @@ flightradar_api: FlightRadar24API = FlightRadar24API()
 logger = logging.getLogger(__name__)
 
 def lambda_handler(event, context):
-    airports: dict = event.get('airports', {})
+    airports: list = event.get('airports', [])
     response: dict = dict()
 
     for airport in airports:
