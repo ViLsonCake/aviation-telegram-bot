@@ -9,21 +9,21 @@ flightradar_api: FlightRadar24API = FlightRadar24API()
 logger = logging.getLogger(__name__)
 
 def lambda_handler(event, context):
-    airports = event.get('airports', [])
-    aircraft_filter_codes = event.get('aircraft_filter_codes', [])
-
+    airports: dict = event.get('airports', {})
     response: dict = dict()
 
     for airport in airports:
         try:
-            wide_body_aircraft_for_aircraft = get_wide_body_aircraft_planes_for_airport(airport, aircraft_filter_codes)
-            response[airport] = wide_body_aircraft_for_aircraft
+            airport_code: str = airport.get('airport_code')
+            aircraft_filter_codes = airport.get('aircraft_filter_codes', [])
+            filtered_flights_for_airport = get_filtered_flights_for_airport(airport_code, aircraft_filter_codes)
+            response[airport] = filtered_flights_for_airport
         except Exception as e:
             logger.error(e)
 
     return response
 
-def get_wide_body_aircraft_planes_for_airport(code: str, aircraft_filter_codes: list[str]):
+def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]) -> dict:
     try:
         details = flightradar_api.get_airport_details(code)
     except AirportNotFoundError:
@@ -36,4 +36,11 @@ def get_wide_body_aircraft_planes_for_airport(code: str, aircraft_filter_codes: 
     arrivals: list = details['airport']['pluginData']['schedule']['arrivals']['data']
     row_filtered_arrivals: list = filter_flights_by_aircraft_code(arrivals, aircraft_filter_codes)
 
-    return {'flights': [vars(ScheduledFlight(flight)) for flight in row_filtered_arrivals]}
+    arrivals_count: int = len(arrivals)
+    filtered_arrivals_count: int = len(row_filtered_arrivals)
+
+    return {
+        'arrivals_count': arrivals_count,
+        'filtered_arrivals_count': filtered_arrivals_count,
+        'flights': [vars(ScheduledFlight(flight)) for flight in row_filtered_arrivals]
+    }
