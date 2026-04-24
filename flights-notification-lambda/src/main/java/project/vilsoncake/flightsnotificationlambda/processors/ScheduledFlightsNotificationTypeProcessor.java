@@ -14,7 +14,7 @@ import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
 import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.FlightsNotificationType;
-import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsService;
+import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 
 @Slf4j
@@ -24,7 +24,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
   private final UserDatabaseProvider userDatabaseProvider;
   private final WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider;
   private final FlightradarApiLambdaAdapter flightradarApiLambdaAdapter;
-  private final UserNotificationsService userNotificationsService;
+  private final UserNotificationsSender userNotificationsSender;
 
   @Override
   public FlightsNotificationType getNotificationType() {
@@ -33,7 +33,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
 
   @Override
   public void process() {
-    log.info("Processing scheduled flights notifications");
+    log.info("Start scheduled flights notifications processing");
 
     Set<UserEntity> eligibleUsers =
         userDatabaseProvider.getEligibleUsersToSendScheduledFlightsNotifications();
@@ -56,6 +56,8 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
         flightradarApiLambdaAdapter.getFilteredFlightsForAirports(airportRequests);
 
     notifyUsers(eligibleUsers, filteredFlightsForAirports);
+
+    log.info("Finished processing scheduled flights notifications");
   }
 
   private void notifyUsers(
@@ -70,7 +72,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
       }
 
       AirportResponse airportResponse = filteredFlightsForAirports.get(userAirportIcao);
-      userNotificationsService.notifyScheduledFlights(user, airportResponse);
+      userNotificationsSender.notifyScheduledFlights(user, airportResponse);
     }
   }
 

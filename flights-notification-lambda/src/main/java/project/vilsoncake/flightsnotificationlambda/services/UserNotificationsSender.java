@@ -6,18 +6,23 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.UserEntity;
+import project.vilsoncake.common.models.ScheduledFlight;
+import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.MessageType;
-import project.vilsoncake.flightsnotificationlambda.models.ScheduledFlight;
 
+@Slf4j
 @RequiredArgsConstructor(staticName = "create")
-public class UserNotificationsService {
+public class UserNotificationsSender {
 
   private final TelegramClient telegramClient;
   private final BotTemplatesResolver botTemplatesResolver;
   private final AircraftNameResolver aircraftNameResolver;
+  private final ScheduledFlightNotificationDatabaseProvider
+      scheduledFlightNotificationDatabaseProvider;
 
   // DO NOT UPDATE: increasing the number of flights per message will disable formatting due to
   // Telegram entities limitations
@@ -26,27 +31,34 @@ public class UserNotificationsService {
   private static final String NEW_LINE = "\n";
 
   public void notifyScheduledFlights(UserEntity user, AirportResponse airportResponse) {
+    List<ScheduledFlight> scheduledFlights = airportResponse.getFlights();
+    List<ScheduledFlight> unnotifiedScheduledFlights =
+        getUnnotifiedScheduledFlights(scheduledFlights);
+
+    if (unnotifiedScheduledFlights.isEmpty()) {
+      return;
+    }
+
+    String timezone = user.getAirport().getTimezone();
+
     MessageType titleMessageType =
-        airportResponse.getFilteredArrivalsCount() > 1
+        unnotifiedScheduledFlights.size() > 1
             ? MessageType.SCHEDULED_FLIGHTS_TITLE
             : MessageType.SINGLE_SCHEDULED_FLIGHT_TITLE;
 
     String notificationTitle = botTemplatesResolver.getTemplate(titleMessageType);
 
     if (titleMessageType.equals(MessageType.SCHEDULED_FLIGHTS_TITLE)) {
-      notificationTitle =
-          String.format(notificationTitle, airportResponse.getFilteredArrivalsCount());
+      notificationTitle = String.format(notificationTitle, unnotifiedScheduledFlights.size());
     }
 
-    List<ScheduledFlight> scheduledFlights = airportResponse.getFlights();
-    String timezone = user.getAirport().getTimezone();
     List<String> messages = new ArrayList<>();
     StringBuilder messageBuilder = new StringBuilder(notificationTitle);
     int flightsInCurrentMessage = 0;
 
     int counter = 0;
 
-    for (ScheduledFlight scheduledFlight : scheduledFlights) {
+    for (ScheduledFlight scheduledFlight : unnotifiedScheduledFlights) {
       counter++;
 
       String scheduledFlightDetails;
@@ -76,6 +88,11 @@ public class UserNotificationsService {
     messages.add(messageBuilder.toString());
 
     telegramClient.sendMessages(user.getChatId(), messages);
+
+    for (ScheduledFlight scheduledFlight : unnotifiedScheduledFlights) {
+      scheduledFlightNotificationDatabaseProvider.saveNotification(scheduledFlight, user);
+    }
+    log.info("All {} unnotified scheduled flights saved", unnotifiedScheduledFlights.size());
   }
 
   private String buildScheduledFlightMessage(
@@ -124,5 +141,13 @@ public class UserNotificationsService {
 
   private String getValueOrUnknown(String value) {
     return value != null && !value.isBlank() ? value : "Unknown";
+  }
+
+  private List<ScheduledFlight> getUnnotifiedScheduledFlights(List<ScheduledFlight> flights) {
+    return flights.stream()
+        .filter(
+            flight ->
+                !scheduledFlightNotificationDatabaseProvider.isNotificationSent(flight.getId()))
+        .toList();
   }
 }

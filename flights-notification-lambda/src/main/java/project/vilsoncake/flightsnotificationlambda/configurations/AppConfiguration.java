@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.configurations.BotConfig;
 import project.vilsoncake.common.configurations.GeneralConfig;
+import project.vilsoncake.common.configurations.NotificationsConfig;
+import project.vilsoncake.common.repositories.AirportRepository;
+import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
+import project.vilsoncake.common.repositories.ScheduledFlightNotificationRepository;
+import project.vilsoncake.common.repositories.ScheduledFlightRepository;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.UserRepository;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
@@ -18,7 +23,7 @@ import project.vilsoncake.flightsnotificationlambda.processors.NotificationTypeP
 import project.vilsoncake.flightsnotificationlambda.processors.ScheduledFlightsNotificationTypeProcessor;
 import project.vilsoncake.flightsnotificationlambda.services.AircraftNameResolver;
 import project.vilsoncake.flightsnotificationlambda.services.BotTemplatesResolver;
-import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsService;
+import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.NotificationTypeAdapter;
 import software.amazon.awssdk.regions.Region;
@@ -70,12 +75,12 @@ public class AppConfiguration {
       UserDatabaseProvider userDatabaseProvider,
       WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
       FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
-      UserNotificationsService userNotificationsService) {
+      UserNotificationsSender userNotificationsSender) {
     return ScheduledFlightsNotificationTypeProcessor.create(
         userDatabaseProvider,
         widebodyAircraftDatabaseProvider,
         flightradarApiLambdaAdapter,
-        userNotificationsService);
+        userNotificationsSender);
   }
 
   // Adapters
@@ -100,12 +105,16 @@ public class AppConfiguration {
 
   // Services
   @Bean
-  public UserNotificationsService notificationsService(
+  public UserNotificationsSender notificationsService(
       TelegramClient telegramClient,
       BotTemplatesResolver botTemplatesResolver,
-      AircraftNameResolver aircraftNameResolver) {
-    return UserNotificationsService.create(
-        telegramClient, botTemplatesResolver, aircraftNameResolver);
+      AircraftNameResolver aircraftNameResolver,
+      ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider) {
+    return UserNotificationsSender.create(
+        telegramClient,
+        botTemplatesResolver,
+        aircraftNameResolver,
+        scheduledFlightNotificationDatabaseProvider);
   }
 
   @Bean
@@ -127,6 +136,21 @@ public class AppConfiguration {
     return WidebodyAircraftDatabaseProvider.create(widebodyAircraftRepository);
   }
 
+  @Bean
+  public ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider(
+      ScheduledFlightNotificationRepository scheduledFlightNotificationRepository,
+      ScheduledFlightRepository scheduledFlightRepository,
+      AirportRepository airportRepository,
+      WidebodyAircraftRepository widebodyAircraftRepository,
+      NotificationsConfig notificationsConfig) {
+    return new ScheduledFlightNotificationDatabaseProvider(
+        scheduledFlightNotificationRepository,
+        scheduledFlightRepository,
+        airportRepository,
+        widebodyAircraftRepository,
+        notificationsConfig);
+  }
+
   // Other required beans
   @Bean
   public ObjectMapper objectMapper() {
@@ -142,5 +166,11 @@ public class AppConfiguration {
   @ConfigurationProperties(prefix = "general")
   public GeneralConfig generalConfig() {
     return new GeneralConfig();
+  }
+
+  @Bean
+  @ConfigurationProperties(prefix = "notifications")
+  public NotificationsConfig notificationsConfig() {
+    return new NotificationsConfig();
   }
 }

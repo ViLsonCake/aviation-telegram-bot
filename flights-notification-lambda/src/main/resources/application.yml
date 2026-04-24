@@ -29,3 +29,6 @@ aws:
 
 general:
   timezone: Europe/Warsaw
+
+notifications:
+  arriving-soon-remaining-minutes: 25

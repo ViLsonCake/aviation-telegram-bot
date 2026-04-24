@@ -2,7 +2,6 @@ package project.vilsoncake.common.repositories;
 
 import java.util.List;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
 
