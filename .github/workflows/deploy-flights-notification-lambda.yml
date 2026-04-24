@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'flights-notification-lambda/**'
+      - 'common-library/**'
       - '.github/workflows/deploy-flights-notification-lambda.yml'
 
 jobs:
@@ -26,7 +27,7 @@ jobs:
 
       - name: Build JAR
         working-directory: flights-notification-lambda
-        run: ./gradlew bootJar
+        run: ./gradlew shadowJar
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -35,8 +36,38 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Upload JAR to S3
+        run: |
+          aws s3 cp \
+            flights-notification-lambda/build/libs/flights-notification-lambda.jar \
+            s3://${{ secrets.LAMBDA_BUCKET }}/flights-notification-lambda.jar
+
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
             --function-name aviation-telegram-bot-flights-notification \
-            --zip-file fileb://flights-notification-lambda/build/libs/flights-notification-lambda.jar
+            --s3-bucket ${{ secrets.LAMBDA_BUCKET }} \
+            --s3-key flights-notification-lambda.jar
+
+      - name: Wait for Lambda Update
+        run: |
+          aws lambda wait function-updated \
+            --function-name aviation-telegram-bot-flights-notification
+
+      - name: Set Lambda Environment Variables
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          aws lambda update-function-configuration \
+            --function-name aviation-telegram-bot-flights-notification \
+            --environment "$(jq -n '{Variables: {
+              BOT_TOKEN: env.BOT_TOKEN,
+              DB_HOST: env.DB_HOST,
+              DB_NAME: env.DB_NAME,
+              DB_USERNAME: env.DB_USERNAME,
+              DB_PASSWORD: env.DB_PASSWORD
+            }}')"
