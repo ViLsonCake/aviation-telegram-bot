@@ -39,3 +39,9 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "flights_notification_schedule" {
+  description = "EventBridge schedule expression for the flights-notification-lambda trigger"
+  type        = string
+  default     = "rate(15 minutes)"
+}
