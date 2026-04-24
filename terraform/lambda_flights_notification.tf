@@ -21,7 +21,7 @@ resource "aws_lambda_function" "flights_notification" {
 
   environment {
     variables = {
-      FLIGHTRADAR_API_LAMBDA_NAME = aws_lambda_function.flights_notification.function_name
+      FLIGHTRADAR_API_LAMBDA_NAME = aws_lambda_function.flightradar_api_scheduled_flights.function_name
     }
   }
 
