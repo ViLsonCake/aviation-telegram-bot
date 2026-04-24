@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '4.0.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.github.goooler.shadow' version '8.1.8'
     id 'com.diffplug.spotless' version '7.0.3'
 }
 
@@ -56,7 +57,20 @@ tasks.named('test') {
 }
 
 bootJar {
+    enabled = false
+}
+
+shadowJar {
     archiveFileName = 'flights-notification-lambda.jar'
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.factories'
+    append 'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports'
+    append 'META-INF/spring/org.springframework.boot.env.EnvironmentPostProcessor.imports'
+    manifest {
+        attributes 'Start-Class': 'project.vilsoncake.flightsnotificationlambda.FlightsNotificationLambdaApplication'
+    }
 }
 
 spotless {
