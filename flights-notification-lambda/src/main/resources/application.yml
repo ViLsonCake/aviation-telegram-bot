@@ -3,6 +3,29 @@ spring:
     name: flights-notification-lambda
   main:
     web-application-type: none
+  config:
+    import: classpath:messages.yml
   cloud:
     function:
       definition: flightsNotificationHandler
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+bot:
+  token: ${BOT_TOKEN}
+  telegram-api-url: https://api.telegram.org/bot${bot.token}/sendMessage
+  telegram-api-callback-url: https://api.telegram.org/bot${bot.token}/answerCallbackQuery
+
+aws:
+  region: ${AWS_REGION:us-east-1}
+  flightradar-api-lambda-name: ${FLIGHTRADAR_API_LAMBDA_NAME}
+
+general:
+  timezone: Europe/Warsaw

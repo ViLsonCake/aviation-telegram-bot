@@ -3,6 +3,7 @@ package project.vilsoncake.common.repositories;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.configurations.GeneralConfig;
@@ -68,5 +69,19 @@ public class UserDatabaseProvider {
 
   public Optional<UserEntity> getByUsername(String username) {
     return userRepository.findByUsername(username);
+  }
+
+  public Set<UserEntity> getEligibleUsersToSendScheduledFlightsNotifications() {
+    return userRepository.findEligibleUsersToSendNotificationsByMode(
+        Set.of(BotMode.ONLY_SCHEDULED_FLIGHTS.name(), BotMode.DEFAULT.name()));
+  }
+
+  public Set<UserEntity> getEligibleUsersToSendSpecificAircraftNotifications() {
+    return userRepository.findEligibleUsersToSendNotificationsByMode(
+        Set.of(BotMode.ONLY_SPECIFIC_AIRCRAFT.name(), BotMode.DEFAULT.name()));
+  }
+
+  public Set<UserEntity> getEligibleUsersToSendNotificationsByMode(Set<String> modes) {
+    return userRepository.findEligibleUsersToSendNotificationsByMode(modes);
   }
 }

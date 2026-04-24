@@ -1,0 +1,22 @@
+templates:
+  notifications:
+    SINGLE_SCHEDULED_FLIGHT_TITLE: |-
+      ⏳ New Scheduled Wide-Body Flight to Your Airport!
+    SCHEDULED_FLIGHTS_TITLE: |-
+      ⏳ New *%s* Scheduled Wide-Body Flights to Your Airport!
+    SINGE_SCHEDULED_FLIGHT_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Registration: _%s_
+      Airline: _%s_
+      Origin airport: _%s_
+      Status: _%s_
+      Arrival time: _%s_
+    PLURAL_SCHEDULED_FLIGHT_DETAILS: |-
+      *%s. %s*
+      Callsign: _%s_
+      Registration: _%s_
+      Airline: _%s_
+      Origin airport: _%s_
+      Status: _%s_
+      Arrival time: _%s_

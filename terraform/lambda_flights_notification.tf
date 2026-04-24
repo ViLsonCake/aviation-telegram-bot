@@ -19,6 +19,12 @@ resource "aws_lambda_function" "flights_notification" {
     ignore_changes = [filename, source_code_hash]
   }
 
+  environment {
+    variables = {
+      FLIGHTRADAR_API_LAMBDA_NAME = aws_lambda_function.flights_notification.function_name
+    }
+  }
+
   tags = {
     Project   = var.project_name
     ManagedBy = "terraform"
