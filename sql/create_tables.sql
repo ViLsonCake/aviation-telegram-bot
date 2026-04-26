@@ -38,6 +38,7 @@ COMMENT ON TABLE wide_body_aircraft IS 'Table for static storing wide-body aircr
 -- Scheduled flights table
 CREATE TABLE IF NOT EXISTS scheduled_flights (
     id                                     VARCHAR(50) PRIMARY KEY,
+    row_id                                 VARCHAR(50) NOT NULL,
     aircraft_code                          VARCHAR(50) NOT NULL,
     airline_name                           VARCHAR(255) NOT NULL,
     origin_airport_icao                    VARCHAR(4) NOT NULL,

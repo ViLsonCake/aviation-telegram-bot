@@ -8,8 +8,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.clients.TelegramClient;
+import project.vilsoncake.common.entities.ScheduledFlightEntity;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.models.ScheduledFlight;
+import project.vilsoncake.common.models.ScheduledFlightNotificationFlags;
+import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.MessageType;
@@ -21,8 +24,10 @@ public class UserNotificationsSender {
   private final TelegramClient telegramClient;
   private final BotTemplatesResolver botTemplatesResolver;
   private final AircraftNameResolver aircraftNameResolver;
+  private final ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider;
   private final ScheduledFlightNotificationDatabaseProvider
       scheduledFlightNotificationDatabaseProvider;
+  private final ScheduledFlightNotificationFlagsResolver scheduledFlightNotificationFlagsResolver;
 
   // DO NOT UPDATE: increasing the number of flights per message will disable formatting due to
   // Telegram entities limitations
@@ -84,15 +89,23 @@ public class UserNotificationsSender {
       messageBuilder.append(NEW_LINE).append(NEW_LINE).append(scheduledFlightDetails);
       flightsInCurrentMessage++;
     }
-
     messages.add(messageBuilder.toString());
 
-    telegramClient.sendMessages(user.getChatId(), messages);
+    saveNotifications(unnotifiedScheduledFlights, user);
 
-    for (ScheduledFlight scheduledFlight : unnotifiedScheduledFlights) {
-      scheduledFlightNotificationDatabaseProvider.saveNotification(scheduledFlight, user);
+    telegramClient.sendMessages(user.getChatId(), messages);
+  }
+
+  private void saveNotifications(List<ScheduledFlight> scheduledFlights, UserEntity user) {
+    for (ScheduledFlight scheduledFlight : scheduledFlights) {
+      ScheduledFlightEntity entity =
+          scheduledFlightDatabaseProvider.getOrCreate(scheduledFlight, user.getAirport());
+      ScheduledFlightNotificationFlags flags =
+          scheduledFlightNotificationFlagsResolver.resolve(entity);
+      scheduledFlightNotificationDatabaseProvider.saveNotification(entity, user, flags);
     }
-    log.info("All {} unnotified scheduled flights saved", unnotifiedScheduledFlights.size());
+
+    log.info("All {} unnotified scheduled flights saved", scheduledFlights.size());
   }
 
   private String buildScheduledFlightMessage(
@@ -147,7 +160,9 @@ public class UserNotificationsSender {
     return flights.stream()
         .filter(
             flight ->
-                !scheduledFlightNotificationDatabaseProvider.isNotificationSent(flight.getId()))
+                !scheduledFlightNotificationDatabaseProvider.isNotificationSent(
+                    ScheduledFlightEntity.constructId(
+                        flight.getRowId(), flight.getScheduledDepartureTime())))
         .toList();
   }
 }
