@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ScheduledFlight {
 
-  @JsonProperty("id")
-  private String id;
+  @JsonProperty("row_id")
+  private String rowId;
 
   @JsonProperty("aircraft_code")
   private String aircraftCode;

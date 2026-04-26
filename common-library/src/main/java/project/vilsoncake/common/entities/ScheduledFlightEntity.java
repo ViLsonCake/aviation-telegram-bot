@@ -6,6 +6,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
@@ -23,10 +24,15 @@ import lombok.Setter;
 @Builder(setterPrefix = "with")
 public class ScheduledFlightEntity {
 
+  private static final String DELIMITER = "_";
+
   @Id
   @Setter(lombok.AccessLevel.NONE)
   @Column(name = "id", nullable = false, updatable = false)
   private String id;
+
+  @Column(name = "row_id", nullable = false)
+  private String rowId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "aircraft_code", nullable = false)
@@ -63,4 +69,13 @@ public class ScheduledFlightEntity {
 
   @Column(name = "estimated_arrival_time")
   private ZonedDateTime estimatedArrivalTime;
+
+  @PrePersist
+  private void setId() {
+    this.id = this.rowId + DELIMITER + this.scheduledDepartureTime.toEpochSecond();
+  }
+
+  public static String constructId(String rowId, int scheduledDepartureTime) {
+    return rowId + DELIMITER + scheduledDepartureTime;
+  }
 }

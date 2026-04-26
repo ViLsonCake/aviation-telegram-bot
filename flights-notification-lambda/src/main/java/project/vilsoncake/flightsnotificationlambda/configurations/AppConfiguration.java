@@ -10,6 +10,7 @@ import project.vilsoncake.common.configurations.BotConfig;
 import project.vilsoncake.common.configurations.GeneralConfig;
 import project.vilsoncake.common.configurations.NotificationsConfig;
 import project.vilsoncake.common.repositories.AirportRepository;
+import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationRepository;
 import project.vilsoncake.common.repositories.ScheduledFlightRepository;
@@ -23,6 +24,7 @@ import project.vilsoncake.flightsnotificationlambda.processors.NotificationTypeP
 import project.vilsoncake.flightsnotificationlambda.processors.ScheduledFlightsNotificationTypeProcessor;
 import project.vilsoncake.flightsnotificationlambda.services.AircraftNameResolver;
 import project.vilsoncake.flightsnotificationlambda.services.BotTemplatesResolver;
+import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightNotificationFlagsResolver;
 import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.NotificationTypeAdapter;
@@ -109,18 +111,28 @@ public class AppConfiguration {
       TelegramClient telegramClient,
       BotTemplatesResolver botTemplatesResolver,
       AircraftNameResolver aircraftNameResolver,
-      ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider) {
+      ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider,
+      ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
+      ScheduledFlightNotificationFlagsResolver scheduledFlightNotificationFlagsResolver) {
     return UserNotificationsSender.create(
         telegramClient,
         botTemplatesResolver,
         aircraftNameResolver,
-        scheduledFlightNotificationDatabaseProvider);
+        scheduledFlightDatabaseProvider,
+        scheduledFlightNotificationDatabaseProvider,
+        scheduledFlightNotificationFlagsResolver);
   }
 
   @Bean
   public AircraftNameResolver aircraftNameResolver(
       WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider) {
     return AircraftNameResolver.create(widebodyAircraftDatabaseProvider);
+  }
+
+  @Bean
+  public ScheduledFlightNotificationFlagsResolver scheduledFlightNotificationFlagsResolver(
+      NotificationsConfig notificationsConfig) {
+    return ScheduledFlightNotificationFlagsResolver.create(notificationsConfig);
   }
 
   // Database
@@ -137,18 +149,18 @@ public class AppConfiguration {
   }
 
   @Bean
-  public ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider(
-      ScheduledFlightNotificationRepository scheduledFlightNotificationRepository,
+  public ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider(
       ScheduledFlightRepository scheduledFlightRepository,
       AirportRepository airportRepository,
-      WidebodyAircraftRepository widebodyAircraftRepository,
-      NotificationsConfig notificationsConfig) {
-    return new ScheduledFlightNotificationDatabaseProvider(
-        scheduledFlightNotificationRepository,
-        scheduledFlightRepository,
-        airportRepository,
-        widebodyAircraftRepository,
-        notificationsConfig);
+      WidebodyAircraftRepository widebodyAircraftRepository) {
+    return new ScheduledFlightDatabaseProvider(
+        scheduledFlightRepository, airportRepository, widebodyAircraftRepository);
+  }
+
+  @Bean
+  public ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider(
+      ScheduledFlightNotificationRepository scheduledFlightNotificationRepository) {
+    return new ScheduledFlightNotificationDatabaseProvider(scheduledFlightNotificationRepository);
   }
 
   // Other required beans
