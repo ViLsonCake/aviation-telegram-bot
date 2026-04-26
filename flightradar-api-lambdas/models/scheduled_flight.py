@@ -16,10 +16,7 @@ class ScheduledFlight:
     estimated_arrival_time: int
 
     def __init__(self, row_flight: dict):
-        self.id: str = row_flight['flight']['identification']['id']
-
-        if self.id is None:
-            self.id = str(row_flight['flight']['identification']['row'])
+        self.row_id: str = str(row_flight['flight']['identification']['row'])
 
         self.origin_airport_name: str = row_flight['flight']['airport']['origin']['name']
         self.origin_airport_iata: str = row_flight['flight']['airport']['origin']['code']['iata']
