@@ -1,5 +1,7 @@
 package project.vilsoncake.flightsnotificationlambda.services;
 
+import static project.vilsoncake.common.utils.BotMessagesUtils.getValueOrUnknown;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -150,10 +152,6 @@ public class UserNotificationsSender {
         getValueOrUnknown(scheduledFlight.getOriginAirportName()),
         getValueOrUnknown(scheduledFlight.getStatus()),
         getValueOrUnknown(formattedScheduledArrivalTime));
-  }
-
-  private String getValueOrUnknown(String value) {
-    return value != null && !value.isBlank() ? value : "Unknown";
   }
 
   private List<ScheduledFlight> getUnnotifiedScheduledFlights(List<ScheduledFlight> flights) {

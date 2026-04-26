@@ -1,5 +1,7 @@
 package project.vilsoncake.common.repositories;
 
+import static project.vilsoncake.common.utils.BotMessagesUtils.getValueOrUnknown;
+
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -54,15 +56,15 @@ public class ScheduledFlightDatabaseProvider {
             : null;
 
     return ScheduledFlightEntity.builder()
-        .withRowId(scheduledFlight.getRowId())
+        .withRowId(getValueOrUnknown(scheduledFlight.getRowId()))
         .withAircraft(aircraft)
-        .withAirlineName(scheduledFlight.getAirlineName())
+        .withAirlineName(getValueOrUnknown(scheduledFlight.getAirlineName()))
         .withOriginAirport(originAirport)
         .withDestinationAirport(destinationAirport)
-        .withCallsign(scheduledFlight.getCallsign())
-        .withRegistration(scheduledFlight.getRegistration())
+        .withCallsign(getValueOrUnknown(scheduledFlight.getCallsign()))
+        .withRegistration(getValueOrUnknown(scheduledFlight.getRegistration()))
         .withLive(scheduledFlight.getLive())
-        .withStatus(scheduledFlight.getStatus())
+        .withStatus(getValueOrUnknown(scheduledFlight.getStatus()))
         .withScheduledDepartureTime(
             ZonedDateTime.ofInstant(
                 Instant.ofEpochSecond(scheduledFlight.getScheduledDepartureTime()), airportZone))
