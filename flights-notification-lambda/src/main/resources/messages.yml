@@ -1,9 +1,9 @@
 templates:
   notifications:
     SINGLE_SCHEDULED_FLIGHT_TITLE: |-
-      ⏳ New Scheduled Wide-Body Flight to Your Airport!
+      ⏳ There is a new Scheduled Wide-Body Flight to Your Airport!
     SCHEDULED_FLIGHTS_TITLE: |-
-      ⏳ New *%s* Scheduled Wide-Body Flights to Your Airport!
+      ⏳ There are *%s* new Scheduled Wide-Body Flights to Your Airport!
     SINGE_SCHEDULED_FLIGHT_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
