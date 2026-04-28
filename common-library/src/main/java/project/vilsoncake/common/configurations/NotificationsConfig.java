@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NotificationsConfig {
   private int arrivingSoonRemainingMinutes;
+  private int etaChangedThresholdMinutes;
 }

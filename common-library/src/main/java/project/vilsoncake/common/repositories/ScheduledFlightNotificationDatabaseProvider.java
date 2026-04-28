@@ -1,11 +1,15 @@
 package project.vilsoncake.common.repositories;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import project.vilsoncake.common.entities.ScheduledFlightEntity;
 import project.vilsoncake.common.entities.ScheduledFlightNotificationEntity;
 import project.vilsoncake.common.entities.UserEntity;
+import project.vilsoncake.common.entities.enums.BotMode;
+import project.vilsoncake.common.models.FlightStatus;
 import project.vilsoncake.common.models.ScheduledFlightNotificationFlags;
 
 @RequiredArgsConstructor
@@ -15,6 +19,14 @@ public class ScheduledFlightNotificationDatabaseProvider {
 
   public boolean isNotificationSent(String flightId) {
     return scheduledFlightNotificationRepository.existsByScheduledFlightId(flightId);
+  }
+
+  public List<ScheduledFlightNotificationEntity> findActiveForEligibleUsers() {
+    return scheduledFlightNotificationRepository.findActiveForEligibleUsers(
+        Set.of(BotMode.DEFAULT, BotMode.ONLY_SCHEDULED_FLIGHTS),
+        Set.of(
+            FlightStatus.LANDED.getFlightradarName(), FlightStatus.CANCELLED.getFlightradarName()),
+        ZonedDateTime.now().minusHours(24));
   }
 
   @Transactional
@@ -31,7 +43,13 @@ public class ScheduledFlightNotificationDatabaseProvider {
             .withNotifiedCancelled(flags.notifiedCancelled())
             .withNotifiedDiverted(flags.notifiedDiverted())
             .withNotifiedArrivingSoon(flags.notifiedArrivingSoon())
+            .withNotifiedLive(false)
             .build();
     scheduledFlightNotificationRepository.save(notification);
+  }
+
+  @Transactional
+  public void updateStatusChangeFlags(ScheduledFlightNotificationEntity entity) {
+    scheduledFlightNotificationRepository.save(entity);
   }
 }

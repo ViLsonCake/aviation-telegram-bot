@@ -20,10 +20,12 @@ import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftRepository;
 import project.vilsoncake.flightsnotificationlambda.handlers.FlightsNotificationTriggerHandler;
 import project.vilsoncake.flightsnotificationlambda.models.BotTemplates;
+import project.vilsoncake.flightsnotificationlambda.processors.FlightStatusChangeNotificationTypeProcessor;
 import project.vilsoncake.flightsnotificationlambda.processors.NotificationTypeProcessor;
 import project.vilsoncake.flightsnotificationlambda.processors.ScheduledFlightsNotificationTypeProcessor;
 import project.vilsoncake.flightsnotificationlambda.services.AircraftNameResolver;
 import project.vilsoncake.flightsnotificationlambda.services.BotTemplatesResolver;
+import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeSender;
 import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightNotificationFlagsResolver;
 import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
@@ -72,6 +74,19 @@ public class AppConfiguration {
   }
 
   // Processors
+  @Bean
+  public FlightStatusChangeNotificationTypeProcessor flightStatusChangeNotificationTypeProcessor(
+      ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
+      WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
+      FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
+      FlightStatusChangeSender flightStatusChangeSender) {
+    return FlightStatusChangeNotificationTypeProcessor.create(
+        scheduledFlightNotificationDatabaseProvider,
+        widebodyAircraftDatabaseProvider,
+        flightradarApiLambdaAdapter,
+        flightStatusChangeSender);
+  }
+
   @Bean
   public ScheduledFlightsNotificationTypeProcessor scheduledFlightsNotificationTypeProcessor(
       UserDatabaseProvider userDatabaseProvider,
@@ -133,6 +148,23 @@ public class AppConfiguration {
   public ScheduledFlightNotificationFlagsResolver scheduledFlightNotificationFlagsResolver(
       NotificationsConfig notificationsConfig) {
     return ScheduledFlightNotificationFlagsResolver.create(notificationsConfig);
+  }
+
+  @Bean
+  public FlightStatusChangeSender flightStatusChangeSender(
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver,
+      AircraftNameResolver aircraftNameResolver,
+      ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
+      ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider,
+      NotificationsConfig notificationsConfig) {
+    return FlightStatusChangeSender.create(
+        telegramClient,
+        botTemplatesResolver,
+        aircraftNameResolver,
+        scheduledFlightNotificationDatabaseProvider,
+        scheduledFlightDatabaseProvider,
+        notificationsConfig);
   }
 
   // Database

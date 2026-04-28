@@ -21,3 +21,27 @@ resource "aws_lambda_permission" "allow_eventbridge_flights_notification" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.flights_notification_schedule.arn
 }
+
+resource "aws_cloudwatch_event_rule" "flights_status_change_schedule" {
+  name                = "${var.project_name}-flights-status-change-schedule"
+  schedule_expression = var.flights_status_change_schedule
+
+  tags = {
+    Project   = var.project_name
+    ManagedBy = "terraform"
+  }
+}
+
+resource "aws_cloudwatch_event_target" "flights_status_change_target" {
+  rule  = aws_cloudwatch_event_rule.flights_status_change_schedule.name
+  arn   = aws_lambda_function.flights_notification.arn
+  input = jsonencode({ type = "FLIGHT_STATUS_CHANGE" })
+}
+
+resource "aws_lambda_permission" "allow_eventbridge_flights_status_change" {
+  statement_id  = "AllowEventBridgeInvokeFlightsStatusChange"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.flights_notification.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.flights_status_change_schedule.arn
+}

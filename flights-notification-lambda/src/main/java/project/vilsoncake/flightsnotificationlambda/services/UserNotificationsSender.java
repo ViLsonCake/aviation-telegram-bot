@@ -3,7 +3,9 @@ package project.vilsoncake.flightsnotificationlambda.services;
 import static project.vilsoncake.common.utils.BotMessagesUtils.getValueOrUnknown;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,10 +117,10 @@ public class UserNotificationsSender {
     String aircraftName =
         aircraftNameResolver.getAircraftName(
             scheduledFlight.getAircraftCode(), scheduledFlight.getAircraftName());
-    String formattedScheduledArrivalTime =
+    ZonedDateTime arrivalDateTime =
         Instant.ofEpochSecond(scheduledFlight.getScheduledArrivalTime())
-            .atZone(ZoneId.of(timezone))
-            .format(DateTimeFormatter.ofPattern("HH:mm"));
+            .atZone(ZoneId.of(timezone));
+    String formattedScheduledArrivalTime = formatArrivalWithDay(arrivalDateTime);
     return String.format(
         scheduledFlightTemplate,
         aircraftName,
@@ -138,10 +140,10 @@ public class UserNotificationsSender {
     String aircraftName =
         aircraftNameResolver.getAircraftName(
             scheduledFlight.getAircraftCode(), scheduledFlight.getAircraftName());
-    String formattedScheduledArrivalTime =
+    ZonedDateTime arrivalDateTime =
         Instant.ofEpochSecond(scheduledFlight.getScheduledArrivalTime())
-            .atZone(ZoneId.of(timezone))
-            .format(DateTimeFormatter.ofPattern("HH:mm"));
+            .atZone(ZoneId.of(timezone));
+    String formattedScheduledArrivalTime = formatArrivalWithDay(arrivalDateTime);
     return String.format(
         scheduledFlightTemplate,
         listNumber,
@@ -152,6 +154,13 @@ public class UserNotificationsSender {
         getValueOrUnknown(scheduledFlight.getOriginAirportName()),
         getValueOrUnknown(scheduledFlight.getStatus()),
         getValueOrUnknown(formattedScheduledArrivalTime));
+  }
+
+  private String formatArrivalWithDay(ZonedDateTime arrivalTime) {
+    LocalDate today = LocalDate.now(arrivalTime.getZone());
+    String time = arrivalTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+    String dayLabel = arrivalTime.toLocalDate().equals(today) ? "today" : "tomorrow";
+    return time + " (" + dayLabel + ")";
   }
 
   private List<ScheduledFlight> getUnnotifiedScheduledFlights(List<ScheduledFlight> flights) {

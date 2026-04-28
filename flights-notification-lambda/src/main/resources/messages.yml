@@ -20,3 +20,40 @@ templates:
       Origin airport: _%s_
       Status: _%s_
       Arrival time: _%s_
+    FLIGHT_LIVE_NOTIFICATION: |-
+      ✈️ A Wide-Body Flight to Your Airport Has Departed!
+    FLIGHT_LIVE_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Registration: _%s_
+      Airline: _%s_
+      Origin airport: _%s_
+      Estimated arrival: _%s_
+    FLIGHT_DELAYED_NOTIFICATION: |-
+      🟠 A Wide-Body Flight to Your Airport Is Delayed
+    FLIGHT_DELAYED_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Airline: _%s_
+      Estimated arrival: _%s_
+    FLIGHT_CANCELLED_NOTIFICATION: |-
+      🔴 A Wide-Body Flight to Your Airport Has Been Cancelled
+    FLIGHT_CANCELLED_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Airline: _%s_
+    FLIGHT_ETA_DELAYED_NOTIFICATION: |-
+      🟠 ETA delayed by *%s* for a Wide-Body Flight to Your Airport
+    FLIGHT_ETA_EARLIER_NOTIFICATION: |-
+      🟢 Arrival time changed to *%s* earlier for a Wide-Body Flight to Your Airport
+    FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Estimated arrival: _%s_
+    FLIGHT_ARRIVING_SOON_NOTIFICATION: |-
+      🛬 A Wide-Body Flight Is Arriving at Your Airport Soon!
+    FLIGHT_ARRIVING_SOON_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Airline: _%s_
+      Estimated arrival: _%s_
