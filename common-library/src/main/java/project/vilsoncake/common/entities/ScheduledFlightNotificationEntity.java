@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,4 +37,10 @@ public class ScheduledFlightNotificationEntity extends FlightNotificationEntity 
 
   @Column(name = "notified_arriving_soon")
   private Boolean notifiedArrivingSoon;
+
+  @Column(name = "notified_live")
+  private Boolean notifiedLive;
+
+  @Column(name = "last_notified_eta")
+  private ZonedDateTime lastNotifiedEstimatedArrivalTime;
 }

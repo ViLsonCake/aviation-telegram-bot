@@ -47,7 +47,8 @@ jobs:
           TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
           TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
-          TF_VAR_flights_notification_schedule: ${{ secrets.FLIGHTS_NOTIFICATION_SCHEDULE }}
+          TF_VAR_flights_notification_schedule: ${{ vars.SCHEDULED_FLIGHTS_NOTIFICATION_SCHEDULE }}
+          TF_VAR_flights_status_change_schedule: ${{ vars.FLIGHTS_STATUS_CHANGE_NOTIFICATION_SCHEDULE }}
         run: terraform plan
 
       - name: Terraform Apply
@@ -58,5 +59,6 @@ jobs:
           TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
           TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
           TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
-          TF_VAR_flights_notification_schedule: ${{ secrets.FLIGHTS_NOTIFICATION_SCHEDULE }}
+          TF_VAR_flights_notification_schedule: ${{ vars.SCHEDULED_FLIGHTS_NOTIFICATION_SCHEDULE }}
+          TF_VAR_flights_status_change_schedule: ${{ vars.FLIGHTS_STATUS_CHANGE_NOTIFICATION_SCHEDULE }}
         run: terraform apply -auto-approve

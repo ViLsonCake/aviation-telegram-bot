@@ -32,3 +32,4 @@ general:
 
 notifications:
   arriving-soon-remaining-minutes: 25
+  eta-changed-threshold-minutes: 40

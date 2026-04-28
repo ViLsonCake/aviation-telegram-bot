@@ -45,3 +45,9 @@ variable "flights_notification_schedule" {
   type        = string
   default     = "rate(15 minutes)"
 }
+
+variable "flights_status_change_schedule" {
+  description = "EventBridge schedule expression for the flight status change check trigger"
+  type        = string
+  default     = "rate(5 minutes)"
+}

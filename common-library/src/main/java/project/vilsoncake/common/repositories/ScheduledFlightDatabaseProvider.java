@@ -74,4 +74,17 @@ public class ScheduledFlightDatabaseProvider {
         .withEstimatedArrivalTime(estimatedArrivalTime)
         .build();
   }
+
+  @Transactional
+  public void updateFlightState(ScheduledFlightEntity entity, ScheduledFlight currentFlight) {
+    ZoneId airportZone = ZoneId.of(entity.getDestinationAirport().getTimezone());
+    entity.setLive(currentFlight.getLive());
+    entity.setStatus(getValueOrUnknown(currentFlight.getStatus()));
+    entity.setEstimatedArrivalTime(
+        currentFlight.getEstimatedArrivalTime() != null
+            ? ZonedDateTime.ofInstant(
+                Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone)
+            : null);
+    scheduledFlightRepository.save(entity);
+  }
 }
