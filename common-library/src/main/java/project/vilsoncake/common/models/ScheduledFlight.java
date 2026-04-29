@@ -10,6 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ScheduledFlight {
 
+  /** Internal generic FR24 ID assigned only to the live flights, could be null, required to create a link to the live flight. */
+  @JsonProperty("id")
+  private String id;
+
+  /** Internal row FR24 ID, always present for flight. */
   @JsonProperty("row_id")
   private String rowId;
 
