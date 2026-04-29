@@ -54,7 +54,9 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
 
     Map<String, AirportResponse> filteredFlightsForAirports =
         flightradarApiLambdaAdapter.getFilteredFlightsForAirports(airportRequests);
+    log.info("Received aircraft from Flightradar API");
 
+    log.info("Starting notifying users for scheduled flights");
     notifyUsers(eligibleUsers, filteredFlightsForAirports);
 
     log.info("Finished processing scheduled flights notifications");
