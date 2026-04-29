@@ -122,8 +122,7 @@ public class TelegramClient {
     }
   }
 
-  private static final Pattern MARKDOWN_LINK_PATTERN =
-      Pattern.compile("\\[([^]]+)]\\(([^)]+)\\)");
+  private static final Pattern MARKDOWN_LINK_PATTERN = Pattern.compile("\\[([^]]+)]\\(([^)]+)\\)");
 
   /** Normalize message text for Telegram API MarkdownV2 format. */
   private String normalizeMessageText(String messageText) {
