@@ -23,6 +23,7 @@ bot:
   token: ${BOT_TOKEN}
   telegram-api-url: https://api.telegram.org/bot${BOT_TOKEN}/sendMessage
   telegram-api-callback-url: https://api.telegram.org/bot${BOT_TOKEN}/answerCallbackQuery
+  telegram-api-media-group-url: https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup
 
 general:
   timezone: Europe/Warsaw

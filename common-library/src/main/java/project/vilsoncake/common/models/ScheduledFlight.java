@@ -1,6 +1,7 @@
 package project.vilsoncake.common.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -62,4 +63,7 @@ public class ScheduledFlight {
 
   @JsonProperty("estimated_arrival_time")
   private Integer estimatedArrivalTime;
+
+  @JsonProperty("images")
+  private List<FlightImage> images;
 }

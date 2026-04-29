@@ -22,6 +22,7 @@ bot:
   token: ${BOT_TOKEN}
   telegram-api-url: https://api.telegram.org/bot${bot.token}/sendMessage
   telegram-api-callback-url: https://api.telegram.org/bot${bot.token}/answerCallbackQuery
+  telegram-api-media-group-url: https://api.telegram.org/bot${bot.token}/sendMediaGroup
 
 aws:
   region: ${AWS_REGION:us-east-1}

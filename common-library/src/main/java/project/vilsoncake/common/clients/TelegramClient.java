@@ -11,9 +11,12 @@ import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.telegram.AnswerCallbackQueryRequest;
 import project.vilsoncake.common.clients.telegram.InlineKeyboardMarkup;
+import project.vilsoncake.common.clients.telegram.InputMediaPhoto;
+import project.vilsoncake.common.clients.telegram.SendMediaGroupRequest;
 import project.vilsoncake.common.clients.telegram.SendMessageRequest;
 import project.vilsoncake.common.clients.telegram.TelegramRequest;
 import project.vilsoncake.common.configurations.BotConfig;
+import project.vilsoncake.common.models.FlightImage;
 import tools.jackson.databind.ObjectMapper;
 
 /** Telegram HTTP client to interact with Telegram API. */
@@ -26,6 +29,12 @@ public class TelegramClient {
 
   // DO NOT UPDATE: strict Telegram API limit
   private static final int MAX_MESSAGE_LENGTH = 4096;
+
+  // DO NOT UPDATE: strict Telegram API limit for media group captions
+  private static final int MAX_CAPTION_LENGTH = 1024;
+
+  // DO NOT UPDATE: strict Telegram API limit for media group size
+  private static final int MAX_MEDIA_GROUP_SIZE = 10;
 
   /**
    * Sends multiple plain text messages to Telegram API following the order.
@@ -77,6 +86,38 @@ public class TelegramClient {
             .withReplyMarkup(replyMarkup)
             .build();
     dispatchMessage(request);
+  }
+
+  /**
+   * Sends a media group (album) of photos with the message text as caption on the first photo.
+   * Falls back to a plain text message if images list is null or empty.
+   *
+   * @param chatId chat id to send to
+   * @param messageText text to use as caption (or plain message if no images)
+   * @param images list of flight images
+   */
+  public void sendMessageWithImages(long chatId, String messageText, List<FlightImage> images) {
+    if (images == null || images.isEmpty()) {
+      sendMessage(chatId, messageText);
+      return;
+    }
+
+    String caption = normalizeMessageText(messageText);
+    if (caption.length() > MAX_CAPTION_LENGTH) {
+      caption = caption.substring(0, MAX_CAPTION_LENGTH);
+    }
+
+    List<InputMediaPhoto> media = new ArrayList<>();
+    List<FlightImage> capped = images.subList(0, Math.min(images.size(), MAX_MEDIA_GROUP_SIZE));
+    for (int i = 0; i < capped.size(); i++) {
+      media.add(
+          i == 0
+              ? new InputMediaPhoto(capped.get(i).getSrc(), caption)
+              : new InputMediaPhoto(capped.get(i).getSrc()));
+    }
+
+    SendMediaGroupRequest request = new SendMediaGroupRequest(chatId, media);
+    dispatch(request, botConfig.getTelegramApiMediaGroupUrl());
   }
 
   public void answerCallbackQuery(String callbackQueryId) {
