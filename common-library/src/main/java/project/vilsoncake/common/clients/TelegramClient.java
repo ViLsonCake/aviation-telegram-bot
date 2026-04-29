@@ -4,7 +4,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.telegram.AnswerCallbackQueryRequest;
 import project.vilsoncake.common.clients.telegram.InlineKeyboardMarkup;
@@ -119,26 +122,47 @@ public class TelegramClient {
     }
   }
 
+  private static final Pattern MARKDOWN_LINK_PATTERN =
+      Pattern.compile("\\[([^]]+)]\\(([^)]+)\\)");
+
   /** Normalize message text for Telegram API MarkdownV2 format. */
   private String normalizeMessageText(String messageText) {
-    return messageText
-        .replace("[", "\\[")
-        .replace("]", "\\]")
-        .replace("(", "\\(")
-        .replace(")", "\\)")
-        .replace("~", "\\~")
-        .replace("`", "\\`")
-        .replace(">", "\\>")
-        .replace("#", "\\#")
-        .replace("+", "\\+")
-        .replace("-", "\\-")
-        .replace("=", "\\=")
-        .replace("|", "\\|")
-        .replace("{", "\\{")
-        .replace("}", "\\}")
-        .replace(".", "\\.")
-        .replace("!", "\\!")
-        .replace("\"", "\\\"");
+    Matcher matcher = MARKDOWN_LINK_PATTERN.matcher(messageText);
+    List<String> links = new ArrayList<>();
+    StringBuilder withPlaceholders = new StringBuilder();
+
+    while (matcher.find()) {
+      links.add("[" + matcher.group(1) + "](" + matcher.group(2) + ")");
+      matcher.appendReplacement(withPlaceholders, "__MDLINK" + (links.size() - 1) + "__");
+    }
+    matcher.appendTail(withPlaceholders);
+
+    String escaped =
+        withPlaceholders
+            .toString()
+            .replace("[", "\\[")
+            .replace("]", "\\]")
+            .replace("(", "\\(")
+            .replace(")", "\\)")
+            .replace("~", "\\~")
+            .replace("`", "\\`")
+            .replace(">", "\\>")
+            .replace("#", "\\#")
+            .replace("+", "\\+")
+            .replace("-", "\\-")
+            .replace("=", "\\=")
+            .replace("|", "\\|")
+            .replace("{", "\\{")
+            .replace("}", "\\}")
+            .replace(".", "\\.")
+            .replace("!", "\\!")
+            .replace("\"", "\\\"");
+
+    for (int i = 0; i < links.size(); i++) {
+      escaped = escaped.replace("__MDLINK" + i + "__", links.get(i));
+    }
+
+    return escaped;
   }
 
   public static class TelegramClientException extends RuntimeException {
