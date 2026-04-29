@@ -64,7 +64,7 @@ public class FlightStatusChangeSender {
                   currentFlight.getRegistration(),
                   currentFlight.getCallsign(),
                   currentFlight.getId());
-      telegramClient.sendMessages(chatId, List.of(message));
+      telegramClient.sendMessageWithImages(chatId, message, currentFlight.getImages());
       notificationEntity.setNotifiedLive(true);
       if (currentFlight.getEstimatedArrivalTime() != null) {
         notificationEntity.setLastNotifiedEstimatedArrivalTime(
@@ -160,7 +160,7 @@ public class FlightStatusChangeSender {
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),
                     currentFlight.getId());
-        telegramClient.sendMessage(chatId, message);
+        telegramClient.sendMessageWithImages(chatId, message, currentFlight.getImages());
         notificationEntity.setLastNotifiedEstimatedArrivalTime(currentEta);
         changed = true;
         log.info(
@@ -195,7 +195,7 @@ public class FlightStatusChangeSender {
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),
                     currentFlight.getId());
-        telegramClient.sendMessages(chatId, List.of(message));
+        telegramClient.sendMessageWithImages(chatId, message, currentFlight.getImages());
         notificationEntity.setNotifiedArrivingSoon(true);
         changed = true;
         log.info(
