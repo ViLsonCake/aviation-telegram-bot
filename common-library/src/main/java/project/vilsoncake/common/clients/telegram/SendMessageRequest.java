@@ -17,15 +17,23 @@ public class SendMessageRequest implements TelegramRequest {
   @JsonProperty("parse_mode")
   private final String parseMode;
 
+  @JsonProperty("disable_web_page_preview")
+  private final boolean disableWebPagePreview;
+
   @JsonInclude(JsonInclude.Include.NON_NULL)
   @JsonProperty("reply_markup")
   private final InlineKeyboardMarkup replyMarkup;
 
   private SendMessageRequest(
-      long chatId, String text, String parseMode, InlineKeyboardMarkup replyMarkup) {
+      long chatId,
+      String text,
+      String parseMode,
+      boolean disableWebPagePreview,
+      InlineKeyboardMarkup replyMarkup) {
     this.chatId = chatId;
     this.text = text;
     this.parseMode = parseMode;
+    this.disableWebPagePreview = disableWebPagePreview;
     this.replyMarkup = replyMarkup;
   }
 
@@ -57,7 +65,7 @@ public class SendMessageRequest implements TelegramRequest {
     }
 
     public SendMessageRequest build() {
-      return new SendMessageRequest(chatId, text, DEFAULT_PARSE_MODE, replyMarkup);
+      return new SendMessageRequest(chatId, text, DEFAULT_PARSE_MODE, true, replyMarkup);
     }
   }
 }
