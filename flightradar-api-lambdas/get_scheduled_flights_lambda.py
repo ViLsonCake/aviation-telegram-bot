@@ -2,7 +2,7 @@ import logging
 
 from FlightRadar24 import FlightRadar24API
 from FlightRadar24.errors import AirportNotFoundError
-from utils.flight_utils import filter_flights_by_aircraft_code
+from utils.flight_utils import filter_flights_by_aircraft_code, convert_images_to_dict
 from models.scheduled_flight import ScheduledFlight
 
 flightradar_api: FlightRadar24API = FlightRadar24API()
@@ -34,13 +34,15 @@ def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]
         return {'flights': []}
 
     arrivals: list = details['airport']['pluginData']['schedule']['arrivals']['data']
-    row_filtered_arrivals: list = filter_flights_by_aircraft_code(arrivals, aircraft_filter_codes)
+    aircraft_images: list = details['aircraftImages']
+    raw_filtered_arrivals: list = filter_flights_by_aircraft_code(arrivals, aircraft_filter_codes)
+    converted_aircraft_images: dict = convert_images_to_dict(aircraft_images)
 
     arrivals_count: int = len(arrivals)
-    filtered_arrivals_count: int = len(row_filtered_arrivals)
+    filtered_arrivals_count: int = len(raw_filtered_arrivals)
 
     return {
         'arrivals_count': arrivals_count,
         'filtered_arrivals_count': filtered_arrivals_count,
-        'flights': [vars(ScheduledFlight(flight)) for flight in row_filtered_arrivals]
+        'flights': [vars(ScheduledFlight(flight, converted_aircraft_images)) for flight in raw_filtered_arrivals]
     }
