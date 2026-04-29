@@ -44,8 +44,12 @@ public class FlightStatusChangeSender {
 
     boolean changed = false;
 
-    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedLive()) && currentFlight.getLive()) {
-      String eta = resolveEtaLabel(currentFlight.getEstimatedArrivalTime(), airportZone);
+    if (Boolean.FALSE.equals(notificationEntity.getNotifiedLive()) && currentFlight.getLive()) {
+      String eta =
+          resolveEtaLabel(
+              currentFlight.getEstimatedArrivalTime(),
+              currentFlight.getScheduledArrivalTime(),
+              airportZone);
       String message =
           botTemplatesResolver.getTemplate(MessageType.FLIGHT_LIVE_NOTIFICATION)
               + "\n\n"
@@ -56,7 +60,10 @@ public class FlightStatusChangeSender {
                   getValueOrUnknown(currentFlight.getRegistration()),
                   getValueOrUnknown(currentFlight.getAirlineName()),
                   getValueOrUnknown(currentFlight.getOriginAirportName()),
-                  eta);
+                  eta,
+                  currentFlight.getRegistration(),
+                  currentFlight.getCallsign(),
+                  currentFlight.getId());
       telegramClient.sendMessages(chatId, List.of(message));
       notificationEntity.setNotifiedLive(true);
       if (currentFlight.getEstimatedArrivalTime() != null) {
@@ -76,7 +83,11 @@ public class FlightStatusChangeSender {
 
     if (Boolean.FALSE.equals(notificationEntity.getNotifiedDelayed())
         && currentFlight.getStatus().startsWith(FlightStatus.DELAYED.getFlightradarName())) {
-      String eta = resolveEtaLabel(currentFlight.getEstimatedArrivalTime(), airportZone);
+      String eta =
+          resolveEtaLabel(
+              currentFlight.getEstimatedArrivalTime(),
+              currentFlight.getScheduledArrivalTime(),
+              airportZone);
       String message =
           botTemplatesResolver.getTemplate(MessageType.FLIGHT_DELAYED_NOTIFICATION)
               + "\n\n"
@@ -119,6 +130,9 @@ public class FlightStatusChangeSender {
       ZonedDateTime currentEta =
           ZonedDateTime.ofInstant(
               Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone);
+      ZonedDateTime scheduledArrivalTime =
+          ZonedDateTime.ofInstant(
+              Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
       ZonedDateTime reference =
           notificationEntity.getLastNotifiedEstimatedArrivalTime() != null
               ? notificationEntity.getLastNotifiedEstimatedArrivalTime()
@@ -141,8 +155,12 @@ public class FlightStatusChangeSender {
                         MessageType.FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS),
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
-                    formatEtaWithDay(currentEta));
-        telegramClient.sendMessages(chatId, List.of(message));
+                    formatEtaWithDay(scheduledArrivalTime),
+                    formatEtaWithDay(currentEta),
+                    currentFlight.getRegistration(),
+                    currentFlight.getCallsign(),
+                    currentFlight.getId());
+        telegramClient.sendMessage(chatId, message);
         notificationEntity.setLastNotifiedEstimatedArrivalTime(currentEta);
         changed = true;
         log.info(
@@ -173,7 +191,10 @@ public class FlightStatusChangeSender {
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
                     getValueOrUnknown(currentFlight.getAirlineName()),
-                    formatEtaWithDay(currentEta));
+                    formatEtaWithDay(currentEta),
+                    currentFlight.getRegistration(),
+                    currentFlight.getCallsign(),
+                    currentFlight.getId());
         telegramClient.sendMessages(chatId, List.of(message));
         notificationEntity.setNotifiedArrivingSoon(true);
         changed = true;
@@ -191,11 +212,13 @@ public class FlightStatusChangeSender {
     scheduledFlightDatabaseProvider.updateFlightState(scheduledFlightEntity, currentFlight);
   }
 
-  private String resolveEtaLabel(Integer etaEpoch, ZoneId airportZone) {
-    if (etaEpoch == null) {
+  private String resolveEtaLabel(
+      Integer etaEpoch, Integer scheduledArrivalEpoch, ZoneId airportZone) {
+    Integer timeToShow = etaEpoch != null ? etaEpoch : scheduledArrivalEpoch;
+    if (timeToShow == null) {
       return "Unknown";
     }
-    ZonedDateTime eta = ZonedDateTime.ofInstant(Instant.ofEpochSecond(etaEpoch), airportZone);
+    ZonedDateTime eta = ZonedDateTime.ofInstant(Instant.ofEpochSecond(timeToShow), airportZone);
     return formatEtaWithDay(eta);
   }
 

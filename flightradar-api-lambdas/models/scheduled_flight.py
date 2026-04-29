@@ -1,5 +1,6 @@
 class ScheduledFlight:
     id: str
+    row_id: str
     aircraft_code: str
     aircraft_name: str
     airline_name: str
@@ -16,6 +17,7 @@ class ScheduledFlight:
     estimated_arrival_time: int
 
     def __init__(self, row_flight: dict):
+        self.id: str = str(row_flight['flight']['identification']['id'])
         self.row_id: str = str(row_flight['flight']['identification']['row'])
 
         self.origin_airport_name: str = row_flight['flight']['airport']['origin']['name']
