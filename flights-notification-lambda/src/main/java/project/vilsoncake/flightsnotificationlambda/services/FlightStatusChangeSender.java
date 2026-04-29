@@ -44,7 +44,7 @@ public class FlightStatusChangeSender {
 
     boolean changed = false;
 
-    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedLive()) && currentFlight.getLive()) {
+    if (Boolean.FALSE.equals(notificationEntity.getNotifiedLive()) && currentFlight.getLive()) {
       String eta =
           resolveEtaLabel(
               currentFlight.getEstimatedArrivalTime(),
@@ -60,7 +60,10 @@ public class FlightStatusChangeSender {
                   getValueOrUnknown(currentFlight.getRegistration()),
                   getValueOrUnknown(currentFlight.getAirlineName()),
                   getValueOrUnknown(currentFlight.getOriginAirportName()),
-                  eta);
+                  eta,
+                  currentFlight.getRegistration(),
+                  currentFlight.getCallsign(),
+                  currentFlight.getId());
       telegramClient.sendMessages(chatId, List.of(message));
       notificationEntity.setNotifiedLive(true);
       if (currentFlight.getEstimatedArrivalTime() != null) {
@@ -127,6 +130,9 @@ public class FlightStatusChangeSender {
       ZonedDateTime currentEta =
           ZonedDateTime.ofInstant(
               Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone);
+      ZonedDateTime scheduledArrivalTime =
+          ZonedDateTime.ofInstant(
+              Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
       ZonedDateTime reference =
           notificationEntity.getLastNotifiedEstimatedArrivalTime() != null
               ? notificationEntity.getLastNotifiedEstimatedArrivalTime()
@@ -149,7 +155,11 @@ public class FlightStatusChangeSender {
                         MessageType.FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS),
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
-                    formatEtaWithDay(currentEta));
+                    formatEtaWithDay(scheduledArrivalTime),
+                    formatEtaWithDay(currentEta),
+                    currentFlight.getRegistration(),
+                    currentFlight.getCallsign(),
+                    currentFlight.getId());
         telegramClient.sendMessage(chatId, message);
         notificationEntity.setLastNotifiedEstimatedArrivalTime(currentEta);
         changed = true;
@@ -181,7 +191,10 @@ public class FlightStatusChangeSender {
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
                     getValueOrUnknown(currentFlight.getAirlineName()),
-                    formatEtaWithDay(currentEta));
+                    formatEtaWithDay(currentEta),
+                    currentFlight.getRegistration(),
+                    currentFlight.getCallsign(),
+                    currentFlight.getId());
         telegramClient.sendMessages(chatId, List.of(message));
         notificationEntity.setNotifiedArrivingSoon(true);
         changed = true;

@@ -29,6 +29,10 @@ templates:
       Airline: _%s_
       Origin airport: _%s_
       Estimated arrival: _%s_
+      
+      🛩️ [Aircraft info](https://www.flightradar24.com/data/aircraft/%s)
+
+      📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
     FLIGHT_DELAYED_NOTIFICATION: |-
       🟠 A Wide-Body Flight to Your Airport Is Delayed
     FLIGHT_DELAYED_NOTIFICATION_DETAILS: |-
@@ -49,11 +53,21 @@ templates:
     FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
+      Scheduled arrival: _%s_
       Estimated arrival: _%s_
+      
+      🛩️ [Aircraft info](https://www.flightradar24.com/data/aircraft/%s)
+      
+      📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
     FLIGHT_ARRIVING_SOON_NOTIFICATION: |-
       🛬 A Wide-Body Flight Is Arriving at Your Airport Soon!
     FLIGHT_ARRIVING_SOON_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
+      Scheduled arrival: _%s_
       Estimated arrival: _%s_
+      
+      🛩️ [Aircraft info](https://www.flightradar24.com/data/aircraft/%s)
+
+      📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
