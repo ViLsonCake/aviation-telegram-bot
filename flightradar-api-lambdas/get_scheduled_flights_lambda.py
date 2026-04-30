@@ -7,8 +7,11 @@ from models.scheduled_flight import ScheduledFlight
 
 scraper = cloudscraper.create_scraper()
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
+    logger.info(f'Event received: {event}')
+
     airports: list = event.get('airports', [])
     response: dict = dict()
 
@@ -20,6 +23,8 @@ def lambda_handler(event, context):
             response[airport_code] = filtered_flights_for_airport
         except Exception as e:
             logger.error(e)
+
+    logger.info('Event successfully processed.')
 
     return response
 
