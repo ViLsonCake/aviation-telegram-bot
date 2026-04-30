@@ -13,6 +13,9 @@ def filter_flights_by_aircraft_code(raw_flights: list[dict], filter_codes: list[
     return filtered_planes_code
 
 def convert_images_to_dict(raw_aircraft_images: list[dict]) -> dict[str, list]:
+    if raw_aircraft_images is None:
+        return {}
+
     converted_images_result: dict = {}
 
     for raw_image in raw_aircraft_images:
