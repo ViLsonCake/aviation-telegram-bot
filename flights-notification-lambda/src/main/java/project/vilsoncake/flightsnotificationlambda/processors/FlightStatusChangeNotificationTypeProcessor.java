@@ -16,7 +16,7 @@ import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
 import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.FlightsNotificationType;
-import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeSender;
+import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeNotificationSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 
 @Slf4j
@@ -27,7 +27,7 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
       scheduledFlightNotificationDatabaseProvider;
   private final WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider;
   private final FlightradarApiLambdaAdapter flightradarApiLambdaAdapter;
-  private final FlightStatusChangeSender flightStatusChangeSender;
+  private final FlightStatusChangeNotificationSender flightStatusChangeNotificationSender;
 
   @Override
   public FlightsNotificationType getNotificationType() {
@@ -103,7 +103,8 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
         continue;
       }
 
-      flightStatusChangeSender.sendStatusChangeNotificationsIfNeeded(notification, currentFlight);
+      flightStatusChangeNotificationSender.sendStatusChangeNotificationsIfNeeded(
+          notification, currentFlight);
     }
 
     log.info("Finished flight status change notifications processing");

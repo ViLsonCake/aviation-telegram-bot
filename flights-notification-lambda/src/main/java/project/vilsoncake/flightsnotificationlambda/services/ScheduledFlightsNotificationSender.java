@@ -23,7 +23,7 @@ import project.vilsoncake.flightsnotificationlambda.models.MessageType;
 
 @Slf4j
 @RequiredArgsConstructor(staticName = "create")
-public class UserNotificationsSender {
+public class ScheduledFlightsNotificationSender {
 
   private final TelegramClient telegramClient;
   private final BotTemplatesResolver botTemplatesResolver;
@@ -93,6 +93,14 @@ public class UserNotificationsSender {
       messageBuilder.append(NEW_LINE).append(NEW_LINE).append(scheduledFlightDetails);
       flightsInCurrentMessage++;
     }
+
+    String scheduledFlightEndingTemplate =
+        botTemplatesResolver.getTemplate(MessageType.SCHEDULED_FLIGHTS_ENDING);
+    // Should be IATA code only, ICAO code will also work, however, will open the browser version
+    // instead of app
+    String airportCodeForLink = user.getAirport().getIata();
+    String scheduledFlightEnding = String.format(scheduledFlightEndingTemplate, airportCodeForLink);
+    messageBuilder.append(NEW_LINE).append(NEW_LINE).append(scheduledFlightEnding);
     messages.add(messageBuilder.toString());
 
     saveNotifications(unnotifiedScheduledFlights, user);
