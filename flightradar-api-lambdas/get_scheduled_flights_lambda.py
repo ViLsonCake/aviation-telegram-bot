@@ -54,7 +54,7 @@ def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]
 
     result = response_json.get("result", {}).get("response", {})
     arrivals: list = result.get('airport', {}).get('pluginData', {}).get('schedule', {}).get('arrivals', {}).get('data', [])
-    aircraft_images: list = response_json.get('aircraftImages', [])
+    aircraft_images: list = result.get('aircraftImages', [])
     raw_filtered_arrivals: list = filter_flights_by_aircraft_code(arrivals, aircraft_filter_codes)
     converted_aircraft_images: dict = convert_images_to_dict(aircraft_images)
 
