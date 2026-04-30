@@ -5,7 +5,7 @@ spring:
     import: classpath:messages.yml
   main:
     web-application-type: none
-    lazy-initialization: true
+    lazy-initialization: false
   cloud:
     function:
       definition: botCommandsHandler
