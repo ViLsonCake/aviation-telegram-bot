@@ -18,6 +18,10 @@ def lambda_handler(event, context):
     for airport in airports:
         try:
             airport_code: str = airport.get('airport_code')
+
+            if airport_code is None or airport_code == '':
+                continue
+
             aircraft_filter_codes = airport.get('aircraft_filter_codes', [])
             filtered_flights_for_airport = get_filtered_flights_for_airport(airport_code, aircraft_filter_codes)
             response[airport_code] = filtered_flights_for_airport
@@ -48,9 +52,9 @@ def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]
         logger.warning(f'The code {code} is not valid. It must be the IATA or ICAO of the airport')
         return {'flights': []}
 
-    result = response_json["result"]["response"]
-    arrivals: list = result['airport']['pluginData']['schedule']['arrivals']['data']
-    aircraft_images: list = result['aircraftImages']
+    result = response_json.get("result", {}).get("response", {})
+    arrivals: list = result.get('airport', {}).get('pluginData', {}).get('schedule', {}).get('arrivals', {}).get('data', [])
+    aircraft_images: list = response_json.get('aircraftImages', [])
     raw_filtered_arrivals: list = filter_flights_by_aircraft_code(arrivals, aircraft_filter_codes)
     converted_aircraft_images: dict = convert_images_to_dict(aircraft_images)
 
