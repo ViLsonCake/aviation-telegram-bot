@@ -60,5 +60,5 @@ def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]
     return {
         'arrivals_count': arrivals_count,
         'filtered_arrivals_count': filtered_arrivals_count,
-        'flights': [vars(ScheduledFlight(flight, converted_aircraft_images)) for flight in raw_filtered_arrivals]
+        'flights': [vars(ScheduledFlight.create_from_raw_flight(flight, converted_aircraft_images)) for flight in raw_filtered_arrivals]
     }
