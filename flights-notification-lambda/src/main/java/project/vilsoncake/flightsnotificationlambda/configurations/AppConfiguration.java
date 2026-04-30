@@ -25,9 +25,9 @@ import project.vilsoncake.flightsnotificationlambda.processors.NotificationTypeP
 import project.vilsoncake.flightsnotificationlambda.processors.ScheduledFlightsNotificationTypeProcessor;
 import project.vilsoncake.flightsnotificationlambda.services.AircraftNameResolver;
 import project.vilsoncake.flightsnotificationlambda.services.BotTemplatesResolver;
-import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeSender;
+import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeNotificationSender;
 import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightNotificationFlagsResolver;
-import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsSender;
+import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightsNotificationSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.NotificationTypeAdapter;
 import software.amazon.awssdk.regions.Region;
@@ -79,12 +79,12 @@ public class AppConfiguration {
       ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
       WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
       FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
-      FlightStatusChangeSender flightStatusChangeSender) {
+      FlightStatusChangeNotificationSender flightStatusChangeNotificationSender) {
     return FlightStatusChangeNotificationTypeProcessor.create(
         scheduledFlightNotificationDatabaseProvider,
         widebodyAircraftDatabaseProvider,
         flightradarApiLambdaAdapter,
-        flightStatusChangeSender);
+        flightStatusChangeNotificationSender);
   }
 
   @Bean
@@ -92,12 +92,12 @@ public class AppConfiguration {
       UserDatabaseProvider userDatabaseProvider,
       WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
       FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
-      UserNotificationsSender userNotificationsSender) {
+      ScheduledFlightsNotificationSender scheduledFlightsNotificationSender) {
     return ScheduledFlightsNotificationTypeProcessor.create(
         userDatabaseProvider,
         widebodyAircraftDatabaseProvider,
         flightradarApiLambdaAdapter,
-        userNotificationsSender);
+        scheduledFlightsNotificationSender);
   }
 
   // Adapters
@@ -122,14 +122,14 @@ public class AppConfiguration {
 
   // Services
   @Bean
-  public UserNotificationsSender notificationsService(
+  public ScheduledFlightsNotificationSender notificationsService(
       TelegramClient telegramClient,
       BotTemplatesResolver botTemplatesResolver,
       AircraftNameResolver aircraftNameResolver,
       ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider,
       ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
       ScheduledFlightNotificationFlagsResolver scheduledFlightNotificationFlagsResolver) {
-    return UserNotificationsSender.create(
+    return ScheduledFlightsNotificationSender.create(
         telegramClient,
         botTemplatesResolver,
         aircraftNameResolver,
@@ -151,14 +151,14 @@ public class AppConfiguration {
   }
 
   @Bean
-  public FlightStatusChangeSender flightStatusChangeSender(
+  public FlightStatusChangeNotificationSender flightStatusChangeSender(
       TelegramClient telegramClient,
       BotTemplatesResolver botTemplatesResolver,
       AircraftNameResolver aircraftNameResolver,
       ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
       ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider,
       NotificationsConfig notificationsConfig) {
-    return FlightStatusChangeSender.create(
+    return FlightStatusChangeNotificationSender.create(
         telegramClient,
         botTemplatesResolver,
         aircraftNameResolver,

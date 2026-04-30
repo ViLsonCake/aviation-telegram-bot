@@ -23,7 +23,7 @@ import project.vilsoncake.flightsnotificationlambda.models.MessageType;
 
 @Slf4j
 @RequiredArgsConstructor(staticName = "create")
-public class FlightStatusChangeSender {
+public class FlightStatusChangeNotificationSender {
 
   private final TelegramClient telegramClient;
   private final BotTemplatesResolver botTemplatesResolver;

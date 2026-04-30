@@ -20,6 +20,8 @@ templates:
       Origin airport: _%s_
       Status: _%s_
       Arrival time: _%s_
+    SCHEDULED_FLIGHTS_ENDING: |-
+      🛬 [Arrivals to your Airport](https://www.flightradar24.com/airport/%s/arrivals)
     FLIGHT_LIVE_NOTIFICATION: |-
       ✈️ A Wide-Body Flight to Your Airport Has Departed!
     FLIGHT_LIVE_NOTIFICATION_DETAILS: |-

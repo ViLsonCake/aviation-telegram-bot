@@ -14,7 +14,7 @@ import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
 import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.FlightsNotificationType;
-import project.vilsoncake.flightsnotificationlambda.services.UserNotificationsSender;
+import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightsNotificationSender;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 
 @Slf4j
@@ -24,7 +24,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
   private final UserDatabaseProvider userDatabaseProvider;
   private final WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider;
   private final FlightradarApiLambdaAdapter flightradarApiLambdaAdapter;
-  private final UserNotificationsSender userNotificationsSender;
+  private final ScheduledFlightsNotificationSender scheduledFlightsNotificationSender;
 
   @Override
   public FlightsNotificationType getNotificationType() {
@@ -74,7 +74,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
       }
 
       AirportResponse airportResponse = filteredFlightsForAirports.get(userAirportIcao);
-      userNotificationsSender.notifyScheduledFlights(user, airportResponse);
+      scheduledFlightsNotificationSender.notifyScheduledFlights(user, airportResponse);
     }
   }
 
