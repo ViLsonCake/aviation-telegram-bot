@@ -1,0 +1,92 @@
+name: CI Gate
+
+on:
+  pull_request:
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      java: ${{ steps.filter.outputs.java }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            java:
+              - "common-library/**"
+              - "bot-commands-processing-lambda/**"
+              - "flights-notification-lambda/**"
+
+  spotless-check:
+    name: Spotless Check
+    needs: detect-changes
+    if: needs.detect-changes.outputs.java == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Spotless Check - Common library
+        run: |
+          cd common-library
+          ./gradlew spotlessCheck
+
+      - name: Spotless Check - Bot commands processing lambda
+        run: |
+          cd bot-commands-processing-lambda
+          ./gradlew spotlessCheck
+
+      - name: Spotless Check - Flights notification lambda
+        run: |
+          cd flights-notification-lambda
+          ./gradlew spotlessCheck
+
+  gradle-build:
+    name: Gradle Build
+    needs: spotless-check
+    if: needs.spotless-check.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Gradle Build - Common library
+        run: |
+          cd common-library
+          ./gradlew build
+
+      - name: Gradle Build - Bot commands processing lambda
+        run: |
+          cd bot-commands-processing-lambda
+          ./gradlew build
+
+      - name: Gradle Build - Flights notification lambda
+        run: |
+          cd flights-notification-lambda
+          ./gradlew build
+
+  ci-status:
+    name: CI Status
+    needs: [detect-changes, spotless-check, gradle-build]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate result
+        run: |
+          java_changed="${{ needs.detect-changes.outputs.java }}"
+          spotless_result="${{ needs.spotless-check.result }}"
+          build_result="${{ needs.gradle-build.result }}"
+
+          if [[ "$java_changed" == 'false' ]]; then
+            echo "No Java changes — skipping Gradle checks"
+            exit 0
+          fi
+
+          if [[ "$spotless_result" == 'success' && "$build_result" == 'success' ]]; then
+            echo "Spotless and Gradle build passed"
+            exit 0
+          fi
+
+          echo "CI failed (spotless: $spotless_result, build: $build_result)"
+          exit 1
