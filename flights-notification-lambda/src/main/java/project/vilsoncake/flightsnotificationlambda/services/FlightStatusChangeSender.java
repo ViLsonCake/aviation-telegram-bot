@@ -177,6 +177,9 @@ public class FlightStatusChangeSender {
       ZonedDateTime currentEta =
           ZonedDateTime.ofInstant(
               Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone);
+      ZonedDateTime scheduledArrivalTime =
+          ZonedDateTime.ofInstant(
+              Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
       long minutesUntilArrival =
           ChronoUnit.MINUTES.between(ZonedDateTime.now(airportZone), currentEta);
 
@@ -191,6 +194,7 @@ public class FlightStatusChangeSender {
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
                     getValueOrUnknown(currentFlight.getAirlineName()),
+                    formatEtaWithDay(scheduledArrivalTime),
                     formatEtaWithDay(currentEta),
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),

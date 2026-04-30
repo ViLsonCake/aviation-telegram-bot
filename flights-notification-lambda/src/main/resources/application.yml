@@ -32,5 +32,5 @@ general:
   timezone: Europe/Warsaw
 
 notifications:
-  arriving-soon-remaining-minutes: 25
+  arriving-soon-remaining-minutes: 35
   eta-changed-threshold-minutes: 40
