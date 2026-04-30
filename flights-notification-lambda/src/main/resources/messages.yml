@@ -34,22 +34,22 @@ templates:
 
       📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
     FLIGHT_DELAYED_NOTIFICATION: |-
-      🟠 A Wide-Body Flight to Your Airport Is Delayed
+      🟠 A Scheduled Wide-Body Flight to Your Airport Is Delayed
     FLIGHT_DELAYED_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
       Estimated arrival: _%s_
     FLIGHT_CANCELLED_NOTIFICATION: |-
-      🔴 A Wide-Body Flight to Your Airport Has Been Cancelled
+      🔴 A Scheduled Wide-Body Flight to Your Airport Has Been Cancelled
     FLIGHT_CANCELLED_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
     FLIGHT_ETA_DELAYED_NOTIFICATION: |-
-      🟠 ETA delayed by *%s* for a Wide-Body Flight to Your Airport
+      🟠 ETA delayed by *%s* for a departed Wide-Body Flight to Your Airport
     FLIGHT_ETA_EARLIER_NOTIFICATION: |-
-      🟢 Arrival time changed to *%s* earlier for a Wide-Body Flight to Your Airport
+      🟢 Arrival time changed to *%s* earlier for a departed Wide-Body Flight to Your Airport
     FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
