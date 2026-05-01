@@ -24,7 +24,7 @@ templates:
 
       🗓 *Only Scheduled Flights*: you'll be notified only about the scheduled flights to your airport.
 
-      🛩 *Only Specific Aircraft*: you'll be notified only about the specific aircraft.
+      🛩 *Only Specific Aircraft*: you'll be notified only about the specific aircraft. CURRENTLY IN DEVELOPMENT, NOT YET READY FOR USE
 
       🔕 *Mute*: you won't be notified about any flights.
 
@@ -73,6 +73,8 @@ templates:
         ⚙️ Current mode is *Only Specific Aircraft*.
 
         You'll be notified only about the specific aircraft.
+      
+        CURRENTLY IN DEVELOPMENT, NOT YET READY FOR USE
     MUTE_BOT_MODE_SELECTED:
       button-text: |-
         🔕 Mute
