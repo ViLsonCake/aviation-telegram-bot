@@ -4,4 +4,5 @@ public record ScheduledFlightNotificationFlags(
     boolean notifiedDelayed,
     boolean notifiedCancelled,
     boolean notifiedDiverted,
-    boolean notifiedArrivingSoon) {}
+    boolean notifiedArrivingSoon,
+    boolean notifiedLanded) {}

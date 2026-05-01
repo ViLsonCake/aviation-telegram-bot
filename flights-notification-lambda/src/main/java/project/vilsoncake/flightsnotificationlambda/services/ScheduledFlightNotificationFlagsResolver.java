@@ -33,6 +33,7 @@ public class ScheduledFlightNotificationFlagsResolver {
         status.startsWith(FlightStatus.DELAYED.getFlightradarName()),
         status.startsWith(FlightStatus.CANCELLED.getFlightradarName()),
         status.startsWith(FlightStatus.DIVERTED.getFlightradarName()),
-        notifiedArrivingSoon);
+        notifiedArrivingSoon,
+        status.startsWith(FlightStatus.LANDED.getFlightradarName()));
   }
 }

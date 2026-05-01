@@ -69,7 +69,19 @@ templates:
       Airline: _%s_
       Scheduled arrival: _%s_
       Estimated arrival: _%s_
-      
+
       🛩️ [Aircraft info](https://www.flightradar24.com/data/aircraft/%s)
 
       📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
+    FLIGHT_LANDED_NOTIFICATION: |-
+      🛬 A Wide-Body Flight Has Landed at Your Airport!
+    FLIGHT_LANDED_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Airline: _%s_
+      Scheduled arrival: _%s_
+      Actual arrival: _%s_
+
+      🛩️ [Aircraft info](https://www.flightradar24.com/data/aircraft/%s)
+
+      🔄 [Playback on Flightradar24](https://www.flightradar24.com/data/aircraft/%s#%s)
