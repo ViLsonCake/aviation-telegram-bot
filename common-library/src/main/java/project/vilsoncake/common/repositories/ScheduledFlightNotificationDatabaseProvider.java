@@ -26,6 +26,7 @@ public class ScheduledFlightNotificationDatabaseProvider {
         Set.of(BotMode.DEFAULT, BotMode.ONLY_SCHEDULED_FLIGHTS),
         Set.of(
             FlightStatus.LANDED.getFlightradarName(), FlightStatus.CANCELLED.getFlightradarName()),
+        FlightStatus.LANDED.getFlightradarName(),
         ZonedDateTime.now().minusHours(24));
   }
 
@@ -44,6 +45,7 @@ public class ScheduledFlightNotificationDatabaseProvider {
             .withNotifiedDiverted(flags.notifiedDiverted())
             .withNotifiedArrivingSoon(flags.notifiedArrivingSoon())
             .withNotifiedLive(false)
+            .withNotifiedLanded(flags.notifiedLanded())
             .build();
     scheduledFlightNotificationRepository.save(notification);
   }

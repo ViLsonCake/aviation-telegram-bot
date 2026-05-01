@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS flights_notification (
     notified_diverted                         BOOLEAN DEFAULT FALSE,
     notified_arriving_soon                    BOOLEAN DEFAULT FALSE,
     notified_live                             BOOLEAN DEFAULT FALSE,
+    notified_landed                           BOOLEAN DEFAULT FALSE,
     last_notified_eta                         TIMESTAMP WITH TIME ZONE,
 
     -- Specific aircraft flights entity columns

@@ -126,6 +126,39 @@ public class FlightStatusChangeNotificationSender {
           notificationEntity.getUser().getUsername());
     }
 
+    if (Boolean.FALSE.equals(notificationEntity.getNotifiedLanded())
+        && currentFlight.getStatus().startsWith(FlightStatus.LANDED.getFlightradarName())) {
+      ZonedDateTime scheduledArrivalTime =
+          ZonedDateTime.ofInstant(
+              Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
+      String estimatedArrival =
+          currentFlight.getEstimatedArrivalTime() != null
+              ? formatEtaWithDay(
+                  ZonedDateTime.ofInstant(
+                      Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone))
+              : formatEtaWithDay(scheduledArrivalTime);
+      String message =
+          botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION)
+              + "\n\n"
+              + String.format(
+                  botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION_DETAILS),
+                  aircraftName,
+                  getValueOrUnknown(currentFlight.getCallsign()),
+                  getValueOrUnknown(currentFlight.getAirlineName()),
+                  formatEtaWithDay(scheduledArrivalTime),
+                  estimatedArrival,
+                  currentFlight.getRegistration(),
+                  currentFlight.getRegistration(),
+                  currentFlight.getId());
+      telegramClient.sendMessageWithImages(chatId, message, currentFlight.getImages());
+      notificationEntity.setNotifiedLanded(true);
+      changed = true;
+      log.info(
+          "Sent landed notification for flight {} to user {}",
+          scheduledFlightEntity.getRowId(),
+          notificationEntity.getUser().getUsername());
+    }
+
     if (currentFlight.getLive() && currentFlight.getEstimatedArrivalTime() != null) {
       ZonedDateTime currentEta =
           ZonedDateTime.ofInstant(

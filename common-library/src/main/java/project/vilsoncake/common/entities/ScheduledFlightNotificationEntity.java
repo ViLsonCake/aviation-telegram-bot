@@ -41,6 +41,9 @@ public class ScheduledFlightNotificationEntity extends FlightNotificationEntity 
   @Column(name = "notified_live")
   private Boolean notifiedLive;
 
+  @Column(name = "notified_landed")
+  private Boolean notifiedLanded;
+
   @Column(name = "last_notified_eta")
   private ZonedDateTime lastNotifiedEstimatedArrivalTime;
 }
