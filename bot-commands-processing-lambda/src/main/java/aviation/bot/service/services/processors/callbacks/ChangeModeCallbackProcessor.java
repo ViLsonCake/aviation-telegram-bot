@@ -1,6 +1,6 @@
-package aviation.bot.service.services;
+package aviation.bot.service.services.processors.callbacks;
 
-import java.util.Map;
+import aviation.bot.service.services.processors.CallbackProcessor;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
@@ -12,20 +12,19 @@ import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.utils.BotTemplatesResolver;
 
 @RequiredArgsConstructor(staticName = "create")
-public class BotModeChangeService {
+public class ChangeModeCallbackProcessor implements CallbackProcessor {
+
   private final UserDatabaseProvider userDatabaseProvider;
   private final TelegramClient telegramClient;
   private final BotTemplatesResolver botTemplatesResolver;
 
-  private final Map<CallbackType, BotMode> botModeByCallbackType =
-      Map.of(
-          CallbackType.DEFAULT_BOT_MODE_SELECTED, BotMode.DEFAULT,
-          CallbackType.ONLY_SCHEDULED_FLIGHTS_BOT_MODE_SELECTED, BotMode.ONLY_SCHEDULED_FLIGHTS,
-          CallbackType.ONLY_SPECIFIC_AIRCRAFT_BOT_MODE_SELECTED, BotMode.ONLY_SPECIFIC_AIRCRAFT,
-          CallbackType.MUTE_BOT_MODE_SELECTED, BotMode.MUTE);
+  @Override
+  public CallbackType getCallbackType() {
+    return CallbackType.CHANGE_MODE;
+  }
 
-  public void handleCallback(
-      CallbackType callbackType, String username, long chatId, String callbackId) {
+  @Override
+  public void process(String username, long chatId, String callbackData, String callbackId) {
     telegramClient.answerCallbackQuery(callbackId);
 
     Optional<UserEntity> optionalUser = userDatabaseProvider.getByUsername(username);
@@ -36,14 +35,12 @@ public class BotModeChangeService {
     }
 
     UserEntity user = optionalUser.get();
-    BotMode botMode = getBotModeByCallbackType(callbackType);
+    String modeValue = callbackData.split("\\|", 2)[1];
+    BotMode botMode = BotMode.valueOf(modeValue);
     userDatabaseProvider.updateBotModeAnsState(user, botMode, UserState.ALL_SET);
 
-    telegramClient.sendMessage(
-        chatId, botTemplatesResolver.getTemplate(callbackType).getMessageTemplate());
-  }
-
-  private BotMode getBotModeByCallbackType(CallbackType callbackType) {
-    return botModeByCallbackType.get(callbackType);
+    String messageTemplate =
+        botTemplatesResolver.getTemplate(getCallbackType()).getMessageTemplate();
+    telegramClient.sendMessage(chatId, String.format(messageTemplate, botMode.getLabel()));
   }
 }

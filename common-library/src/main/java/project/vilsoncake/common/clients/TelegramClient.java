@@ -126,6 +126,16 @@ public class TelegramClient {
     dispatchCallbackAnswer(request);
   }
 
+  public void answerCallbackQueryWithAlert(String callbackQueryId, String text) {
+    AnswerCallbackQueryRequest request =
+        AnswerCallbackQueryRequest.builder()
+            .withCallbackQueryId(callbackQueryId)
+            .withText(text)
+            .withShowAlert(true)
+            .build();
+    dispatchCallbackAnswer(request);
+  }
+
   private void dispatchMessage(TelegramRequest telegramRequest) {
     dispatch(telegramRequest, botConfig.getTelegramApiUrl());
   }

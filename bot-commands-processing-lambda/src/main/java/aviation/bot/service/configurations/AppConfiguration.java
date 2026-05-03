@@ -1,7 +1,7 @@
 package aviation.bot.service.configurations;
 
 import aviation.bot.service.handlers.TelegramHandler;
-import aviation.bot.service.services.BotModeChangeService;
+import aviation.bot.service.services.AircraftFamilyFilterService;
 import aviation.bot.service.services.adapters.BotCommandProcessorsAdapter;
 import aviation.bot.service.services.adapters.CallbackProcessorsAdapter;
 import aviation.bot.service.services.adapters.MessageContentTypeAdapter;
@@ -10,12 +10,13 @@ import aviation.bot.service.services.processors.BotCommandProcessor;
 import aviation.bot.service.services.processors.CallbackProcessor;
 import aviation.bot.service.services.processors.MessageContentTypeProcessor;
 import aviation.bot.service.services.processors.PlainTextProcessor;
+import aviation.bot.service.services.processors.callbacks.AircraftFilterCallbackProcessor;
 import aviation.bot.service.services.processors.callbacks.ChangeAirportCallbackProcessor;
 import aviation.bot.service.services.processors.callbacks.ChangeBotModeCallbackProcessor;
-import aviation.bot.service.services.processors.callbacks.DefaultModeCallbackProcessor;
-import aviation.bot.service.services.processors.callbacks.MuteModeCallbackProcessor;
-import aviation.bot.service.services.processors.callbacks.OnlyScheduledFlightsModeCallbackProcessor;
-import aviation.bot.service.services.processors.callbacks.OnlySpecificAircraftModeCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.ChangeModeCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.ResetAircraftFilterCallbackProcessor;
+import aviation.bot.service.services.processors.callbacks.ToggleAircraftFamilyCallbackProcessor;
+import aviation.bot.service.services.processors.commands.AircraftBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.AirportBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.ModeBotCommandProcessor;
 import aviation.bot.service.services.processors.commands.PingBotCommandProcessor;
@@ -33,8 +34,11 @@ import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.configurations.BotConfig;
 import project.vilsoncake.common.configurations.GeneralConfig;
 import project.vilsoncake.common.messages.BotTemplates;
+import project.vilsoncake.common.repositories.AircraftFamilyRepository;
 import project.vilsoncake.common.repositories.AirportDatabaseProvider;
 import project.vilsoncake.common.repositories.AirportRepository;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabaseProvider;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterRepository;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.UserRepository;
 import project.vilsoncake.common.utils.BotTemplatesResolver;
@@ -107,6 +111,16 @@ public class AppConfiguration {
         userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
+  @Bean
+  public AircraftBotCommandProcessor aircraftBotCommandProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      UserAircraftFamilyFilterDatabaseProvider filterDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return AircraftBotCommandProcessor.create(
+        userDatabaseProvider, filterDatabaseProvider, telegramClient, botTemplatesResolver);
+  }
+
   // Processors - Content Types
   @Bean
   public CommandMessageContentTypeProcessor commandMessageContentTypeProcessor(
@@ -159,27 +173,49 @@ public class AppConfiguration {
   }
 
   @Bean
-  public DefaultModeCallbackProcessor defaultModeCallbackProcessor(
-      BotModeChangeService botModeChangeService) {
-    return DefaultModeCallbackProcessor.create(botModeChangeService);
+  public ChangeModeCallbackProcessor changeModeCallbackProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return ChangeModeCallbackProcessor.create(
+        userDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
   @Bean
-  public OnlyScheduledFlightsModeCallbackProcessor onlyScheduledFlightsModeCallbackProcessor(
-      BotModeChangeService botModeChangeService) {
-    return OnlyScheduledFlightsModeCallbackProcessor.create(botModeChangeService);
+  public AircraftFilterCallbackProcessor aircraftFilterCallbackProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      AircraftFamilyFilterService aircraftFamilyFilterService,
+      TelegramClient telegramClient) {
+    return AircraftFilterCallbackProcessor.create(
+        userDatabaseProvider, aircraftFamilyFilterService, telegramClient);
   }
 
   @Bean
-  public OnlySpecificAircraftModeCallbackProcessor onlySpecificAircraftModeCallbackProcessor(
-      BotModeChangeService botModeChangeService) {
-    return OnlySpecificAircraftModeCallbackProcessor.create(botModeChangeService);
+  public ToggleAircraftFamilyCallbackProcessor toggleAircraftFamilyCallbackProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      AircraftFamilyFilterService aircraftFamilyFilterService,
+      TelegramClient telegramClient) {
+    return ToggleAircraftFamilyCallbackProcessor.create(
+        userDatabaseProvider, aircraftFamilyFilterService, telegramClient);
   }
 
   @Bean
-  public MuteModeCallbackProcessor muteModeCallbackProcessor(
-      BotModeChangeService botModeChangeService) {
-    return MuteModeCallbackProcessor.create(botModeChangeService);
+  public ResetAircraftFilterCallbackProcessor resetAircraftFilterCallbackProcessor(
+      UserDatabaseProvider userDatabaseProvider,
+      AircraftFamilyFilterService aircraftFamilyFilterService,
+      TelegramClient telegramClient) {
+    return ResetAircraftFilterCallbackProcessor.create(
+        userDatabaseProvider, aircraftFamilyFilterService, telegramClient);
+  }
+
+  // Services
+  @Bean
+  public AircraftFamilyFilterService aircraftFamilyFilterService(
+      UserAircraftFamilyFilterDatabaseProvider filterDatabaseProvider,
+      TelegramClient telegramClient,
+      BotTemplatesResolver botTemplatesResolver) {
+    return AircraftFamilyFilterService.create(
+        filterDatabaseProvider, telegramClient, botTemplatesResolver);
   }
 
   // Adapters
@@ -219,13 +255,12 @@ public class AppConfiguration {
     return AirportDatabaseProvider.create(airportRepository);
   }
 
-  // Other Services
   @Bean
-  public BotModeChangeService botModeChangeService(
-      UserDatabaseProvider userDatabaseProvider,
-      TelegramClient telegramClient,
-      BotTemplatesResolver botTemplatesResolver) {
-    return BotModeChangeService.create(userDatabaseProvider, telegramClient, botTemplatesResolver);
+  public UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider(
+      UserAircraftFamilyFilterRepository filterRepository,
+      AircraftFamilyRepository aircraftFamilyRepository) {
+    return UserAircraftFamilyFilterDatabaseProvider.create(
+        filterRepository, aircraftFamilyRepository);
   }
 
   // Other required beans

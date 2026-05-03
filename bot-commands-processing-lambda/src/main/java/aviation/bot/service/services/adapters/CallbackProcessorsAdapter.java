@@ -23,7 +23,12 @@ public class CallbackProcessorsAdapter {
                 Map::putAll);
   }
 
-  public void process(CallbackType callbackType, String username, long chatId, String callbackId) {
+  public void process(
+      CallbackType callbackType,
+      String username,
+      long chatId,
+      String callbackData,
+      String callbackId) {
     CallbackProcessor callbackProcessor = callbackProcessorsMap.get(callbackType);
 
     // Silently ignore unknown callback types
@@ -31,6 +36,6 @@ public class CallbackProcessorsAdapter {
       return;
     }
 
-    callbackProcessor.process(username, chatId, callbackId);
+    callbackProcessor.process(username, chatId, callbackData, callbackId);
   }
 }

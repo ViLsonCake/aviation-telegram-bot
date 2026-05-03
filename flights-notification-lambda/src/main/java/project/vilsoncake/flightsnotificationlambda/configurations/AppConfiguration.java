@@ -9,11 +9,14 @@ import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.configurations.BotConfig;
 import project.vilsoncake.common.configurations.GeneralConfig;
 import project.vilsoncake.common.configurations.NotificationsConfig;
+import project.vilsoncake.common.repositories.AircraftFamilyRepository;
 import project.vilsoncake.common.repositories.AirportRepository;
 import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationRepository;
 import project.vilsoncake.common.repositories.ScheduledFlightRepository;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabaseProvider;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterRepository;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.UserRepository;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
@@ -91,11 +94,13 @@ public class AppConfiguration {
   public ScheduledFlightsNotificationTypeProcessor scheduledFlightsNotificationTypeProcessor(
       UserDatabaseProvider userDatabaseProvider,
       WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
+      UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider,
       FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
       ScheduledFlightsNotificationSender scheduledFlightsNotificationSender) {
     return ScheduledFlightsNotificationTypeProcessor.create(
         userDatabaseProvider,
         widebodyAircraftDatabaseProvider,
+        userAircraftFamilyFilterDatabaseProvider,
         flightradarApiLambdaAdapter,
         scheduledFlightsNotificationSender);
   }
@@ -178,6 +183,14 @@ public class AppConfiguration {
   public WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider(
       WidebodyAircraftRepository widebodyAircraftRepository) {
     return WidebodyAircraftDatabaseProvider.create(widebodyAircraftRepository);
+  }
+
+  @Bean
+  public UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider(
+      UserAircraftFamilyFilterRepository filterRepository,
+      AircraftFamilyRepository aircraftFamilyRepository) {
+    return UserAircraftFamilyFilterDatabaseProvider.create(
+        filterRepository, aircraftFamilyRepository);
   }
 
   @Bean
