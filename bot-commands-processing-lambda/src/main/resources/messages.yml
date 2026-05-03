@@ -27,6 +27,12 @@ templates:
       🛩 *Only Specific Aircraft*: you'll be notified only about the specific aircraft. CURRENTLY IN DEVELOPMENT, NOT YET READY FOR USE
 
       🔕 *Mute*: you won't be notified about any flights.
+    AIRCRAFT: |-
+      🛩 *Aircraft Filter*
+
+      Current filter: %s
+
+      Controls which aircraft families you receive notifications for.
 
   user-state-responses:
     CHOOSING_AIRPORT:
@@ -52,34 +58,25 @@ templates:
         ⚙️ Change Mode
       message-template: |-
         Select mode using the buttons below.
-    DEFAULT_BOT_MODE_SELECTED:
-      button-text: |-
-        🔔 Default
+      buttons:
+        DEFAULT: "🔔 Default"
+        ONLY_SCHEDULED_FLIGHTS: "🗓 Only Scheduled Flights"
+        ONLY_SPECIFIC_AIRCRAFT: "🛩 Only Specific Aircraft"
+        MUTE: "🔕 Mute"
+    CHANGE_MODE:
+      button-text: ""
       message-template: |-
-        ⚙️ Current mode is *Default*.
-
-        You'll be notified about the scheduled flights to your airport as well as about the specific aircraft.
-    ONLY_SCHEDULED_FLIGHTS_BOT_MODE_SELECTED:
+        ⚙️ Mode changed to *%s*.
+    AIRCRAFT_FILTER:
       button-text: |-
-        🗓 Only Scheduled Flights
-      message-template:
-        ⚙️ Current mode is *Only Scheduled Flights*.
-
-        You'll be notified only about the scheduled flights to your airport.
-    ONLY_SPECIFIC_AIRCRAFT_BOT_MODE_SELECTED:
-      button-text: |-
-        🛩 Only Specific Aircraft
-      message-template:
-        ⚙️ Current mode is *Only Specific Aircraft*.
-
-        You'll be notified only about the specific aircraft.
-      
-        CURRENTLY IN DEVELOPMENT, NOT YET READY FOR USE
-    MUTE_BOT_MODE_SELECTED:
-      button-text: |-
-        🔕 Mute
-      message-template:
-        ⚙️ Current mode is *Mute*.
-
-        You won't be notified about any flights.
-
+        🛩 Manage Aircraft Filter
+      message-template: |-
+        Select up to 10 aircraft families.
+        Families with ✅ will be included in your notifications.
+        No selection = all aircraft (default).
+    TOGGLE_AIRCRAFT_FAMILY:
+      button-text: ""
+      message-template: ""
+    RESET_AIRCRAFT_FILTER:
+      button-text: "🔄 Reset (show all aircraft)"
+      message-template: ""

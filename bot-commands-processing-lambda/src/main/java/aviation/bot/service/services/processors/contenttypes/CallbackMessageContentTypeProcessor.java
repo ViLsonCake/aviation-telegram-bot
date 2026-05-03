@@ -36,12 +36,13 @@ public class CallbackMessageContentTypeProcessor implements MessageContentTypePr
     }
 
     try {
-      callbackType = CallbackType.valueOf(callbackData);
+      String typePart = callbackData.split("\\|", 2)[0];
+      callbackType = CallbackType.valueOf(typePart);
     } catch (IllegalArgumentException e) {
       log.warn("Unknown callback type: {}", callbackData);
       return;
     }
 
-    callbackProcessorsAdapter.process(callbackType, username, chatId, callbackId);
+    callbackProcessorsAdapter.process(callbackType, username, chatId, callbackData, callbackId);
   }
 }

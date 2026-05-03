@@ -1,12 +1,14 @@
 package aviation.bot.service.services.processors.callbacks;
 
 import aviation.bot.service.services.processors.CallbackProcessor;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.clients.telegram.InlineKeyboardButton;
 import project.vilsoncake.common.clients.telegram.InlineKeyboardMarkup;
 import project.vilsoncake.common.entities.UserEntity;
+import project.vilsoncake.common.entities.enums.BotMode;
 import project.vilsoncake.common.entities.enums.UserState;
 import project.vilsoncake.common.models.CallbackType;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
@@ -25,7 +27,7 @@ public class ChangeBotModeCallbackProcessor implements CallbackProcessor {
   }
 
   @Override
-  public void process(String username, long chatId, String callbackId) {
+  public void process(String username, long chatId, String callbackData, String callbackId) {
     telegramClient.answerCallbackQuery(callbackId);
 
     Optional<UserEntity> optionalUser = userDatabaseProvider.getByUsername(username);
@@ -44,38 +46,24 @@ public class ChangeBotModeCallbackProcessor implements CallbackProcessor {
   }
 
   private InlineKeyboardMarkup buildInlineKeyboardMarkupToSelectBotMode() {
-    // Default mode
-    CallbackType defaultModeCallbackType = CallbackType.DEFAULT_BOT_MODE_SELECTED;
-    String defaultModeButtonText =
-        botTemplatesResolver.getTemplate(defaultModeCallbackType).getButtonText();
-
-    // Only scheduled flights mode
-    CallbackType onlyScheduledFlightsModeCallbackType =
-        CallbackType.ONLY_SCHEDULED_FLIGHTS_BOT_MODE_SELECTED;
-    String onlyScheduledModeButtonText =
-        botTemplatesResolver.getTemplate(onlyScheduledFlightsModeCallbackType).getButtonText();
-
-    // Only specific aircraft mode
-    CallbackType onlySpecificAircraftModeCallbackType =
-        CallbackType.ONLY_SPECIFIC_AIRCRAFT_BOT_MODE_SELECTED;
-    String onlySpecificAircraftModeButtonText =
-        botTemplatesResolver.getTemplate(onlySpecificAircraftModeCallbackType).getButtonText();
-
-    // Mute mode
-    CallbackType muteModeCallbackType = CallbackType.MUTE_BOT_MODE_SELECTED;
-    String muteModeButtonText =
-        botTemplatesResolver.getTemplate(muteModeCallbackType).getButtonText();
+    Map<String, String> buttons = botTemplatesResolver.getTemplate(getCallbackType()).getButtons();
 
     return InlineKeyboardMarkup.builder()
         .addRow(
             InlineKeyboardButton.of(
-                onlyScheduledModeButtonText, onlyScheduledFlightsModeCallbackType.name()))
+                buttons.get(BotMode.ONLY_SCHEDULED_FLIGHTS.name()),
+                CallbackType.CHANGE_MODE.name() + "|" + BotMode.ONLY_SCHEDULED_FLIGHTS.name()))
         .addRow(
             InlineKeyboardButton.of(
-                onlySpecificAircraftModeButtonText, onlySpecificAircraftModeCallbackType.name()))
+                buttons.get(BotMode.ONLY_SPECIFIC_AIRCRAFT.name()),
+                CallbackType.CHANGE_MODE.name() + "|" + BotMode.ONLY_SPECIFIC_AIRCRAFT.name()))
         .addRow(
-            InlineKeyboardButton.of(defaultModeButtonText, defaultModeCallbackType.name()),
-            InlineKeyboardButton.of(muteModeButtonText, muteModeCallbackType.name()))
+            InlineKeyboardButton.of(
+                buttons.get(BotMode.DEFAULT.name()),
+                CallbackType.CHANGE_MODE.name() + "|" + BotMode.DEFAULT.name()),
+            InlineKeyboardButton.of(
+                buttons.get(BotMode.MUTE.name()),
+                CallbackType.CHANGE_MODE.name() + "|" + BotMode.MUTE.name()))
         .build();
   }
 }

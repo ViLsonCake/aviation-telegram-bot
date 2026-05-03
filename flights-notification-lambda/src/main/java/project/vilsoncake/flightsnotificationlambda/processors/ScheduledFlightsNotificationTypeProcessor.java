@@ -1,6 +1,8 @@
 package project.vilsoncake.flightsnotificationlambda.processors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
+import project.vilsoncake.common.models.ScheduledFlight;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabaseProvider;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
@@ -23,6 +27,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
 
   private final UserDatabaseProvider userDatabaseProvider;
   private final WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider;
+  private final UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider;
   private final FlightradarApiLambdaAdapter flightradarApiLambdaAdapter;
   private final ScheduledFlightsNotificationSender scheduledFlightsNotificationSender;
 
@@ -37,21 +42,22 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
 
     Set<UserEntity> eligibleUsers =
         userDatabaseProvider.getEligibleUsersToSendScheduledFlightsNotifications();
-    Set<String> uniqueAirportsIcao = getUniqueAirportsIcao(eligibleUsers);
 
-    log.info(
-        "Found {} eligible users for scheduled flights notifications and {} unique airports",
-        eligibleUsers.size(),
-        uniqueAirportsIcao.size());
+    log.info("Found {} eligible users for scheduled flights notifications", eligibleUsers.size());
 
     List<WideBodyAircraftEntity> allWideBodyAircraft =
         widebodyAircraftDatabaseProvider.getAllWideBodyAircraft();
-    // TODO: replace with individual aircraft codes for each user once feature implemented
-    List<String> allWideBodyAircraftCodes =
-        allWideBodyAircraft.stream().map(WideBodyAircraftEntity::getCode).toList();
-    List<AirportRequest> airportRequests =
-        buildAirportRequests(uniqueAirportsIcao, allWideBodyAircraftCodes);
+    Set<String> allWideBodyAircraftCodes =
+        allWideBodyAircraft.stream()
+            .map(WideBodyAircraftEntity::getCode)
+            .collect(Collectors.toSet());
 
+    Map<String, Set<String>> aircraftCodesByAirport =
+        buildAircraftCodesByAirport(eligibleUsers, allWideBodyAircraftCodes);
+
+    log.info("Querying Flightradar API for {} unique airports", aircraftCodesByAirport.size());
+
+    List<AirportRequest> airportRequests = buildAirportRequests(aircraftCodesByAirport);
     Map<String, AirportResponse> filteredFlightsForAirports =
         flightradarApiLambdaAdapter.getFilteredFlightsForAirports(airportRequests);
     log.info("Received aircraft from Flightradar API");
@@ -60,6 +66,33 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
     notifyUsers(eligibleUsers, filteredFlightsForAirports);
 
     log.info("Finished processing scheduled flights notifications");
+  }
+
+  private Map<String, Set<String>> buildAircraftCodesByAirport(
+      Set<UserEntity> users, Set<String> allCodes) {
+    Map<String, Set<String>> result = new HashMap<>();
+
+    for (UserEntity user : users) {
+      String icao = user.getAirport().getIcao();
+      Set<String> userFamilyCodes =
+          userAircraftFamilyFilterDatabaseProvider.getFilterFamilyCodes(user);
+
+      Set<String> userAircraftCodes;
+      if (userFamilyCodes.isEmpty()) {
+        userAircraftCodes = allCodes;
+      } else {
+        userAircraftCodes =
+            widebodyAircraftDatabaseProvider
+                .getWideBodyAircraftByFamilies(new ArrayList<>(userFamilyCodes))
+                .stream()
+                .map(WideBodyAircraftEntity::getCode)
+                .collect(Collectors.toSet());
+      }
+
+      result.computeIfAbsent(icao, k -> new HashSet<>()).addAll(userAircraftCodes);
+    }
+
+    return result;
   }
 
   private void notifyUsers(
@@ -74,26 +107,47 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
       }
 
       AirportResponse airportResponse = filteredFlightsForAirports.get(userAirportIcao);
-      scheduledFlightsNotificationSender.notifyScheduledFlights(user, airportResponse);
+      AirportResponse userFilteredResponse = filterResponseForUser(user, airportResponse);
+
+      scheduledFlightsNotificationSender.notifyScheduledFlights(user, userFilteredResponse);
     }
   }
 
-  private Set<String> getUniqueAirportsIcao(Set<UserEntity> users) {
-    return users.stream().map(user -> user.getAirport().getIcao()).collect(Collectors.toSet());
+  private AirportResponse filterResponseForUser(UserEntity user, AirportResponse airportResponse) {
+    Set<String> userFamilyCodes =
+        userAircraftFamilyFilterDatabaseProvider.getFilterFamilyCodes(user);
+
+    if (userFamilyCodes.isEmpty()) {
+      return airportResponse;
+    }
+
+    Set<String> userAircraftCodes =
+        widebodyAircraftDatabaseProvider
+            .getWideBodyAircraftByFamilies(new ArrayList<>(userFamilyCodes))
+            .stream()
+            .map(WideBodyAircraftEntity::getCode)
+            .collect(Collectors.toSet());
+
+    List<ScheduledFlight> filteredFlights =
+        airportResponse.getFlights().stream()
+            .filter(flight -> userAircraftCodes.contains(flight.getAircraftCode()))
+            .toList();
+
+    return new AirportResponse(
+        airportResponse.getArrivalsCount(), filteredFlights.size(), filteredFlights);
   }
 
   private List<AirportRequest> buildAirportRequests(
-      Set<String> airports, List<String> aircraftFilter) {
+      Map<String, Set<String>> aircraftCodesByAirport) {
     List<AirportRequest> airportRequests = new ArrayList<>();
 
-    airports.forEach(
-        airport -> {
-          airportRequests.add(
-              AirportRequest.builder()
-                  .withAirportCode(airport)
-                  .withAircraftFilterCodes(aircraftFilter)
-                  .build());
-        });
+    aircraftCodesByAirport.forEach(
+        (airportCode, aircraftCodes) ->
+            airportRequests.add(
+                AirportRequest.builder()
+                    .withAirportCode(airportCode)
+                    .withAircraftFilterCodes(new ArrayList<>(aircraftCodes))
+                    .build()));
 
     return airportRequests;
   }

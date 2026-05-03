@@ -126,3 +126,15 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 COMMENT ON TABLE users IS 'Table for storing bot users';
+
+-- User aircraft family filters table
+CREATE TABLE IF NOT EXISTS user_aircraft_family_filters (
+    user_id              UUID        NOT NULL,
+    aircraft_family_code VARCHAR(50) NOT NULL,
+
+    PRIMARY KEY (user_id, aircraft_family_code),
+    FOREIGN KEY (user_id)              REFERENCES users(id),
+    FOREIGN KEY (aircraft_family_code) REFERENCES aircraft_families(code)
+);
+
+COMMENT ON TABLE user_aircraft_family_filters IS 'Table for storing per-user aircraft family notification filters (empty = all families)';

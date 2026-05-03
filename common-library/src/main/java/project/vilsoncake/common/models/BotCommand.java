@@ -9,7 +9,8 @@ public enum BotCommand {
   START("/start"),
   PING("/ping"),
   AIRPORT("/airport"),
-  MODE("/mode");
+  MODE("/mode"),
+  AIRCRAFT("/aircraft");
 
   private final String command;
 }
