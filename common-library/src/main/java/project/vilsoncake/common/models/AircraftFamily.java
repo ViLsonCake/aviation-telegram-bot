@@ -21,7 +21,7 @@ public enum AircraftFamily {
   AIRBUS_A400("A400M"),
   MD11("MD-11"),
   AN124("An-124"),
-  C5_GALAXY("C-5 Galaxy"),
+  C5_GALAXY("C-5"),
   C130_HERCULES("C-130"),
   ILYUSHIN_IL76("Il-76");
 
