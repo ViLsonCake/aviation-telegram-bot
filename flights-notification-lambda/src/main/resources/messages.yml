@@ -65,7 +65,7 @@ templates:
       
       📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
     FLIGHT_ARRIVING_SOON_NOTIFICATION: |-
-      🛬 A Wide-Body Flight Is Arriving at Your Airport Soon!
+      🛬 A Wide-Body Flight Is Arriving at Your Airport in *%s*!
     FLIGHT_ARRIVING_SOON_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
@@ -78,7 +78,7 @@ templates:
 
       📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
     FLIGHT_LANDED_NOTIFICATION: |-
-      🛬 A Wide-Body Flight Has Landed at Your Airport!
+      🛬 A Wide-Body Flight Has Landed at Your Airport *%s ago*!
     FLIGHT_LANDED_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_

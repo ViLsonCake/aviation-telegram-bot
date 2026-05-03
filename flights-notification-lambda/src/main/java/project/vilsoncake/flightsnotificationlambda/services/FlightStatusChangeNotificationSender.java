@@ -140,14 +140,18 @@ public class FlightStatusChangeNotificationSender {
       ZonedDateTime scheduledArrivalTime =
           ZonedDateTime.ofInstant(
               Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
-      String estimatedArrival =
+      ZonedDateTime actualArrival =
           currentFlight.getEstimatedArrivalTime() != null
-              ? formatTimeWithDay(
-                  ZonedDateTime.ofInstant(
-                      Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone))
-              : formatTimeWithDay(scheduledArrivalTime);
+              ? ZonedDateTime.ofInstant(
+                  Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone)
+              : scheduledArrivalTime;
+      long minutesSinceLanding =
+          Math.max(0, ChronoUnit.MINUTES.between(actualArrival, ZonedDateTime.now(airportZone)));
+      String estimatedArrival = formatTimeWithDay(actualArrival);
       String message =
-          botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION)
+          String.format(
+                  botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION),
+                  formatDuration(minutesSinceLanding))
               + "\n\n"
               + String.format(
                   botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION_DETAILS),
@@ -233,7 +237,9 @@ public class FlightStatusChangeNotificationSender {
       if (minutesUntilArrival >= 0
           && minutesUntilArrival <= notificationsConfig.getArrivingSoonRemainingMinutes()) {
         String message =
-            botTemplatesResolver.getTemplate(MessageType.FLIGHT_ARRIVING_SOON_NOTIFICATION)
+            String.format(
+                    botTemplatesResolver.getTemplate(MessageType.FLIGHT_ARRIVING_SOON_NOTIFICATION),
+                    formatDuration(minutesUntilArrival))
                 + "\n\n"
                 + String.format(
                     botTemplatesResolver.getTemplate(
