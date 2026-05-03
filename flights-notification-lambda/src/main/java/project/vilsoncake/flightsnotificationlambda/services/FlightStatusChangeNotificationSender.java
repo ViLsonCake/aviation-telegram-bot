@@ -46,7 +46,8 @@ public class FlightStatusChangeNotificationSender {
 
     boolean changed = false;
 
-    if (Boolean.FALSE.equals(notificationEntity.getNotifiedLive()) && currentFlight.getLive()) {
+    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedLive())
+        && Boolean.TRUE.equals(currentFlight.getLive())) {
       String eta =
           resolveEtaLabel(
               currentFlight.getEstimatedArrivalTime(),
@@ -84,8 +85,9 @@ public class FlightStatusChangeNotificationSender {
           notificationEntity.getUser().getUsername());
     }
 
-    if (Boolean.FALSE.equals(notificationEntity.getNotifiedDelayed())
-        && currentFlight.getStatus().startsWith(FlightStatus.DELAYED.getFlightradarName())) {
+    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedDelayed())
+        && currentFlight.getStatus().startsWith(FlightStatus.DELAYED.getFlightradarName())
+        && !Boolean.TRUE.equals(currentFlight.getLive())) {
       String eta =
           resolveEtaLabel(
               currentFlight.getEstimatedArrivalTime(),
@@ -111,7 +113,7 @@ public class FlightStatusChangeNotificationSender {
           notificationEntity.getUser().getUsername());
     }
 
-    if (Boolean.FALSE.equals(notificationEntity.getNotifiedCancelled())
+    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedCancelled())
         && currentFlight.getStatus().startsWith(FlightStatus.CANCELLED.getFlightradarName())) {
       String message =
           botTemplatesResolver.getTemplate(MessageType.FLIGHT_CANCELLED_NOTIFICATION)
@@ -133,7 +135,7 @@ public class FlightStatusChangeNotificationSender {
           notificationEntity.getUser().getUsername());
     }
 
-    if (Boolean.FALSE.equals(notificationEntity.getNotifiedLanded())
+    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedLanded())
         && currentFlight.getStatus().startsWith(FlightStatus.LANDED.getFlightradarName())) {
       ZonedDateTime scheduledArrivalTime =
           ZonedDateTime.ofInstant(
@@ -168,7 +170,8 @@ public class FlightStatusChangeNotificationSender {
           notificationEntity.getUser().getUsername());
     }
 
-    if (currentFlight.getLive() && currentFlight.getEstimatedArrivalTime() != null) {
+    if (Boolean.TRUE.equals(currentFlight.getLive())
+        && currentFlight.getEstimatedArrivalTime() != null) {
       ZonedDateTime currentEta =
           ZonedDateTime.ofInstant(
               Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone);
@@ -215,8 +218,8 @@ public class FlightStatusChangeNotificationSender {
       }
     }
 
-    if (Boolean.FALSE.equals(notificationEntity.getNotifiedArrivingSoon())
-        && currentFlight.getLive()
+    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedArrivingSoon())
+        && Boolean.TRUE.equals(currentFlight.getLive())
         && currentFlight.getEstimatedArrivalTime() != null) {
       ZonedDateTime currentEta =
           ZonedDateTime.ofInstant(
