@@ -3,7 +3,11 @@ templates:
     START: |-
         ✈️ *Welcome to Aviation Bot!*
 
-        Provide *ICAO* or *IATA* code of the airport you want to choose.
+        Track wide-body aircraft arrivals at your airport — get notified about scheduled flights and live movements of jets like the *747, A380, C-17, and more*. 
+
+        To start using the bot, provide *ICAO* or *IATA* code of the airport you want to choose.
+      
+        e.g. if you want to track arrivals to *Frankfurt Airport*, type *EDDF* or *FRA*, you could find it on the [Flightradar24](https://www.flightradar24.com).
     PING: |-
         pong
     AIRPORT: |-
