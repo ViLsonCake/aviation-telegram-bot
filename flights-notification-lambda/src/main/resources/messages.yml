@@ -41,6 +41,7 @@ templates:
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
+      Origin airport: _%s_
       Estimated arrival: _%s_
     FLIGHT_CANCELLED_NOTIFICATION: |-
       🔴 A Scheduled Wide-Body Flight to Your Airport Has Been Cancelled
@@ -48,6 +49,7 @@ templates:
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
+      Origin airport: _%s_
     FLIGHT_ETA_DELAYED_NOTIFICATION: |-
       🟠 ETA delayed by *%s* for a departed Wide-Body Flight to Your Airport
     FLIGHT_ETA_EARLIER_NOTIFICATION: |-
@@ -55,6 +57,7 @@ templates:
     FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS: |-
       Aircraft: _%s_
       Callsign: _%s_
+      Origin airport: _%s_
       Scheduled arrival: _%s_
       Estimated arrival: _%s_
       
@@ -67,6 +70,7 @@ templates:
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
+      Origin airport: _%s_
       Scheduled arrival: _%s_
       Estimated arrival: _%s_
 
@@ -79,6 +83,7 @@ templates:
       Aircraft: _%s_
       Callsign: _%s_
       Airline: _%s_
+      Origin airport: _%s_
       Scheduled arrival: _%s_
       Actual arrival: _%s_
 

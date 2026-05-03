@@ -1,12 +1,12 @@
 package project.vilsoncake.flightsnotificationlambda.services;
 
+import static project.vilsoncake.common.utils.BotMessagesUtils.formatOriginAirport;
+import static project.vilsoncake.common.utils.BotMessagesUtils.formatTimeWithDay;
 import static project.vilsoncake.common.utils.BotMessagesUtils.getValueOrUnknown;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -96,7 +96,8 @@ public class ScheduledFlightsNotificationSender {
 
     String scheduledFlightEndingTemplate =
         botTemplatesResolver.getTemplate(MessageType.SCHEDULED_FLIGHTS_ENDING);
-    // Should be IATA code only, ICAO code will also work, however, will open the browser version
+    // NOTE: Should be IATA code only, ICAO code will also work, however, will open the browser
+    // version
     // instead of app
     String airportCodeForLink = user.getAirport().getIata();
     String scheduledFlightEnding = String.format(scheduledFlightEndingTemplate, airportCodeForLink);
@@ -128,14 +129,15 @@ public class ScheduledFlightsNotificationSender {
     ZonedDateTime arrivalDateTime =
         Instant.ofEpochSecond(scheduledFlight.getScheduledArrivalTime())
             .atZone(ZoneId.of(timezone));
-    String formattedScheduledArrivalTime = formatArrivalWithDay(arrivalDateTime);
+    String formattedScheduledArrivalTime = formatTimeWithDay(arrivalDateTime);
     return String.format(
         scheduledFlightTemplate,
         aircraftName,
         getValueOrUnknown(scheduledFlight.getCallsign()),
         getValueOrUnknown(scheduledFlight.getRegistration()),
         getValueOrUnknown(scheduledFlight.getAirlineName()),
-        getValueOrUnknown(scheduledFlight.getOriginAirportName()),
+        formatOriginAirport(
+            scheduledFlight.getOriginAirportName(), scheduledFlight.getOriginAirportIata()),
         getValueOrUnknown(scheduledFlight.getStatus()),
         getValueOrUnknown(formattedScheduledArrivalTime));
   }
@@ -151,7 +153,7 @@ public class ScheduledFlightsNotificationSender {
     ZonedDateTime arrivalDateTime =
         Instant.ofEpochSecond(scheduledFlight.getScheduledArrivalTime())
             .atZone(ZoneId.of(timezone));
-    String formattedScheduledArrivalTime = formatArrivalWithDay(arrivalDateTime);
+    String formattedScheduledArrivalTime = formatTimeWithDay(arrivalDateTime);
     return String.format(
         scheduledFlightTemplate,
         listNumber,
@@ -159,16 +161,10 @@ public class ScheduledFlightsNotificationSender {
         getValueOrUnknown(scheduledFlight.getCallsign()),
         getValueOrUnknown(scheduledFlight.getRegistration()),
         getValueOrUnknown(scheduledFlight.getAirlineName()),
-        getValueOrUnknown(scheduledFlight.getOriginAirportName()),
+        formatOriginAirport(
+            scheduledFlight.getOriginAirportName(), scheduledFlight.getOriginAirportIata()),
         getValueOrUnknown(scheduledFlight.getStatus()),
         getValueOrUnknown(formattedScheduledArrivalTime));
-  }
-
-  private String formatArrivalWithDay(ZonedDateTime arrivalTime) {
-    LocalDate today = LocalDate.now(arrivalTime.getZone());
-    String time = arrivalTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-    String dayLabel = arrivalTime.toLocalDate().equals(today) ? "today" : "tomorrow";
-    return time + " (" + dayLabel + ")";
   }
 
   private List<ScheduledFlight> getUnnotifiedScheduledFlights(List<ScheduledFlight> flights) {

@@ -1,12 +1,14 @@
 package project.vilsoncake.flightsnotificationlambda.services;
 
+import static project.vilsoncake.common.utils.BotMessagesUtils.formatDuration;
+import static project.vilsoncake.common.utils.BotMessagesUtils.formatOriginAirport;
+import static project.vilsoncake.common.utils.BotMessagesUtils.formatTimeWithDay;
 import static project.vilsoncake.common.utils.BotMessagesUtils.getValueOrUnknown;
+import static project.vilsoncake.common.utils.BotMessagesUtils.resolveEtaLabel;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +61,8 @@ public class FlightStatusChangeNotificationSender {
                   getValueOrUnknown(currentFlight.getCallsign()),
                   getValueOrUnknown(currentFlight.getRegistration()),
                   getValueOrUnknown(currentFlight.getAirlineName()),
-                  getValueOrUnknown(currentFlight.getOriginAirportName()),
+                  formatOriginAirport(
+                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
                   eta,
                   currentFlight.getRegistration(),
                   currentFlight.getCallsign(),
@@ -96,6 +99,8 @@ public class FlightStatusChangeNotificationSender {
                   aircraftName,
                   getValueOrUnknown(currentFlight.getCallsign()),
                   getValueOrUnknown(currentFlight.getAirlineName()),
+                  formatOriginAirport(
+                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
                   eta);
       telegramClient.sendMessages(chatId, List.of(message));
       notificationEntity.setNotifiedDelayed(true);
@@ -116,7 +121,9 @@ public class FlightStatusChangeNotificationSender {
                       MessageType.FLIGHT_CANCELLED_NOTIFICATION_DETAILS),
                   aircraftName,
                   getValueOrUnknown(currentFlight.getCallsign()),
-                  getValueOrUnknown(currentFlight.getAirlineName()));
+                  getValueOrUnknown(currentFlight.getAirlineName()),
+                  formatOriginAirport(
+                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()));
       telegramClient.sendMessages(chatId, List.of(message));
       notificationEntity.setNotifiedCancelled(true);
       changed = true;
@@ -133,10 +140,10 @@ public class FlightStatusChangeNotificationSender {
               Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
       String estimatedArrival =
           currentFlight.getEstimatedArrivalTime() != null
-              ? formatEtaWithDay(
+              ? formatTimeWithDay(
                   ZonedDateTime.ofInstant(
                       Instant.ofEpochSecond(currentFlight.getEstimatedArrivalTime()), airportZone))
-              : formatEtaWithDay(scheduledArrivalTime);
+              : formatTimeWithDay(scheduledArrivalTime);
       String message =
           botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION)
               + "\n\n"
@@ -145,7 +152,9 @@ public class FlightStatusChangeNotificationSender {
                   aircraftName,
                   getValueOrUnknown(currentFlight.getCallsign()),
                   getValueOrUnknown(currentFlight.getAirlineName()),
-                  formatEtaWithDay(scheduledArrivalTime),
+                  formatOriginAirport(
+                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
+                  formatTimeWithDay(scheduledArrivalTime),
                   estimatedArrival,
                   currentFlight.getRegistration(),
                   currentFlight.getRegistration(),
@@ -188,8 +197,10 @@ public class FlightStatusChangeNotificationSender {
                         MessageType.FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS),
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
-                    formatEtaWithDay(scheduledArrivalTime),
-                    formatEtaWithDay(currentEta),
+                    formatOriginAirport(
+                        currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
+                    formatTimeWithDay(scheduledArrivalTime),
+                    formatTimeWithDay(currentEta),
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),
                     currentFlight.getId());
@@ -227,8 +238,10 @@ public class FlightStatusChangeNotificationSender {
                     aircraftName,
                     getValueOrUnknown(currentFlight.getCallsign()),
                     getValueOrUnknown(currentFlight.getAirlineName()),
-                    formatEtaWithDay(scheduledArrivalTime),
-                    formatEtaWithDay(currentEta),
+                    formatOriginAirport(
+                        currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
+                    formatTimeWithDay(scheduledArrivalTime),
+                    formatTimeWithDay(currentEta),
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),
                     currentFlight.getId());
@@ -247,35 +260,5 @@ public class FlightStatusChangeNotificationSender {
     }
 
     scheduledFlightDatabaseProvider.updateFlightState(scheduledFlightEntity, currentFlight);
-  }
-
-  private String resolveEtaLabel(
-      Integer etaEpoch, Integer scheduledArrivalEpoch, ZoneId airportZone) {
-    Integer timeToShow = etaEpoch != null ? etaEpoch : scheduledArrivalEpoch;
-    if (timeToShow == null) {
-      return "Unknown";
-    }
-    ZonedDateTime eta = ZonedDateTime.ofInstant(Instant.ofEpochSecond(timeToShow), airportZone);
-    return formatEtaWithDay(eta);
-  }
-
-  private String formatDuration(long minutes) {
-    if (minutes < 60) {
-      return minutes + " minute" + (minutes == 1 ? "" : "s");
-    }
-    long hours = minutes / 60;
-    long remainingMinutes = minutes % 60;
-    String hoursPart = hours + " hour" + (hours == 1 ? "" : "s");
-    if (remainingMinutes == 0) {
-      return hoursPart;
-    }
-    return hoursPart + " " + remainingMinutes + " minute" + (remainingMinutes == 1 ? "" : "s");
-  }
-
-  private String formatEtaWithDay(ZonedDateTime eta) {
-    LocalDate today = LocalDate.now(eta.getZone());
-    String time = eta.format(DateTimeFormatter.ofPattern("HH:mm"));
-    String dayLabel = eta.toLocalDate().equals(today) ? "today" : "tomorrow";
-    return time + " (" + dayLabel + ")";
   }
 }
