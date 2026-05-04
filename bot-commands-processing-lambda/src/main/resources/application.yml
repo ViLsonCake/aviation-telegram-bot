@@ -27,3 +27,6 @@ bot:
 
 general:
   timezone: Europe/Warsaw
+
+messages:
+  aircraft-filter-recommendation-threshold: 5

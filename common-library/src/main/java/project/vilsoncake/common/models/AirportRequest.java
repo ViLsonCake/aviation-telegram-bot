@@ -1,4 +1,4 @@
-package project.vilsoncake.flightsnotificationlambda.models;
+package project.vilsoncake.common.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;

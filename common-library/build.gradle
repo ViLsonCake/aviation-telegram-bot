@@ -20,6 +20,8 @@ dependencies {
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa:4.0.5'
     compileOnly 'tools.jackson.core:jackson-databind:3.1.0'
 
+    compileOnly 'software.amazon.awssdk:lambda:2.31.0'
+
     compileOnly 'org.projectlombok:lombok:1.18.38'
     annotationProcessor 'org.projectlombok:lombok:1.18.38'
     testCompileOnly 'org.projectlombok:lombok:1.18.38'

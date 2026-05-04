@@ -15,11 +15,11 @@ import project.vilsoncake.common.models.ScheduledFlight;
 import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabaseProvider;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
-import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
-import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
+import project.vilsoncake.common.models.AirportRequest;
+import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.FlightsNotificationType;
 import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightsNotificationSender;
-import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
+import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
 
 @Slf4j
 @RequiredArgsConstructor(staticName = "create")

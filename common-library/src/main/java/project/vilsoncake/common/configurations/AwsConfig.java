@@ -1,4 +1,4 @@
-package project.vilsoncake.flightsnotificationlambda.configurations;
+package project.vilsoncake.common.configurations;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

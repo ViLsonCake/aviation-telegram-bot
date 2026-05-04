@@ -18,7 +18,7 @@ import project.vilsoncake.common.models.ScheduledFlight;
 import project.vilsoncake.common.models.ScheduledFlightNotificationFlags;
 import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
-import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
+import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.MessageType;
 
 @Slf4j
