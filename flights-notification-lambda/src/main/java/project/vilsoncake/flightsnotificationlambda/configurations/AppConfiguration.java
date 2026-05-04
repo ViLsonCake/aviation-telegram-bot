@@ -83,11 +83,13 @@ public class AppConfiguration {
   public FlightStatusChangeNotificationTypeProcessor flightStatusChangeNotificationTypeProcessor(
       ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
       WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
+      UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider,
       FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
       FlightStatusChangeNotificationSender flightStatusChangeNotificationSender) {
     return FlightStatusChangeNotificationTypeProcessor.create(
         scheduledFlightNotificationDatabaseProvider,
         widebodyAircraftDatabaseProvider,
+        userAircraftFamilyFilterDatabaseProvider,
         flightradarApiLambdaAdapter,
         flightStatusChangeNotificationSender);
   }
