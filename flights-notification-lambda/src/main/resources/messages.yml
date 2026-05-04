@@ -50,6 +50,18 @@ templates:
       Callsign: _%s_
       Airline: _%s_
       Origin airport: _%s_
+    FLIGHT_DIVERTED_NOTIFICATION: |-
+      🔴 A Wide-Body Flight to Your Airport Has Been Diverted to *%s* (%s)
+    FLIGHT_DIVERTED_NOTIFICATION_DETAILS: |-
+      Aircraft: _%s_
+      Callsign: _%s_
+      Origin airport: _%s_
+      Scheduled arrival: _%s_
+      Diverted to: _%s_
+
+      🛩️ [Aircraft info](https://www.flightradar24.com/data/aircraft/%s)
+
+      📍 [View on Flightradar24](https://www.flightradar24.com/%s/%s)
     FLIGHT_ETA_DELAYED_NOTIFICATION: |-
       🟠 ETA delayed by *%s* for a departed Wide-Body Flight to Your Airport
     FLIGHT_ETA_EARLIER_NOTIFICATION: |-

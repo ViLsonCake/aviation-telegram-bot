@@ -15,10 +15,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.configurations.NotificationsConfig;
+import project.vilsoncake.common.entities.AirportEntity;
 import project.vilsoncake.common.entities.ScheduledFlightEntity;
 import project.vilsoncake.common.entities.ScheduledFlightNotificationEntity;
 import project.vilsoncake.common.models.FlightStatus;
 import project.vilsoncake.common.models.ScheduledFlight;
+import project.vilsoncake.common.repositories.AirportDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
 import project.vilsoncake.flightsnotificationlambda.models.MessageType;
@@ -33,6 +35,7 @@ public class FlightStatusChangeNotificationSender {
   private final ScheduledFlightNotificationDatabaseProvider
       scheduledFlightNotificationDatabaseProvider;
   private final ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider;
+  private final AirportDatabaseProvider airportDatabaseProvider;
   private final NotificationsConfig notificationsConfig;
 
   public void sendStatusChangeNotificationsIfNeeded(
@@ -131,6 +134,46 @@ public class FlightStatusChangeNotificationSender {
       changed = true;
       log.info(
           "Sent cancelled notification for flight {} to user {}",
+          scheduledFlightEntity.getRowId(),
+          notificationEntity.getUser().getUsername());
+    }
+
+    if (!Boolean.TRUE.equals(notificationEntity.getNotifiedDiverted())
+        && currentFlight.getStatus().startsWith(FlightStatus.DIVERTED.getFlightradarName())) {
+      String divertedIata = extractDivertedIata(currentFlight.getStatus());
+      AirportEntity divertedAirport =
+          divertedIata.isBlank()
+              ? null
+              : airportDatabaseProvider.getAirportByCode(divertedIata).orElse(null);
+      String divertedAirportName =
+          divertedAirport != null ? divertedAirport.getName() : getValueOrUnknown(null);
+      ZonedDateTime scheduledArrivalTime =
+          ZonedDateTime.ofInstant(
+              Instant.ofEpochSecond(currentFlight.getScheduledArrivalTime()), airportZone);
+      String message =
+          String.format(
+                  botTemplatesResolver.getTemplate(MessageType.FLIGHT_DIVERTED_NOTIFICATION),
+                  divertedAirportName,
+                  getValueOrUnknown(divertedIata.isBlank() ? null : divertedIata))
+              + "\n\n"
+              + String.format(
+                  botTemplatesResolver.getTemplate(
+                      MessageType.FLIGHT_DIVERTED_NOTIFICATION_DETAILS),
+                  aircraftName,
+                  getValueOrUnknown(currentFlight.getCallsign()),
+                  formatOriginAirport(
+                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
+                  formatTimeWithDay(scheduledArrivalTime),
+                  formatOriginAirport(
+                      divertedAirportName, divertedIata.isBlank() ? null : divertedIata),
+                  currentFlight.getRegistration(),
+                  currentFlight.getCallsign(),
+                  currentFlight.getId());
+      telegramClient.sendMessageWithImages(chatId, message, currentFlight.getImages());
+      notificationEntity.setNotifiedDiverted(true);
+      changed = true;
+      log.info(
+          "Sent diverted notification for flight {} to user {}",
           scheduledFlightEntity.getRowId(),
           notificationEntity.getUser().getUsername());
     }
@@ -269,5 +312,13 @@ public class FlightStatusChangeNotificationSender {
     }
 
     scheduledFlightDatabaseProvider.updateFlightState(scheduledFlightEntity, currentFlight);
+  }
+
+  private static String extractDivertedIata(String status) {
+    String prefix = FlightStatus.DIVERTED.getFlightradarName() + " to ";
+    if (status.length() > prefix.length()) {
+      return status.substring(prefix.length()).trim();
+    }
+    return "";
   }
 }
