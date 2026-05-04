@@ -10,14 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.entities.ScheduledFlightNotificationEntity;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
+import project.vilsoncake.common.models.AirportRequest;
+import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.common.models.ScheduledFlight;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
-import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
-import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
+import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.models.FlightsNotificationType;
 import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeNotificationSender;
-import project.vilsoncake.flightsnotificationlambda.services.adapters.FlightradarApiLambdaAdapter;
 
 @Slf4j
 @RequiredArgsConstructor(staticName = "create")

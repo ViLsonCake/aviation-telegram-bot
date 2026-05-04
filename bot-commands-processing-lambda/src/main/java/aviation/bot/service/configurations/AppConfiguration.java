@@ -31,8 +31,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import project.vilsoncake.common.clients.TelegramClient;
+import project.vilsoncake.common.configurations.AwsConfig;
 import project.vilsoncake.common.configurations.BotConfig;
 import project.vilsoncake.common.configurations.GeneralConfig;
+import project.vilsoncake.common.configurations.MessagesConfig;
 import project.vilsoncake.common.messages.BotTemplates;
 import project.vilsoncake.common.repositories.AircraftFamilyRepository;
 import project.vilsoncake.common.repositories.AirportDatabaseProvider;
@@ -41,7 +43,12 @@ import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabasePr
 import project.vilsoncake.common.repositories.UserAircraftFamilyFilterRepository;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.UserRepository;
+import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
+import project.vilsoncake.common.repositories.WidebodyAircraftRepository;
+import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.common.utils.BotTemplatesResolver;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.lambda.LambdaClient;
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -148,9 +155,18 @@ public class AppConfiguration {
       UserDatabaseProvider userDatabaseProvider,
       AirportDatabaseProvider airportDatabaseProvider,
       TelegramClient telegramClient,
-      BotTemplatesResolver botTemplatesResolver) {
+      BotTemplatesResolver botTemplatesResolver,
+      FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
+      MessagesConfig messagesConfig,
+      WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider) {
     return ChoosingAirportPlainTextProcessor.create(
-        userDatabaseProvider, airportDatabaseProvider, telegramClient, botTemplatesResolver);
+        userDatabaseProvider,
+        airportDatabaseProvider,
+        widebodyAircraftDatabaseProvider,
+        flightradarApiLambdaAdapter,
+        telegramClient,
+        botTemplatesResolver,
+        messagesConfig);
   }
 
   // Processors - Callbacks
@@ -243,6 +259,12 @@ public class AppConfiguration {
     return CallbackProcessorsAdapter.create(callbackProcessors);
   }
 
+  @Bean
+  public FlightradarApiLambdaAdapter flightradarApiLambdaAdapter(
+      LambdaClient lambdaClient, AwsConfig awsConfig, ObjectMapper objectMapper) {
+    return FlightradarApiLambdaAdapter.create(lambdaClient, awsConfig, objectMapper);
+  }
+
   // Database
   @Bean
   public UserDatabaseProvider userDatabaseProvider(
@@ -263,11 +285,35 @@ public class AppConfiguration {
         filterRepository, aircraftFamilyRepository);
   }
 
+  @Bean
+  public WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider(
+      WidebodyAircraftRepository widebodyAircraftRepository) {
+    return WidebodyAircraftDatabaseProvider.create(widebodyAircraftRepository);
+  }
+
+  // AWS
+  @Bean
+  @ConfigurationProperties(prefix = "aws")
+  public AwsConfig awsConfig() {
+    return new AwsConfig();
+  }
+
+  @Bean
+  public LambdaClient lambdaClient(AwsConfig awsConfig) {
+    return LambdaClient.builder().region(Region.of(awsConfig.getRegion())).build();
+  }
+
   // Other required beans
   @Bean
   @ConfigurationProperties(prefix = "general")
   public GeneralConfig generalConfig() {
     return new GeneralConfig();
+  }
+
+  @Bean
+  @ConfigurationProperties(prefix = "messages")
+  public MessagesConfig messagesConfig() {
+    return new MessagesConfig();
   }
 
   @Bean

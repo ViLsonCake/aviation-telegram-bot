@@ -50,6 +50,12 @@ templates:
           *IATA*: _%s_
           *City*: _%s_
           *Country*: _%s_
+        AIRCRAFT_FILTER_RECOMMENDATION: |-
+          Looks like you have selected a busy airport with a lot of Wide-body aircraft arrivals.
+          
+          To reduce the noise, consider changing the *Aircraft Filter* to include only aircraft families you are interested in.
+          
+          Use the %s command for that.
 
   callbacks:
     CHANGE_AIRPORT:

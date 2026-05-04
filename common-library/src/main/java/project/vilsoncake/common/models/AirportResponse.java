@@ -1,11 +1,10 @@
-package project.vilsoncake.flightsnotificationlambda.models;
+package project.vilsoncake.common.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.vilsoncake.common.models.ScheduledFlight;
 
 @Data
 @AllArgsConstructor

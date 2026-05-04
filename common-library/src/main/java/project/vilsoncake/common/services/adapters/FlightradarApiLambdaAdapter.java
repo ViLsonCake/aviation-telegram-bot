@@ -1,11 +1,11 @@
-package project.vilsoncake.flightsnotificationlambda.services.adapters;
+package project.vilsoncake.common.services.adapters;
 
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import project.vilsoncake.flightsnotificationlambda.configurations.AwsConfig;
-import project.vilsoncake.flightsnotificationlambda.models.AirportRequest;
-import project.vilsoncake.flightsnotificationlambda.models.AirportResponse;
+import project.vilsoncake.common.configurations.AwsConfig;
+import project.vilsoncake.common.models.AirportRequest;
+import project.vilsoncake.common.models.AirportResponse;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.InvocationType;
