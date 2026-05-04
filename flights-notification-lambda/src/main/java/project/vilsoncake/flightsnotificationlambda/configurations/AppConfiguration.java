@@ -10,6 +10,7 @@ import project.vilsoncake.common.configurations.BotConfig;
 import project.vilsoncake.common.configurations.GeneralConfig;
 import project.vilsoncake.common.configurations.NotificationsConfig;
 import project.vilsoncake.common.repositories.AircraftFamilyRepository;
+import project.vilsoncake.common.repositories.AirportDatabaseProvider;
 import project.vilsoncake.common.repositories.AirportRepository;
 import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
@@ -162,6 +163,7 @@ public class AppConfiguration {
       AircraftNameResolver aircraftNameResolver,
       ScheduledFlightNotificationDatabaseProvider scheduledFlightNotificationDatabaseProvider,
       ScheduledFlightDatabaseProvider scheduledFlightDatabaseProvider,
+      AirportDatabaseProvider airportDatabaseProvider,
       NotificationsConfig notificationsConfig) {
     return FlightStatusChangeNotificationSender.create(
         telegramClient,
@@ -169,7 +171,13 @@ public class AppConfiguration {
         aircraftNameResolver,
         scheduledFlightNotificationDatabaseProvider,
         scheduledFlightDatabaseProvider,
+        airportDatabaseProvider,
         notificationsConfig);
+  }
+
+  @Bean
+  public AirportDatabaseProvider airportDatabaseProvider(AirportRepository airportRepository) {
+    return AirportDatabaseProvider.create(airportRepository);
   }
 
   // Database
