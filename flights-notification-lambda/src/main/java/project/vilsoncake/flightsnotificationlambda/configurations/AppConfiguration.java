@@ -23,6 +23,7 @@ import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.UserRepository;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftRepository;
+import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.handlers.FlightsNotificationTriggerHandler;
 import project.vilsoncake.flightsnotificationlambda.models.BotTemplates;
 import project.vilsoncake.flightsnotificationlambda.processors.FlightStatusChangeNotificationTypeProcessor;
@@ -33,7 +34,6 @@ import project.vilsoncake.flightsnotificationlambda.services.BotTemplatesResolve
 import project.vilsoncake.flightsnotificationlambda.services.FlightStatusChangeNotificationSender;
 import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightNotificationFlagsResolver;
 import project.vilsoncake.flightsnotificationlambda.services.ScheduledFlightsNotificationSender;
-import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.services.adapters.NotificationTypeAdapter;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;

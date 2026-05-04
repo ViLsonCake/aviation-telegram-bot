@@ -14,11 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.ScheduledFlightEntity;
 import project.vilsoncake.common.entities.UserEntity;
+import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.common.models.ScheduledFlight;
 import project.vilsoncake.common.models.ScheduledFlightNotificationFlags;
 import project.vilsoncake.common.repositories.ScheduledFlightDatabaseProvider;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
-import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.flightsnotificationlambda.models.MessageType;
 
 @Slf4j
