@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.vilsoncake.common.entities.ScheduledFlightNotificationEntity;
+import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
 import project.vilsoncake.common.models.AirportRequest;
 import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.common.models.ScheduledFlight;
 import project.vilsoncake.common.repositories.ScheduledFlightNotificationDatabaseProvider;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
 import project.vilsoncake.flightsnotificationlambda.models.FlightsNotificationType;
@@ -26,6 +28,7 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
   private final ScheduledFlightNotificationDatabaseProvider
       scheduledFlightNotificationDatabaseProvider;
   private final WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider;
+  private final UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider;
   private final FlightradarApiLambdaAdapter flightradarApiLambdaAdapter;
   private final FlightStatusChangeNotificationSender flightStatusChangeNotificationSender;
 
@@ -103,10 +106,34 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
         continue;
       }
 
+      if (!matchesUserAircraftFilter(notification.getUser(), currentFlight.getAircraftCode())) {
+        log.info(
+            "Skipping status change for flight {} - aircraft {} not in user {} filter",
+            notification.getScheduledFlight().getRowId(),
+            currentFlight.getAircraftCode(),
+            notification.getUser().getUsername());
+        continue;
+      }
+
       flightStatusChangeNotificationSender.sendStatusChangeNotificationsIfNeeded(
           notification, currentFlight);
     }
 
     log.info("Finished flight status change notifications processing");
+  }
+
+  private boolean matchesUserAircraftFilter(UserEntity user, String aircraftCode) {
+    Set<String> userFamilyCodes =
+        userAircraftFamilyFilterDatabaseProvider.getFilterFamilyCodes(user);
+    if (userFamilyCodes.isEmpty()) {
+      return true;
+    }
+    Set<String> allowedCodes =
+        widebodyAircraftDatabaseProvider
+            .getWideBodyAircraftByFamilies(new ArrayList<>(userFamilyCodes))
+            .stream()
+            .map(WideBodyAircraftEntity::getCode)
+            .collect(Collectors.toSet());
+    return allowedCodes.contains(aircraftCode);
   }
 }
