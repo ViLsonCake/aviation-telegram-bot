@@ -25,6 +25,10 @@ bot:
   telegram-api-callback-url: https://api.telegram.org/bot${BOT_TOKEN}/answerCallbackQuery
   telegram-api-media-group-url: https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup
 
+aws:
+  region: ${AWS_REGION:us-east-1}
+  flightradar-api-lambda-name: ${FLIGHTRADAR_API_LAMBDA_NAME}
+
 general:
   timezone: Europe/Warsaw
 
