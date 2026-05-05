@@ -49,6 +49,7 @@ jobs:
           TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
           TF_VAR_flights_notification_schedule: ${{ vars.SCHEDULED_FLIGHTS_NOTIFICATION_SCHEDULE }}
           TF_VAR_flights_status_change_schedule: ${{ vars.FLIGHTS_STATUS_CHANGE_NOTIFICATION_SCHEDULE }}
+          TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
         run: terraform plan
 
       - name: Terraform Apply
@@ -61,4 +62,5 @@ jobs:
           TF_VAR_bot_token: ${{ secrets.BOT_TOKEN }}
           TF_VAR_flights_notification_schedule: ${{ vars.SCHEDULED_FLIGHTS_NOTIFICATION_SCHEDULE }}
           TF_VAR_flights_status_change_schedule: ${{ vars.FLIGHTS_STATUS_CHANGE_NOTIFICATION_SCHEDULE }}
+          TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
         run: terraform apply -auto-approve
