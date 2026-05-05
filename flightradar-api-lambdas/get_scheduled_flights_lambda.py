@@ -1,21 +1,12 @@
 import logging
+import cloudscraper
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from FlightRadar24 import FlightRadar24API
-from FlightRadar24.errors import AirportNotFoundError
-from FlightRadar24.core import Core
+from requests.exceptions import HTTPError, ConnectionError, Timeout
 from utils.flight_utils import filter_flights_by_aircraft_code, convert_images_to_dict
 from models.scheduled_flight import ScheduledFlight
 
-# TODO remove the library patching once it's updated to resolve 403 Forbidden response
-Core.headers = {
-    "accept-encoding": "gzip, br",
-    "accept-language": "en-US,en;q=0.9",
-    "cache-control": "max-age=0",
-    "user-agent": "Flightradar24/10.0.0 (com.flightradar24.iphone; build:10.0.0.1; iOS 17.4.1) Alamofire/5.9.1"
-}
-Core.json_headers = Core.headers.copy()
-flightradar_api: FlightRadar24API = FlightRadar24API()
+scraper = cloudscraper.create_scraper()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -36,16 +27,17 @@ def lambda_handler(event, context):
             aircraft_filter_codes = airport.get('aircraft_filter_codes', [])
             filtered_flights_for_airport = get_filtered_flights_for_airport(airport_code, aircraft_filter_codes)
             response[airport_code] = filtered_flights_for_airport
+            logger.info('Event successfully processed.')
         except Exception as e:
             logger.error(e)
-
-    logger.info('Event successfully processed.')
 
     return response
 
 def fetch_page(code: str, page: int) -> dict:
-    return flightradar_api.get_airport_details(code=code, page=page)
-
+    return scraper.get(
+        'https://api.flightradar24.com/common/v1/airport.json',
+        params={"format": "json", "code": code, "limit": 100, "page": page}
+    )
 
 def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str], pages_to_retrieve: int = 3) -> dict:
     total_arrivals_count: int = 0
@@ -58,15 +50,23 @@ def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]
         for future in as_completed(futures):
             try:
                 response = future.result()
-            except AirportNotFoundError:
-                logger.warning(f'The airport with the code {code} was not found')
+                response_json = response.json()
+            except HTTPError as e:
+                logger.warning(f"{e.response.status_code} Client Error")
+                return {'flights': []}
+            except ConnectionError:
+                logger.warning("No connection")
+                return {'flights': []}
+            except Timeout:
+                logger.warning("Request timed out")
                 return {'flights': []}
             except ValueError:
                 logger.warning(f'The code {code} is not valid. It must be the IATA or ICAO of the airport')
                 return {'flights': []}
 
-            arrivals: list = response.get('airport', {}).get('pluginData', {}).get('schedule', {}).get('arrivals', {}).get('data', [])
-            aircraft_images: list = response.get('aircraftImages', [])
+            result: dict = response_json.get('result', {}).get('response', {})
+            arrivals: list = result.get('airport', {}).get('pluginData', {}).get('schedule', {}).get('arrivals', {}).get('data', [])
+            aircraft_images: list = result.get('aircraftImages', [])
             raw_filtered_arrivals: list = filter_flights_by_aircraft_code(arrivals, aircraft_filter_codes)
             converted_aircraft_images: dict = convert_images_to_dict(aircraft_images)
 
