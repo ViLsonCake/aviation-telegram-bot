@@ -19,11 +19,12 @@ resource "aws_lambda_function" "bot_commands_processing" {
 
   environment {
     variables = {
-      DB_HOST     = var.db_host
-      DB_NAME     = var.db_name
-      DB_USERNAME = var.db_username
-      DB_PASSWORD = var.db_password
-      BOT_TOKEN   = var.bot_token
+      DB_HOST                    = var.db_host
+      DB_NAME                    = var.db_name
+      DB_USERNAME                = var.db_username
+      DB_PASSWORD                = var.db_password
+      BOT_TOKEN                  = var.bot_token
+      FLIGHTRADAR_API_LAMBDA_NAME = aws_lambda_function.flightradar_api_scheduled_flights.function_name
     }
   }
 
