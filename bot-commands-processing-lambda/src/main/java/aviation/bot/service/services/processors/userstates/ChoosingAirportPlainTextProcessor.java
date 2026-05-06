@@ -78,13 +78,13 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
             airport.getCity(),
             airport.getCountry());
 
-    String updatedMessage = includeAircraftFilterRecommendationIfNeeded(airport, message, username);
+    telegramClient.sendMessage(chatId, message);
 
-    telegramClient.sendMessage(chatId, updatedMessage);
+    sendAircraftFilterRecommendationIfNeeded(airport, chatId, username);
   }
 
-  private String includeAircraftFilterRecommendationIfNeeded(
-      AirportEntity airport, String message, String username) {
+  private void sendAircraftFilterRecommendationIfNeeded(
+      AirportEntity airport, long chatId, String username) {
     try {
       List<WideBodyAircraftEntity> allWideBodyAircraft =
           widebodyAircraftDatabaseProvider.getAllWideBodyAircraft();
@@ -103,21 +103,18 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
         int filteredArrivalsCount = response.getFilteredArrivalsCount();
 
         if (filteredArrivalsCount > messagesConfig.getAircraftFilterRecommendationThreshold()) {
-          String aircraftFilterRecommendation =
+          String aircraftFilterRecommendationMessage =
               String.format(
                   botTemplatesResolver.getTemplate(
                       getUserState(), UserStateResponseTemplate.AIRCRAFT_FILTER_RECOMMENDATION),
                   BotCommand.AIRCRAFT.getCommand());
-          message += "\n\n" + aircraftFilterRecommendation;
 
-          log.info("Added aircraft filter recommendation for the message to user {}", username);
+          telegramClient.sendMessage(chatId, aircraftFilterRecommendationMessage);
+          log.info("Sent aircraft filter recommendation for the message to user {}", username);
         }
       }
-
-      return message;
     } catch (Exception e) {
       log.error("Error while retrieving wide-body flights from flightradar API", e);
-      return message;
     }
   }
 }
