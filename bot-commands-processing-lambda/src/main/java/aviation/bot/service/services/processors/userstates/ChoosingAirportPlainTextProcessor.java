@@ -17,6 +17,7 @@ import project.vilsoncake.common.models.AirportResponse;
 import project.vilsoncake.common.models.BotCommand;
 import project.vilsoncake.common.models.UserStateResponseTemplate;
 import project.vilsoncake.common.repositories.AirportDatabaseProvider;
+import project.vilsoncake.common.repositories.UserAircraftFamilyFilterDatabaseProvider;
 import project.vilsoncake.common.repositories.UserDatabaseProvider;
 import project.vilsoncake.common.repositories.WidebodyAircraftDatabaseProvider;
 import project.vilsoncake.common.services.adapters.FlightradarApiLambdaAdapter;
@@ -29,6 +30,7 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
   private final UserDatabaseProvider userDatabaseProvider;
   private final AirportDatabaseProvider airportDatabaseProvider;
   private final WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider;
+  private final UserAircraftFamilyFilterDatabaseProvider filterDatabaseProvider;
   private final FlightradarApiLambdaAdapter flightradarApiLambdaAdapter;
   private final TelegramClient telegramClient;
   private final BotTemplatesResolver botTemplatesResolver;
@@ -80,12 +82,18 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
 
     telegramClient.sendMessage(chatId, message);
 
-    sendAircraftFilterRecommendationIfNeeded(airport, chatId, username);
+    sendAircraftFilterRecommendationIfNeeded(airport, chatId, user);
   }
 
   private void sendAircraftFilterRecommendationIfNeeded(
-      AirportEntity airport, long chatId, String username) {
+      AirportEntity airport, long chatId, UserEntity user) {
     try {
+      long selectedAircraftFamilyCount = filterDatabaseProvider.countSelectedFamilies(user);
+
+      if (selectedAircraftFamilyCount > 0) {
+        return;
+      }
+
       List<WideBodyAircraftEntity> allWideBodyAircraft =
           widebodyAircraftDatabaseProvider.getAllWideBodyAircraft();
       AirportRequest airportRequest =
@@ -110,7 +118,8 @@ public class ChoosingAirportPlainTextProcessor implements PlainTextProcessor {
                   BotCommand.AIRCRAFT.getCommand());
 
           telegramClient.sendMessage(chatId, aircraftFilterRecommendationMessage);
-          log.info("Sent aircraft filter recommendation for the message to user {}", username);
+          log.info(
+              "Sent aircraft filter recommendation for the message to user {}", user.getUsername());
         }
       }
     } catch (Exception e) {
