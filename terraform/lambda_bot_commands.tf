@@ -45,6 +45,10 @@ resource "aws_lambda_alias" "bot_commands_processing" {
   name             = "live"
   function_name    = aws_lambda_function.bot_commands_processing.function_name
   function_version = aws_lambda_function.bot_commands_processing.version
+
+  lifecycle {
+    ignore_changes = [function_version]
+  }
 }
 
 resource "aws_lambda_function_url" "bot_commands_processing" {
