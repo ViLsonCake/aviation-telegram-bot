@@ -29,7 +29,7 @@ def lambda_handler(event, context):
             response[airport_code] = filtered_flights_for_airport
             logger.info('Event successfully processed.')
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
 
     return response
 
