@@ -23,16 +23,20 @@ class ScheduledFlight:
 
     @classmethod
     def create_from_raw_flight(cls, raw_flight: dict, converted_aircraft_images: dict) -> "ScheduledFlight":
-        flight = raw_flight.get('flight', {})
-        identification = flight.get('identification', {})
-        airport = flight.get('airport', {})
-        origin = airport.get('origin', {})
-        origin_code = origin.get('code', {})
-        aircraft = flight.get('aircraft', {})
-        flight_status = flight.get('status', {})
-        generic = flight_status.get('generic', {})
-        time = flight.get('time', {})
-        scheduled = time.get('scheduled', {})
+        flight = raw_flight.get('flight') or {}
+        identification = flight.get('identification') or {}
+        airport = flight.get('airport') or {}
+        origin = airport.get('origin') or {}
+        origin_code = origin.get('code') or {}
+        aircraft = flight.get('aircraft') or {}
+        flight_status = flight.get('status') or {}
+        generic = flight_status.get('generic') or {}
+        time = flight.get('time') or {}
+        scheduled = time.get('scheduled') or {}
+        airline = flight.get('airline') or {}
+        model = aircraft.get('model') or {}
+        generic_status = generic.get('status') or {}
+        event_time = generic.get('eventTime') or {}
 
         registration = aircraft.get('registration', '')
 
@@ -46,12 +50,12 @@ class ScheduledFlight:
             registration=registration,
             live=flight_status.get('live', False),
             status=flight_status.get('text', ''),
-            diverted=generic.get('status', {}).get('diverted', ''),
+            diverted=generic_status.get('diverted', ''),
             scheduled_departure_time=scheduled.get('departure', 0),
             scheduled_arrival_time=scheduled.get('arrival', 0),
-            estimated_arrival_time=generic.get('eventTime', {}).get('utc', 0),
-            aircraft_code=aircraft.get('model', {}).get('code', 'Unknown'),
-            aircraft_name=aircraft.get('model', {}).get('text', 'Unknown'),
-            airline_name=flight.get('airline', {}).get('name', 'Unknown'),
+            estimated_arrival_time=event_time.get('utc', 0),
+            aircraft_code=model.get('code', 'Unknown'),
+            aircraft_name=model.get('text', 'Unknown'),
+            airline_name=airline.get('name', 'Unknown'),
             images=converted_aircraft_images.get(registration, []),
         )
