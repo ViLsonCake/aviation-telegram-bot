@@ -158,11 +158,13 @@ public class AppConfiguration {
       BotTemplatesResolver botTemplatesResolver,
       FlightradarApiLambdaAdapter flightradarApiLambdaAdapter,
       MessagesConfig messagesConfig,
-      WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider) {
+      WidebodyAircraftDatabaseProvider widebodyAircraftDatabaseProvider,
+      UserAircraftFamilyFilterDatabaseProvider userAircraftFamilyFilterDatabaseProvider) {
     return ChoosingAirportPlainTextProcessor.create(
         userDatabaseProvider,
         airportDatabaseProvider,
         widebodyAircraftDatabaseProvider,
+        userAircraftFamilyFilterDatabaseProvider,
         flightradarApiLambdaAdapter,
         telegramClient,
         botTemplatesResolver,
