@@ -54,22 +54,17 @@ jobs:
           aws lambda wait function-updated \
             --function-name aviation-telegram-bot-flights-notification
 
-      - name: Set Lambda Environment Variables
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          FLIGHTRADAR_API_LAMBDA_NAME: aviation-telegram-bot-flightradar-api-get-scheduled-flights
+      - name: Publish Lambda Version
+        id: publish
         run: |
-          aws lambda update-function-configuration \
+          VERSION=$(aws lambda publish-version \
             --function-name aviation-telegram-bot-flights-notification \
-            --environment "$(jq -n '{Variables: {
-              BOT_TOKEN: env.BOT_TOKEN,
-              DB_HOST: env.DB_HOST,
-              DB_NAME: env.DB_NAME,
-              DB_USERNAME: env.DB_USERNAME,
-              DB_PASSWORD: env.DB_PASSWORD,
-              FLIGHTRADAR_API_LAMBDA_NAME: env.FLIGHTRADAR_API_LAMBDA_NAME
-            }}')"
+            --query 'Version' --output text)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update Live Alias
+        run: |
+          aws lambda update-alias \
+            --function-name aviation-telegram-bot-flights-notification \
+            --name live \
+            --function-version ${{ steps.publish.outputs.version }}
