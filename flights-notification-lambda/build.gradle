@@ -33,6 +33,9 @@ dependencies {
     // Common library
     implementation 'project.vilsoncake:common-library:1.0-SNAPSHOT'
 
+    // CRaC — enables Spring Boot's SnapStart datasource lifecycle (close pool before checkpoint)
+    implementation 'org.crac:crac'
+
     // AWS
     implementation 'com.amazonaws:aws-lambda-java-core:1.2.3'
     implementation 'com.amazonaws:aws-lambda-java-events:3.11.4'
