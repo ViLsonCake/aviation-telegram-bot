@@ -42,7 +42,7 @@ public class ScheduledFlightsNotificationSender {
   public void notifyScheduledFlights(UserEntity user, AirportResponse airportResponse) {
     List<ScheduledFlight> scheduledFlights = airportResponse.getFlights();
     List<ScheduledFlight> unnotifiedScheduledFlights =
-        getUnnotifiedScheduledFlights(scheduledFlights);
+        getUnnotifiedScheduledFlights(scheduledFlights, user);
 
     if (unnotifiedScheduledFlights.isEmpty()) {
       return;
@@ -167,13 +167,15 @@ public class ScheduledFlightsNotificationSender {
         getValueOrUnknown(formattedScheduledArrivalTime));
   }
 
-  private List<ScheduledFlight> getUnnotifiedScheduledFlights(List<ScheduledFlight> flights) {
+  private List<ScheduledFlight> getUnnotifiedScheduledFlights(
+      List<ScheduledFlight> flights, UserEntity user) {
     return flights.stream()
         .filter(
             flight ->
                 !scheduledFlightNotificationDatabaseProvider.isNotificationSent(
                     ScheduledFlightEntity.constructId(
-                        flight.getRowId(), flight.getScheduledDepartureTime())))
+                        flight.getRowId(), flight.getScheduledDepartureTime()),
+                    user))
         .toList();
   }
 }

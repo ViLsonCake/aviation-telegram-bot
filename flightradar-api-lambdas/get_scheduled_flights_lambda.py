@@ -74,8 +74,16 @@ def get_filtered_flights_for_airport(code: str, aircraft_filter_codes: list[str]
             total_filtered_arrivals_count += len(raw_filtered_arrivals)
             total_flights.extend([vars(ScheduledFlight.create_from_raw_flight(flight, converted_aircraft_images)) for flight in raw_filtered_arrivals])
 
+    seen = set()
+    unique_flights = []
+    for flight in total_flights:
+        key = (flight['row_id'], flight['scheduled_departure_time'])
+        if key not in seen:
+            seen.add(key)
+            unique_flights.append(flight)
+
     return {
         'arrivals_count': total_arrivals_count,
-        'filtered_arrivals_count': total_filtered_arrivals_count,
-        'flights': total_flights
+        'filtered_arrivals_count': len(unique_flights),
+        'flights': unique_flights
     }
