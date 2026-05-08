@@ -13,7 +13,7 @@ import project.vilsoncake.common.entities.enums.BotMode;
 public interface ScheduledFlightNotificationRepository
     extends JpaRepository<ScheduledFlightNotificationEntity, UUID> {
 
-  boolean existsByScheduledFlightId(String scheduledFlightId);
+  boolean existsByScheduledFlightIdAndUserId(String scheduledFlightId, UUID userId);
 
   @Query(
       """

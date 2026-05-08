@@ -17,8 +17,9 @@ public class ScheduledFlightNotificationDatabaseProvider {
 
   private final ScheduledFlightNotificationRepository scheduledFlightNotificationRepository;
 
-  public boolean isNotificationSent(String flightId) {
-    return scheduledFlightNotificationRepository.existsByScheduledFlightId(flightId);
+  public boolean isNotificationSent(String flightId, UserEntity userEntity) {
+    return scheduledFlightNotificationRepository.existsByScheduledFlightIdAndUserId(
+        flightId, userEntity.getId());
   }
 
   public List<ScheduledFlightNotificationEntity> findActiveForEligibleUsers() {
