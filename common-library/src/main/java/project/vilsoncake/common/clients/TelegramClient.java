@@ -183,13 +183,15 @@ public class TelegramClient {
 
     while (matcher.find()) {
       links.add("[" + matcher.group(1) + "](" + matcher.group(2) + ")");
-      matcher.appendReplacement(withPlaceholders, "__MDLINK" + (links.size() - 1) + "__");
+      matcher.appendReplacement(withPlaceholders, "MDLINKPLACEHOLDER" + (links.size() - 1) + "END");
     }
     matcher.appendTail(withPlaceholders);
 
     String escaped =
         withPlaceholders
             .toString()
+            .replace("_", "\\_")
+            .replace("*", "\\*")
             .replace("[", "\\[")
             .replace("]", "\\]")
             .replace("(", "\\(")
@@ -209,7 +211,7 @@ public class TelegramClient {
             .replace("\"", "\\\"");
 
     for (int i = 0; i < links.size(); i++) {
-      escaped = escaped.replace("__MDLINK" + i + "__", links.get(i));
+      escaped = escaped.replace("MDLINKPLACEHOLDER" + i + "END", links.get(i));
     }
 
     return escaped;
