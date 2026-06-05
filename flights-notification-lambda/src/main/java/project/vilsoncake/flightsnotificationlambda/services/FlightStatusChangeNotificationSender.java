@@ -1,5 +1,6 @@
 package project.vilsoncake.flightsnotificationlambda.services;
 
+import static project.vilsoncake.common.utils.BotMessagesUtils.escapeMarkdownV2;
 import static project.vilsoncake.common.utils.BotMessagesUtils.formatDuration;
 import static project.vilsoncake.common.utils.BotMessagesUtils.formatOriginAirport;
 import static project.vilsoncake.common.utils.BotMessagesUtils.formatTimeWithDay;
@@ -61,13 +62,15 @@ public class FlightStatusChangeNotificationSender {
               + "\n\n"
               + String.format(
                   botTemplatesResolver.getTemplate(MessageType.FLIGHT_LIVE_NOTIFICATION_DETAILS),
-                  aircraftName,
-                  getValueOrUnknown(currentFlight.getCallsign()),
-                  getValueOrUnknown(currentFlight.getRegistration()),
-                  getValueOrUnknown(currentFlight.getAirlineName()),
-                  formatOriginAirport(
-                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
-                  eta,
+                  escapeMarkdownV2(aircraftName),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getRegistration())),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getAirlineName())),
+                  escapeMarkdownV2(
+                      formatOriginAirport(
+                          currentFlight.getOriginAirportName(),
+                          currentFlight.getOriginAirportIata())),
+                  escapeMarkdownV2(eta),
                   currentFlight.getRegistration(),
                   currentFlight.getCallsign(),
                   currentFlight.getId());
@@ -101,12 +104,14 @@ public class FlightStatusChangeNotificationSender {
               + "\n\n"
               + String.format(
                   botTemplatesResolver.getTemplate(MessageType.FLIGHT_DELAYED_NOTIFICATION_DETAILS),
-                  aircraftName,
-                  getValueOrUnknown(currentFlight.getCallsign()),
-                  getValueOrUnknown(currentFlight.getAirlineName()),
-                  formatOriginAirport(
-                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
-                  eta);
+                  escapeMarkdownV2(aircraftName),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getAirlineName())),
+                  escapeMarkdownV2(
+                      formatOriginAirport(
+                          currentFlight.getOriginAirportName(),
+                          currentFlight.getOriginAirportIata())),
+                  escapeMarkdownV2(eta));
       telegramClient.sendMessages(chatId, List.of(message));
       notificationEntity.setNotifiedDelayed(true);
       changed = true;
@@ -124,11 +129,13 @@ public class FlightStatusChangeNotificationSender {
               + String.format(
                   botTemplatesResolver.getTemplate(
                       MessageType.FLIGHT_CANCELLED_NOTIFICATION_DETAILS),
-                  aircraftName,
-                  getValueOrUnknown(currentFlight.getCallsign()),
-                  getValueOrUnknown(currentFlight.getAirlineName()),
-                  formatOriginAirport(
-                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()));
+                  escapeMarkdownV2(aircraftName),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getAirlineName())),
+                  escapeMarkdownV2(
+                      formatOriginAirport(
+                          currentFlight.getOriginAirportName(),
+                          currentFlight.getOriginAirportIata())));
       telegramClient.sendMessages(chatId, List.of(message));
       notificationEntity.setNotifiedCancelled(true);
       changed = true;
@@ -153,19 +160,22 @@ public class FlightStatusChangeNotificationSender {
       String message =
           String.format(
                   botTemplatesResolver.getTemplate(MessageType.FLIGHT_DIVERTED_NOTIFICATION),
-                  divertedAirportName,
-                  getValueOrUnknown(divertedIata.isBlank() ? null : divertedIata))
+                  escapeMarkdownV2(divertedAirportName),
+                  escapeMarkdownV2(getValueOrUnknown(divertedIata.isBlank() ? null : divertedIata)))
               + "\n\n"
               + String.format(
                   botTemplatesResolver.getTemplate(
                       MessageType.FLIGHT_DIVERTED_NOTIFICATION_DETAILS),
-                  aircraftName,
-                  getValueOrUnknown(currentFlight.getCallsign()),
-                  formatOriginAirport(
-                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
-                  formatTimeWithDay(scheduledArrivalTime),
-                  formatOriginAirport(
-                      divertedAirportName, divertedIata.isBlank() ? null : divertedIata),
+                  escapeMarkdownV2(aircraftName),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                  escapeMarkdownV2(
+                      formatOriginAirport(
+                          currentFlight.getOriginAirportName(),
+                          currentFlight.getOriginAirportIata())),
+                  escapeMarkdownV2(formatTimeWithDay(scheduledArrivalTime)),
+                  escapeMarkdownV2(
+                      formatOriginAirport(
+                          divertedAirportName, divertedIata.isBlank() ? null : divertedIata)),
                   currentFlight.getRegistration(),
                   currentFlight.getCallsign(),
                   currentFlight.getId());
@@ -198,13 +208,15 @@ public class FlightStatusChangeNotificationSender {
               + "\n\n"
               + String.format(
                   botTemplatesResolver.getTemplate(MessageType.FLIGHT_LANDED_NOTIFICATION_DETAILS),
-                  aircraftName,
-                  getValueOrUnknown(currentFlight.getCallsign()),
-                  getValueOrUnknown(currentFlight.getAirlineName()),
-                  formatOriginAirport(
-                      currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
-                  formatTimeWithDay(scheduledArrivalTime),
-                  estimatedArrival,
+                  escapeMarkdownV2(aircraftName),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                  escapeMarkdownV2(getValueOrUnknown(currentFlight.getAirlineName())),
+                  escapeMarkdownV2(
+                      formatOriginAirport(
+                          currentFlight.getOriginAirportName(),
+                          currentFlight.getOriginAirportIata())),
+                  escapeMarkdownV2(formatTimeWithDay(scheduledArrivalTime)),
+                  escapeMarkdownV2(estimatedArrival),
                   currentFlight.getRegistration(),
                   currentFlight.getRegistration(),
                   currentFlight.getId());
@@ -245,12 +257,14 @@ public class FlightStatusChangeNotificationSender {
                 + String.format(
                     botTemplatesResolver.getTemplate(
                         MessageType.FLIGHT_ETA_CHANGED_NOTIFICATION_DETAILS),
-                    aircraftName,
-                    getValueOrUnknown(currentFlight.getCallsign()),
-                    formatOriginAirport(
-                        currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
-                    formatTimeWithDay(scheduledArrivalTime),
-                    formatTimeWithDay(currentEta),
+                    escapeMarkdownV2(aircraftName),
+                    escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                    escapeMarkdownV2(
+                        formatOriginAirport(
+                            currentFlight.getOriginAirportName(),
+                            currentFlight.getOriginAirportIata())),
+                    escapeMarkdownV2(formatTimeWithDay(scheduledArrivalTime)),
+                    escapeMarkdownV2(formatTimeWithDay(currentEta)),
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),
                     currentFlight.getId());
@@ -287,13 +301,15 @@ public class FlightStatusChangeNotificationSender {
                 + String.format(
                     botTemplatesResolver.getTemplate(
                         MessageType.FLIGHT_ARRIVING_SOON_NOTIFICATION_DETAILS),
-                    aircraftName,
-                    getValueOrUnknown(currentFlight.getCallsign()),
-                    getValueOrUnknown(currentFlight.getAirlineName()),
-                    formatOriginAirport(
-                        currentFlight.getOriginAirportName(), currentFlight.getOriginAirportIata()),
-                    formatTimeWithDay(scheduledArrivalTime),
-                    formatTimeWithDay(currentEta),
+                    escapeMarkdownV2(aircraftName),
+                    escapeMarkdownV2(getValueOrUnknown(currentFlight.getCallsign())),
+                    escapeMarkdownV2(getValueOrUnknown(currentFlight.getAirlineName())),
+                    escapeMarkdownV2(
+                        formatOriginAirport(
+                            currentFlight.getOriginAirportName(),
+                            currentFlight.getOriginAirportIata())),
+                    escapeMarkdownV2(formatTimeWithDay(scheduledArrivalTime)),
+                    escapeMarkdownV2(formatTimeWithDay(currentEta)),
                     currentFlight.getRegistration(),
                     currentFlight.getCallsign(),
                     currentFlight.getId());
