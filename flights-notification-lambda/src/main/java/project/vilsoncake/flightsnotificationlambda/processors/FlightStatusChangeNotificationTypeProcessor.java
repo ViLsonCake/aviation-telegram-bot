@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.ScheduledFlightNotificationEntity;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
@@ -115,8 +116,16 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
         continue;
       }
 
-      flightStatusChangeNotificationSender.sendStatusChangeNotificationsIfNeeded(
-          notification, currentFlight);
+      try {
+        flightStatusChangeNotificationSender.sendStatusChangeNotificationsIfNeeded(
+            notification, currentFlight);
+      } catch (TelegramClient.TelegramClientException e) {
+        log.error(
+            "Failed to send status change notification for flight {} to user {}: {}",
+            notification.getScheduledFlight().getRowId(),
+            notification.getUser().getUsername(),
+            e.getMessage());
+      }
     }
 
     log.info("Finished flight status change notifications processing");

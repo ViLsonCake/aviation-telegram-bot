@@ -1,5 +1,6 @@
 package project.vilsoncake.flightsnotificationlambda.services;
 
+import static project.vilsoncake.common.utils.BotMessagesUtils.escapeMarkdownV2;
 import static project.vilsoncake.common.utils.BotMessagesUtils.formatOriginAirport;
 import static project.vilsoncake.common.utils.BotMessagesUtils.formatTimeWithDay;
 import static project.vilsoncake.common.utils.BotMessagesUtils.getValueOrUnknown;
@@ -132,14 +133,15 @@ public class ScheduledFlightsNotificationSender {
     String formattedScheduledArrivalTime = formatTimeWithDay(arrivalDateTime);
     return String.format(
         scheduledFlightTemplate,
-        aircraftName,
-        getValueOrUnknown(scheduledFlight.getCallsign()),
-        getValueOrUnknown(scheduledFlight.getRegistration()),
-        getValueOrUnknown(scheduledFlight.getAirlineName()),
-        formatOriginAirport(
-            scheduledFlight.getOriginAirportName(), scheduledFlight.getOriginAirportIata()),
-        getValueOrUnknown(scheduledFlight.getStatus()),
-        getValueOrUnknown(formattedScheduledArrivalTime));
+        escapeMarkdownV2(aircraftName),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getCallsign())),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getRegistration())),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getAirlineName())),
+        escapeMarkdownV2(
+            formatOriginAirport(
+                scheduledFlight.getOriginAirportName(), scheduledFlight.getOriginAirportIata())),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getStatus())),
+        escapeMarkdownV2(getValueOrUnknown(formattedScheduledArrivalTime)));
   }
 
   private String buildScheduledFlightMessage(
@@ -157,14 +159,15 @@ public class ScheduledFlightsNotificationSender {
     return String.format(
         scheduledFlightTemplate,
         listNumber,
-        aircraftName,
-        getValueOrUnknown(scheduledFlight.getCallsign()),
-        getValueOrUnknown(scheduledFlight.getRegistration()),
-        getValueOrUnknown(scheduledFlight.getAirlineName()),
-        formatOriginAirport(
-            scheduledFlight.getOriginAirportName(), scheduledFlight.getOriginAirportIata()),
-        getValueOrUnknown(scheduledFlight.getStatus()),
-        getValueOrUnknown(formattedScheduledArrivalTime));
+        escapeMarkdownV2(aircraftName),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getCallsign())),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getRegistration())),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getAirlineName())),
+        escapeMarkdownV2(
+            formatOriginAirport(
+                scheduledFlight.getOriginAirportName(), scheduledFlight.getOriginAirportIata())),
+        escapeMarkdownV2(getValueOrUnknown(scheduledFlight.getStatus())),
+        escapeMarkdownV2(getValueOrUnknown(formattedScheduledArrivalTime)));
   }
 
   private List<ScheduledFlight> getUnnotifiedScheduledFlights(

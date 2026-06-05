@@ -11,6 +11,11 @@ public class BotMessagesUtils {
     return value == null || value.isBlank() ? "Unknown" : value;
   }
 
+  /** Escapes MarkdownV2 formatting characters that appear in dynamic data values. */
+  public static String escapeMarkdownV2(String value) {
+    return value.replace("\\", "\\\\").replace("_", "\\_").replace("*", "\\*");
+  }
+
   public static String formatOriginAirport(String name, String icao) {
     String resolvedName = getValueOrUnknown(name);
     String resolvedIcao = getValueOrUnknown(icao);
