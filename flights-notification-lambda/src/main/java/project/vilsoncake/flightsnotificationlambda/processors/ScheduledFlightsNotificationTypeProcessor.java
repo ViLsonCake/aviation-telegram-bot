@@ -114,9 +114,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
         scheduledFlightsNotificationSender.notifyScheduledFlights(user, userFilteredResponse);
       } catch (TelegramClient.TelegramClientException e) {
         log.error(
-            "Failed to send scheduled flights notification to user {}: {}",
-            user.getUsername(),
-            e.getMessage());
+            "Failed to send scheduled flights notification to user {}", user.getUsername(), e);
       }
     }
   }
