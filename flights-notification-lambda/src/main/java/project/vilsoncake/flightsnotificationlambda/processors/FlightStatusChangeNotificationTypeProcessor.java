@@ -121,10 +121,10 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
             notification, currentFlight);
       } catch (TelegramClient.TelegramClientException e) {
         log.error(
-            "Failed to send status change notification for flight {} to user {}: {}",
+            "Failed to send status change notification for flight {} to user {}",
             notification.getScheduledFlight().getRowId(),
             notification.getUser().getUsername(),
-            e.getMessage());
+            e);
       }
     }
 
