@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.ScheduledFlightNotificationEntity;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
@@ -119,7 +118,7 @@ public class FlightStatusChangeNotificationTypeProcessor implements Notification
       try {
         flightStatusChangeNotificationSender.sendStatusChangeNotificationsIfNeeded(
             notification, currentFlight);
-      } catch (TelegramClient.TelegramClientException e) {
+      } catch (Exception e) {
         log.error(
             "Failed to send status change notification for flight {} to user {}",
             notification.getScheduledFlight().getRowId(),
