@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.vilsoncake.common.clients.TelegramClient;
 import project.vilsoncake.common.entities.UserEntity;
 import project.vilsoncake.common.entities.WideBodyAircraftEntity;
 import project.vilsoncake.common.models.AirportRequest;
@@ -112,7 +111,7 @@ public class ScheduledFlightsNotificationTypeProcessor implements NotificationTy
 
       try {
         scheduledFlightsNotificationSender.notifyScheduledFlights(user, userFilteredResponse);
-      } catch (TelegramClient.TelegramClientException e) {
+      } catch (Exception e) {
         log.error(
             "Failed to send scheduled flights notification to user {}", user.getUsername(), e);
       }

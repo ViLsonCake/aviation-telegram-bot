@@ -112,11 +112,18 @@ public class ScheduledFlightsNotificationSender {
 
   private void saveNotifications(List<ScheduledFlight> scheduledFlights, UserEntity user) {
     for (ScheduledFlight scheduledFlight : scheduledFlights) {
-      ScheduledFlightEntity entity =
-          scheduledFlightDatabaseProvider.getOrCreate(scheduledFlight, user.getAirport());
-      ScheduledFlightNotificationFlags flags =
-          scheduledFlightNotificationFlagsResolver.resolve(entity);
-      scheduledFlightNotificationDatabaseProvider.saveNotification(entity, user, flags);
+      try {
+        ScheduledFlightEntity entity =
+            scheduledFlightDatabaseProvider.getOrCreate(scheduledFlight, user.getAirport());
+        ScheduledFlightNotificationFlags flags =
+            scheduledFlightNotificationFlagsResolver.resolve(entity);
+        scheduledFlightNotificationDatabaseProvider.saveNotification(entity, user, flags);
+      } catch (Exception e) {
+        log.error(
+            "Failed to save notification for flight {}, skipping",
+            scheduledFlight.getRowId(),
+            e);
+      }
     }
 
     log.info("All {} unnotified scheduled flights saved", scheduledFlights.size());
